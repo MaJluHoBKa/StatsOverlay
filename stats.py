@@ -185,12 +185,20 @@ class Overlay_info(QWidget):
         self.stats_button.setIcon(QIcon(QPixmap(resource_path('src/stats_icon.webp'))))
         self.stats_button.setIconSize(QSize(24, 24))
         self.stats_button.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 0);
-            color: #e2ded3;
-            font-size: 12px;
-            font-family: Consolas;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 0px; 
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
         """)
         self.stats_button.clicked.connect(lambda: self.switch_page(3))
 
@@ -198,12 +206,20 @@ class Overlay_info(QWidget):
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
         self.rating_button.setIconSize(QSize(24, 24))
         self.rating_button.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 0);
-            color: #e2ded3;
-            font-size: 12px;
-            font-family: Consolas;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 0px; 
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
         """)
         self.rating_button.clicked.connect(lambda: self.switch_page(2))
 
@@ -211,13 +227,20 @@ class Overlay_info(QWidget):
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
         self.tank_button.setIconSize(QSize(24, 24))
         self.tank_button.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 0);
-            color: #e2ded3;
-            font-size: 12px;
-            font-family: Consolas;
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px; 
-            padding-left: 3px;
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
         """)
         self.tank_button.clicked.connect(lambda: self.switch_page(1))
 
@@ -225,12 +248,20 @@ class Overlay_info(QWidget):
         self.info_button.setIcon(QIcon(QPixmap(resource_path('src/info_icon.webp'))))
         self.info_button.setIconSize(QSize(24, 24))
         self.info_button.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 0);
-            color: #e2ded3;
-            font-size: 12px;
-            font-family: Consolas;
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px; 
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
         """)
         self.info_button.clicked.connect(lambda: self.switch_page(0))
 
@@ -238,12 +269,20 @@ class Overlay_info(QWidget):
         self.exit_button.setIcon(QIcon(QPixmap(resource_path('src/exit_icon.webp'))))
         self.exit_button.setIconSize(QSize(24, 24))
         self.exit_button.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 0);
-            color: #e2ded3;
-            font-size: 12px;
-            font-family: Consolas;
-            border-top-left-radius: 0px; 
-            border-bottom-left-radius: 10px; 
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 10px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
         """)
         self.exit_button.clicked.connect(self.quit)
 
@@ -273,7 +312,30 @@ class Overlay_info(QWidget):
         self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
         if self.isVisible():
             self.resize(self.width(), self.full_height)
-        
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() == Qt.LeftButton:
+            # Получаем текущую позицию курсора
+            new_position = event.globalPos() - self.drag_position
+
+            # Получаем геометрию экрана
+            screen_geometry = QApplication.primaryScreen().availableGeometry()
+
+            # Ограничиваем положение окна в пределах экрана
+            x = max(screen_geometry.left(), min(new_position.x(), screen_geometry.right() - self.width()))
+            y = max(screen_geometry.top(), min(new_position.y(), screen_geometry.bottom() - self.height()))
+
+            # Перемещаем окно
+            self.move(x, y)
+            event.accept()
+
+    def mouseReleaseEvent(self, event):
+        self.setCursor(Qt.ArrowCursor)
     
     def quit(self):
         if self.api_client.is_auth:
@@ -1016,7 +1078,7 @@ class Info(QWidget):
         
         # HTML-текст с ссылками
         info_text.setText("""
-        <p>STATS OVERLAY v0.6 BETA</p>
+        <p>STATS OVERLAY v0.7 BETA</p>
         
         <p>Используется API Леста Игры:<br>
         - <a href="https://developers.lesta.ru/documentation/rules/agreement/" style="color: #72d1ff;">Условия использования API</a><br>
@@ -1025,18 +1087,18 @@ class Info(QWidget):
         <p>Телеграмм-канал автора:<br>
         - <a href="https://t.me/tanksblitz_pmods" style="color: #72d1ff;">Telegram</a></p>
 
+        <p>Благодарности:<br>
+        - Участникам группы Blitz Hata VЫP за поддержку и идеи<br>
+        - Леста Игры за предоставленный API<br>
+        - Сообществу Tanks Blitz за тестирование</p>
+
         <p>Запрещено:<br>
         - Коммерческое использование и распространение <br>
         - Модификация и декомпиляция кода <br>
         - Использование в нарушение правил Леста Игры</p>
         
         <p>Автор не гарантирует 100% точность данных и не несет ответственности за:<br>
-        - Блокировки аккаунтов (используйте на свой риск)</p>
-
-        <p>Благодарности:<br>
-        - Участникам группы Blitz Hata VЫP за поддержку и идеи<br>
-        - Леста Игры за предоставленный API<br>
-        - Сообществу Tanks Blitz за тестирование</p>                        
+        - Блокировки аккаунтов (используйте на свой риск)</p>                        
         """)
         
         info_text.setStyleSheet("""
@@ -1051,12 +1113,12 @@ class Info(QWidget):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(info_text)
-        scroll_area.setViewportMargins(0, 0, 2, 0)
+        scroll_area.setViewportMargins(5, 5, 5, 5)
         scroll_area.setStyleSheet("""
             QScrollArea {
-                background-color: rgba(0, 0, 0, 0);
+                background-color: rgba(50, 50, 50, 80);
                 border: none;
-                border-radius: 0px;
+                border-radius: 5px;
             }
             QScrollBar:vertical {
                 background: rgba(0, 0, 0, 0);
@@ -1094,20 +1156,30 @@ class Info(QWidget):
                 width: 0;
             }
         """)
-        scroll_area.setMaximumHeight(160)
+        scroll_area.setMaximumHeight(185)
         main_layout.addWidget(scroll_area)
 
         donate_button = QPushButton()
         donate_button.setText("Поддержать автора")
         donate_button.setStyleSheet("""
-            background-color: rgba(70, 70, 70, 150);
-            color: #e2ded3;
-            border: 1px solid #333333;
-            font-size: 12px;
-            font-family: Consolas;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 5px;
+            QPushButton {
+                background-color: rgba(70, 70, 70, 150);
+                color: #e2ded3;
+                border: 1px solid #333333;
+                font-size: 12px;
+                font-family: Consolas;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(90, 90, 90, 200);
+                color: #ffffff;
+            }
+            QPushButton:pressed {
+                background-color: rgba(50, 50, 50, 200);
+                color: #cccccc;
+            }
         """)
         donate_button.clicked.connect(lambda: self.open_page_donate())  
         donate_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -1116,14 +1188,24 @@ class Info(QWidget):
         support_button = QPushButton()
         support_button.setText("Центр поддержки")
         support_button.setStyleSheet("""
-            background-color: rgba(70, 70, 70, 150);
-            color: #e2ded3;
-            border: 1px solid #333333;
-            font-size: 12px;
-            font-family: Consolas;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 5px;
+            QPushButton {
+                background-color: rgba(70, 70, 70, 150);
+                color: #e2ded3;
+                border: 1px solid #333333;
+                font-size: 12px;
+                font-family: Consolas;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(90, 90, 90, 200);
+                color: #ffffff;
+            }
+            QPushButton:pressed {
+                background-color: rgba(50, 50, 50, 200);
+                color: #cccccc;
+            }
         """)
         support_button.clicked.connect(lambda: self.open_page_support())  
         support_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -1132,14 +1214,24 @@ class Info(QWidget):
         reset_button = QPushButton()
         reset_button.setText("Сбросить статистику")
         reset_button.setStyleSheet("""
-            background-color: rgba(70, 70, 70, 150);
-            color: #e2ded3;
-            border: 1px solid #333333;
-            font-size: 12px;
-            font-family: Consolas;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 5px;
+            QPushButton {
+                background-color: rgba(70, 70, 70, 150);
+                color: #e2ded3;
+                border: 1px solid #333333;
+                font-size: 12px;
+                font-family: Consolas;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(90, 90, 90, 200);
+                color: #ffffff;
+            }
+            QPushButton:pressed {
+                background-color: rgba(50, 50, 50, 200);
+                color: #cccccc;
+            }
         """)
         reset_button.clicked.connect(lambda: self.reset_data())  
         reset_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -1148,14 +1240,24 @@ class Info(QWidget):
         self.auth_button = QPushButton()
         self.auth_button.setText("Авторизоваться")
         self.auth_button.setStyleSheet("""
-            background-color: rgba(70, 70, 70, 150);
-            color: #e2ded3;
-            border: 1px solid #333333;
-            font-size: 12px;
-            font-family: Consolas;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 5px;
+            QPushButton {
+                background-color: rgba(70, 70, 70, 150);
+                color: #e2ded3;
+                border: 1px solid #333333;
+                font-size: 12px;
+                font-family: Consolas;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(90, 90, 90, 200);
+                color: #ffffff;
+            }
+            QPushButton:pressed {
+                background-color: rgba(50, 50, 50, 200);
+                color: #cccccc;
+            }
         """)
         self.auth_button.clicked.connect(lambda: self.server_auth())  
         self.auth_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
