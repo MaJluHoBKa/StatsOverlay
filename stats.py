@@ -317,23 +317,12 @@ class Overlay_info(QWidget):
         if event.button() == Qt.LeftButton:
             self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
             event.accept()
-
+    
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:
-            # Получаем текущую позицию курсора
-            new_position = event.globalPos() - self.drag_position
-
-            # Получаем геометрию экрана
-            screen_geometry = QApplication.primaryScreen().availableGeometry()
-
-            # Ограничиваем положение окна в пределах экрана
-            x = max(screen_geometry.left(), min(new_position.x(), screen_geometry.right() - self.width()))
-            y = max(screen_geometry.top(), min(new_position.y(), screen_geometry.bottom() - self.height()))
-
-            # Перемещаем окно
-            self.move(x, y)
+            self.move(event.globalPos() - self.drag_position)
             event.accept()
-
+    
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
     
