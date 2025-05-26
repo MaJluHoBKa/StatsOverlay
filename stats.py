@@ -8,7 +8,7 @@ from PyQt5.QtGui import QPixmap, QIcon, QFont, QFontDatabase
 
 from PyQt5.QtGui import QDesktopServices
 from server import APIClient
-from datetime import datetime
+from datetime import datetime, timedelta
 import threading
 import time
 
@@ -150,22 +150,26 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setSpacing(1)
 
         self.tanks_page = TanksStat(api_client=self.api_client)
+        self.other_page = Other(api_client=api_client)
         self.info_page = Info(api_client=self.api_client, tank_stat=self.tanks_page)
 
         self.stacked_widget.addWidget(self.info_page)
         self.stacked_widget.setCurrentIndex(0)
 
-        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.addWidget(self.other_page)
         self.stacked_widget.setCurrentIndex(1)
+
+        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.setCurrentIndex(2)
 
 
         self.rating_page = Rating(api_client=self.api_client)
         self.stacked_widget.addWidget(self.rating_page)
-        self.stacked_widget.setCurrentIndex(2)
+        self.stacked_widget.setCurrentIndex(3)
 
         self.stats_page = Stats(api_client=self.api_client)
         self.stacked_widget.addWidget(self.stats_page)
-        self.stacked_widget.setCurrentIndex(3)
+        self.stacked_widget.setCurrentIndex(4)
 
         main_layout = QHBoxLayout()
         main_layout.setSpacing(0)
@@ -200,7 +204,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.stats_button.clicked.connect(lambda: self.switch_page(3))
+        self.stats_button.clicked.connect(lambda: self.switch_page(4))
 
         self.rating_button = QPushButton(self)
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
@@ -221,7 +225,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.rating_button.clicked.connect(lambda: self.switch_page(2))
+        self.rating_button.clicked.connect(lambda: self.switch_page(3))
 
         self.tank_button = QPushButton(self)
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
@@ -242,7 +246,28 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.tank_button.clicked.connect(lambda: self.switch_page(1))
+        self.tank_button.clicked.connect(lambda: self.switch_page(2))
+
+        self.other_button = QPushButton(self)
+        self.other_button.setIcon(QIcon(QPixmap(resource_path('src/other_icon.png'))))
+        self.other_button.setIconSize(QSize(24, 24))
+        self.other_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
+        """)
+        self.other_button.clicked.connect(lambda: self.switch_page(1))
 
         self.info_button = QPushButton(self)
         self.info_button.setIcon(QIcon(QPixmap(resource_path('src/info_icon.webp'))))
@@ -289,6 +314,7 @@ class Overlay_info(QWidget):
         v_config_layout.addWidget(self.stats_button)
         v_config_layout.addWidget(self.rating_button)
         v_config_layout.addWidget(self.tank_button)
+        v_config_layout.addWidget(self.other_button)
         v_config_layout.addWidget(self.info_button)
         v_config_layout.addWidget(self.exit_button)
         config_container.setLayout(v_config_layout)
@@ -300,12 +326,13 @@ class Overlay_info(QWidget):
         self.tank_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.exit_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.info_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.other_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         # -------------------------------------------------------------------------------------------------
 
         main_layout.addWidget(self.stacked_widget)
         self.setLayout(main_layout)
-        self.switch_page(3)
+        self.switch_page(4)
 
     def switch_page(self, index):
         self.stacked_widget.setCurrentIndex(index)
@@ -762,6 +789,7 @@ class TanksStat(QWidget):
             background-color: #383838;
             border-radius: 3px;
         """)
+        header_widget.setFixedHeight(25)
         header_layout = QHBoxLayout(header_widget)
         header_layout.setSpacing(0)
         header_layout.setContentsMargins(0, 0, 0, 0)
@@ -1024,6 +1052,168 @@ class TanksStat(QWidget):
             widget = item.widget()
             if widget is not None:
                 widget.deleteLater()
+
+class Other(QWidget):   
+    def __init__(self, api_client):
+        super().__init__()
+        self.api_client = api_client
+        self.setup_ui()
+
+        self.updating_thread = threading.Thread(target=self.update_other_periodically)
+        self.updating_thread.daemon = True
+        self.updating_thread.start()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(0)
+
+        container = QWidget()
+        container.setStyleSheet("background-color: transparent;")
+        h_layout = QHBoxLayout()
+        h_layout.setContentsMargins(10, 2, 10, 2)
+        h_layout.setSpacing(10)
+
+        iconArrow = QLabel()
+        iconArrow.setPixmap(QPixmap(resource_path('src/arrow_icon.webp')))
+        iconArrow.setStyleSheet("background-color: rgba(30, 30, 30, 0);")
+
+        avgLabel = QLabel(self)
+        avgLabel.setText("Боевые показатели")
+        avgLabel.setStyleSheet("""
+            font-family: Segoe UI;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 0px;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        avgLabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  
+        avgLabel.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        h_layout.addWidget(iconArrow)
+        h_layout.addWidget(avgLabel)
+
+        container.setLayout(h_layout)
+        layout.addWidget(container)
+
+        self.labels = {}
+        self.add_icon_with_label(layout, resource_path('src/percent_damage_icon.png'), "Процент попаданий", is_top=True)
+        self.add_icon_with_label(layout, resource_path('src/percent_leave_icon.png'), "Процент выживания")
+        self.add_icon_with_label(layout, resource_path('src/time_icon.png'), "Ср. время выживания")
+        self.add_icon_with_label(layout, resource_path('src/k_shot_icon.png'), "Коэффициент урона")
+        self.add_icon_with_label(layout, resource_path('src/k_tank_icon.png'), "Коэффициент уничтожения", is_bottom=True)
+        # self.add_icon_with_label(layout, resource_path('src/win_icon.webp'), "Победы")
+        # self.add_icon_with_label(layout, resource_path('src/damage_icon.webp'), "Урон")
+        # self.add_icon_with_label(layout, resource_path('src/xp_icon.webp'), "Опыт", is_bottom=True)
+
+        self.full_height = self.sizeHint().height()
+
+        # Пример: обновление значений
+        self.set_value("Процент попаданий", "-")
+        self.set_value("Процент выживания", "-")
+        self.set_value("Ср. время выживания", "-")
+        self.set_value("Коэффициент урона", "-")
+        self.set_value("Коэффициент уничтожения", "-")
+        # self.set_value("Победы", "-")
+        # self.set_value("Урон", "-")
+        # self.set_value("Опыт", "-")
+
+    def add_icon_with_label(self, layout, icon_path, key, is_top=False, is_bottom=False):
+        container = QWidget()
+        h_layout = QHBoxLayout()
+        h_layout.setContentsMargins(10, 2, 10, 2)
+        h_layout.setSpacing(10)
+
+        icon = QLabel()
+        icon.setPixmap(QPixmap(icon_path))
+        icon.setStyleSheet("background-color: rgba(30, 30, 30, 0);")
+
+        label = QLabel()
+
+        label.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 12px;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+
+        self.labels[key] = label
+
+        h_layout.addWidget(icon)
+        h_layout.addWidget(label)
+
+        container.setLayout(h_layout)
+
+        radius_style = ""
+        if is_top:
+            radius_style += "border-top-right-radius: 10px;"
+        if is_bottom:
+            radius_style += "border-bottom-right-radius: 10px;"
+
+        container.setStyleSheet(f"""
+            background-color: rgba(30, 30, 30, 0);
+            {radius_style}
+        """)
+
+        layout.addWidget(container)
+
+    def set_value(self, key, value):
+        max_length = 36 
+        if key in self.labels:
+            if key not in ["Ср. время выживания"]:  # Исключаем ключи, которые не нужно форматировать
+                # Проверяем, является ли значение числом
+                if isinstance(value, int):
+                    value = f"{value:,}".replace(",", " ")  # Форматируем целое число
+                elif isinstance(value, float):
+                    value = f"{value:,.2f}".replace(",", " ")  # Форматируем число с плавающей точкой
+                elif isinstance(value, str):
+                    try:
+                        # Пробуем преобразовать строку в число
+                        if "." in value:
+                            numeric_value = float(value.replace(" ", "").replace(",", ""))
+                            value = f"{numeric_value:,.2f}".replace(",", " ")
+                        else:
+                            numeric_value = int(value.replace(" ", "").replace(",", ""))
+                            value = f"{numeric_value:,}".replace(",", " ")
+                    except ValueError:
+                        pass
+
+            if key == "Процент попаданий" and value != '-':
+                value = f"{value}%"
+            elif key == "Процент выживания" and value != '-':
+                value = f"{value}%"
+            dots = '.' * max(1, max_length - len(key) - len(value))
+            self.labels[key].setText(f"{key} {dots} {value}")  
+
+    def convert_seconds_to_minutes_seconds(self, seconds):
+        td = timedelta(seconds=seconds)
+        return f"{td.seconds // 60}:{td.seconds % 60:02}"
+    
+    def update_other_periodically(self):
+        while True:
+            try:
+                success = self.api_client.set_other_stats()
+                if success:
+                    if self.api_client.other_stats_structure["shots"] > 0:
+                        self.set_value("Процент попаданий", str(round((self.api_client.other_stats_structure["hits"] / self.api_client.other_stats_structure["shots"]) * 100.00, 2)))
+                    if self.api_client.other_stats_structure["battles"] > 0:
+                        self.set_value("Процент выживания", str(round((self.api_client.other_stats_structure["survived"] / self.api_client.other_stats_structure["battles"]) * 100.00, 2)))
+                        self.set_value("Ср. время выживания", self.convert_seconds_to_minutes_seconds(self.api_client.other_stats_structure["lifeTime"] // self.api_client.other_stats_structure["battles"]))
+                        self.set_value("Коэффициент урона", str(round((self.api_client.other_stats_structure["totalDamage"] / self.api_client.other_stats_structure["receiverDamage"]), 2)))
+                        
+                        deaths = self.api_client.other_stats_structure["battles"] - self.api_client.other_stats_structure["survived"]
+                        if deaths > 0:
+                            kill_death_ratio = round(self.api_client.other_stats_structure["frags"] / deaths, 2)
+                        else:
+                            kill_death_ratio = self.api_client.other_stats_structure["frags"]
+                        self.set_value("Коэффициент уничтожения", str(kill_death_ratio))
+                else:
+                    print("Не удалось обновить статистику.")
+            except Exception as e:
+                print(f"Ошибка при обновлении статистики: {e}")
+
+            time.sleep(30)
 
 class Info(QWidget):
     def __init__(self, api_client, tank_stat):

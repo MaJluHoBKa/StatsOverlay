@@ -23,6 +23,7 @@ class APIClient:
         self.is_first_main_stats = True
         self.is_first_rating_stats = True
         self.is_first_tech_stats = True
+        self.is_first_other_stats = True
 
         self.main_stats_structure = {
             "credits": 0,
@@ -47,6 +48,27 @@ class APIClient:
             "wins": 0,
             "losses": 0,
             "totalDamage": 0,
+        }
+
+        self.first_other_stats_structure = {
+            "battles": 0,
+            "hits": 0,
+            "shots": 0,
+            "survived": 0,
+            "frags": 0,
+            "receiverDamage": 0,
+            "totalDamage": 0,
+            "lifeTime": 0,
+        }        
+        self.other_stats_structure = {
+            "battles": 0,
+            "hits": 0,
+            "shots": 0,
+            "survived": 0,
+            "frags": 0,
+            "receiverDamage": 0,
+            "totalDamage": 0,
+            "lifeTime": 0,
         }
         
         self.rating_stats_structure = {
@@ -212,6 +234,50 @@ class APIClient:
 
                         if self.is_first_tech_stats:
                             self.is_first_tech_stats = False
+                else:
+                    print("Ошибка: данные не найдены в ответе API.")
+                    return False
+            except requests.exceptions.RequestException as e:
+                print(f"Ошибка при получении данных: {e}")
+                return False
+            return True
+        else:
+            print("Ошибка: Необходимо авторизоваться.")
+            return False
+
+    def set_other_stats(self):
+        if self.is_auth:
+            url = "https://papi.tanksblitz.ru/wotb/account/info/"
+            params = {
+                "application_id": self.application_id,
+                "access_token": self.token,
+                "account_id": self.account_id,
+            }
+            try:
+                response = requests.get(url, params=params)
+                response.raise_for_status()
+                data = response.json()
+                if self.is_first_other_stats:
+                    if "data" in data and str(self.account_id) in data["data"]:
+                        self.first_other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles")
+                        self.first_other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits")
+                        self.first_other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots")
+                        self.first_other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles")
+                        self.first_other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags")
+                        self.first_other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received")
+                        self.first_other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt")
+                        self.first_other_stats_structure["lifeTime"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("battle_life_time")                        
+                        self.is_first_other_stats = False
+
+                if "data" in data and str(self.account_id) in data["data"]:
+                    self.other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles") - self.first_other_stats_structure["battles"]
+                    self.other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits") - self.first_other_stats_structure["hits"]
+                    self.other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots") - self.first_other_stats_structure["shots"]
+                    self.other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles") - self.first_other_stats_structure["survived"]
+                    self.other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags") - self.first_other_stats_structure["frags"]
+                    self.other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received") - self.first_other_stats_structure["receiverDamage"]
+                    self.other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") - self.first_other_stats_structure["totalDamage"]
+                    self.other_stats_structure["lifeTime"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("battle_life_time") - self.first_other_stats_structure["lifeTime"]
                 else:
                     print("Ошибка: данные не найдены в ответе API.")
                     return False
