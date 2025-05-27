@@ -1504,7 +1504,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 5, 25, 23, 59, 59)
+        self.expiration_date = datetime(2025, 6, 1, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -1513,7 +1513,7 @@ class MainApp:
         # else:
             # Проверяем текущую дату
         current_date = datetime.now()
-        expiration_date = datetime(2025, 5, 25, 23, 59, 59)  # Установленная дата и время
+        expiration_date = datetime(2025, 6, 1, 23, 59, 59)  # Установленная дата и время
 
         if current_date > expiration_date:
             QApplication.quit()
