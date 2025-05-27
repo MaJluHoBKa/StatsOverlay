@@ -252,6 +252,7 @@ class APIClient:
                 "application_id": self.application_id,
                 "access_token": self.token,
                 "account_id": self.account_id,
+                "extra": "statistics.rating"
             }
             try:
                 response = requests.get(url, params=params)
@@ -259,24 +260,24 @@ class APIClient:
                 data = response.json()
                 if self.is_first_other_stats:
                     if "data" in data and str(self.account_id) in data["data"]:
-                        self.first_other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles")
-                        self.first_other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits")
-                        self.first_other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots")
-                        self.first_other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles")
-                        self.first_other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags")
-                        self.first_other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received")
-                        self.first_other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt")
+                        self.first_other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("battles")
+                        self.first_other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("hits")
+                        self.first_other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("shots")
+                        self.first_other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("survived_battles")
+                        self.first_other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("frags")
+                        self.first_other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_received")
+                        self.first_other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_dealt")
                         self.first_other_stats_structure["lifeTime"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("battle_life_time")                        
                         self.is_first_other_stats = False
 
                 if "data" in data and str(self.account_id) in data["data"]:
-                    self.other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles") - self.first_other_stats_structure["battles"]
-                    self.other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits") - self.first_other_stats_structure["hits"]
-                    self.other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots") - self.first_other_stats_structure["shots"]
-                    self.other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles") - self.first_other_stats_structure["survived"]
-                    self.other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags") - self.first_other_stats_structure["frags"]
-                    self.other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received") - self.first_other_stats_structure["receiverDamage"]
-                    self.other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") - self.first_other_stats_structure["totalDamage"]
+                    self.other_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("battles") - self.first_other_stats_structure["battles"]
+                    self.other_stats_structure["hits"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("hits") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("hits") - self.first_other_stats_structure["hits"]
+                    self.other_stats_structure["shots"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("shots") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("shots") - self.first_other_stats_structure["shots"]
+                    self.other_stats_structure["survived"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("survived_battles") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("survived_battles") - self.first_other_stats_structure["survived"]
+                    self.other_stats_structure["frags"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("frags") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("frags") - self.first_other_stats_structure["frags"]
+                    self.other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_received") - self.first_other_stats_structure["receiverDamage"]
+                    self.other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_dealt") - self.first_other_stats_structure["totalDamage"]
                     self.other_stats_structure["lifeTime"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("battle_life_time") - self.first_other_stats_structure["lifeTime"]
                 else:
                     print("Ошибка: данные не найдены в ответе API.")

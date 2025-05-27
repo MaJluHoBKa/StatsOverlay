@@ -11,6 +11,7 @@ from server import APIClient
 from datetime import datetime, timedelta
 import threading
 import time
+from HWIDActivator import HWIDActivator
 
 def resource_path(relative_path):
         import sys, os
@@ -1647,7 +1648,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 5, 25, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 6, 1, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -1694,21 +1695,21 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 5, 25, 23, 59, 59)
+        self.expiration_date = datetime(2025, 6, 1, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
-        # if not HWIDActivator.check_activation():
-        #     self.show_activation_window()
-        # else:
+        if not HWIDActivator.check_activation():
+            self.show_activation_window()
+        else:
             # Проверяем текущую дату
-        current_date = datetime.now()
-        expiration_date = datetime(2025, 5, 25, 23, 59, 59)  # Установленная дата и время
+            current_date = datetime.now()
+            expiration_date = datetime(2025, 6, 1, 23, 59, 59)  # Установленная дата и время
 
-        if current_date > expiration_date:
-            QApplication.quit()
-        else:    
-            self.show_main_app()
+            if current_date > expiration_date:
+                QApplication.quit()
+            else:    
+                self.show_main_app()
 
     def start_expiration_timer(self):
         """Запускает таймер для проверки истечения срока действия программы."""

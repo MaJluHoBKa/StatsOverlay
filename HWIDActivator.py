@@ -7,7 +7,7 @@ import subprocess
 from typing import Optional
 
 class HWIDActivator:
-    SECRET_SEED = "speaker"
+    SECRET_SEED = "dualports"
 
     @staticmethod
     def get_activation_file_path() -> str:
