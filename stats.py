@@ -2,7 +2,7 @@ import datetime
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, 
                             QSizePolicy, QPushButton, QStackedWidget, QGridLayout, 
-                            QScrollArea, QLineEdit, QMessageBox, QLayout)
+                            QScrollArea, QLineEdit, QMessageBox, QLayout, QGraphicsOpacityEffect)
 from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QRect, Qt, QSize, QTimer, QUrl, pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QFontDatabase
 
@@ -122,7 +122,7 @@ class Overlay_info(QWidget):
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
         self.full_height = 200
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(250, 200)  # Начальный размер
 

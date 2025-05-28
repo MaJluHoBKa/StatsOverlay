@@ -1,5 +1,8 @@
 ('D:\\Games\\MOD\\WoT Blitz\\Stats\\build\\stats\\PYZ-00.pyz',
- [('PyQt5',
+ [('HWIDActivator',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\HWIDActivator.py',
+   'PYMODULE'),
+  ('PyQt5',
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\PyQt5\\__init__.py',
    'PYMODULE'),
