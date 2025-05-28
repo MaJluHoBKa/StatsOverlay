@@ -121,7 +121,7 @@ class Overlay_info(QWidget):
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
         self.full_height = 200
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(250, 200)  # Начальный размер
 
