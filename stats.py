@@ -1238,7 +1238,7 @@ class Info(QWidget):
         arrow_icon.setStyleSheet("background-color: transparent;")
         title_layout.addWidget(arrow_icon)
         
-        title = QLabel("Информация")
+        title = QLabel("STATS OVERLAY v0.8 BETA")
         title.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
@@ -1258,24 +1258,27 @@ class Info(QWidget):
         
         # HTML-текст с ссылками
         info_text.setText("""
-        <p>STATS OVERLAY v0.7 BETA</p>
+        <p><b>Лицензионное соглашение</b></p>
+                          
+        <p>Авторизовываясь в приложении, вы соглашаетесь с лицензионным соглашением</p>
         
         <p>Используется API Леста Игры:<br>
         - <a href="https://developers.lesta.ru/documentation/rules/agreement/" style="color: #72d1ff;">Условия использования API</a><br>
         - <a href="https://legal.lesta.ru/privacy-policy/" style="color: #72d1ff;">Политика конфиденциальности</a></p>
-
-        <p>Телеграмм-канал автора:<br>
-        - <a href="https://t.me/tanksblitz_pmods" style="color: #72d1ff;">Telegram</a></p>
 
         <p>Благодарности:<br>
         - Участникам группы Blitz Hata VЫP за поддержку и идеи<br>
         - Леста Игры за предоставленный API<br>
         - Сообществу Tanks Blitz за тестирование</p>
 
+        <p>Телеграмм-канал автора:<br>
+        - <a href="https://t.me/tanksblitz_pmods" style="color: #72d1ff;">Telegram</a></p>
+
         <p>Запрещено:<br>
         - Коммерческое использование и распространение <br>
         - Модификация и декомпиляция кода <br>
-        - Использование в нарушение правил Леста Игры</p>
+        - Использование в нарушение правил Леста Игры <br>
+        - Распространение приложения или его производных без указания автора</p>
         
         <p>Автор не гарантирует 100% точность данных и не несет ответственности за:<br>
         - Блокировки аккаунтов (используйте на свой риск)</p>                        
@@ -1447,7 +1450,7 @@ class Info(QWidget):
         message_layout.setSpacing(10)
         message_layout.setContentsMargins(10, 2, 10, 2)
         
-        self.message_text = QLabel("Вывод событий")
+        self.message_text = QLabel("Пожалуйста, авторизуйтесь")
         self.message_text.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
