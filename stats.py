@@ -136,6 +136,15 @@ class Overlay_info(QWidget):
             border-radius: 0px;
         """)
 
+        # Добавляем кнопку выхода -----------------------------------------------------------------------
+        config_container = QWidget()
+        config_container.setStyleSheet("""
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        """)
+        v_config_layout = QVBoxLayout()
+        v_config_layout.setSpacing(0)
+        v_config_layout.setContentsMargins(0, 0, 0, 0)
 
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.setStyleSheet("""
@@ -150,7 +159,8 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setContentsMargins(0, 0, 0, 0)
         self.stacked_widget.layout().setSpacing(1)
 
-        self.stats_page = Stats(api_client=self.api_client)
+        self.stream_page = Stream(api_client=self.api_client, config_container=config_container)
+        self.stats_page = Stats(api_client=self.api_client, stream_page = self.stream_page)
         self.rating_page = Rating(api_client=self.api_client)
         self.tanks_page = TanksStat(api_client=self.api_client)
         self.other_page = Other(api_client=api_client)
@@ -159,32 +169,25 @@ class Overlay_info(QWidget):
         self.stacked_widget.addWidget(self.info_page)
         self.stacked_widget.setCurrentIndex(0)
 
-        self.stacked_widget.addWidget(self.other_page)
+        self.stacked_widget.addWidget(self.stream_page)
         self.stacked_widget.setCurrentIndex(1)
 
-        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.addWidget(self.other_page)
         self.stacked_widget.setCurrentIndex(2)
+
+        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.setCurrentIndex(3)
 
 
         self.stacked_widget.addWidget(self.rating_page)
-        self.stacked_widget.setCurrentIndex(3)
+        self.stacked_widget.setCurrentIndex(4)
 
         self.stacked_widget.addWidget(self.stats_page)
-        self.stacked_widget.setCurrentIndex(4)
+        self.stacked_widget.setCurrentIndex(5)
 
         main_layout = QHBoxLayout()
         main_layout.setSpacing(0)
         main_layout.setContentsMargins(0, 2, 0, 2)
-
-        # Добавляем кнопку выхода -----------------------------------------------------------------------
-        config_container = QWidget()
-        config_container.setStyleSheet("""
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-        """)
-        v_config_layout = QVBoxLayout()
-        v_config_layout.setSpacing(0)
-        v_config_layout.setContentsMargins(0, 0, 0, 0)
 
         self.stats_button = QPushButton(self)
         self.stats_button.setIcon(QIcon(QPixmap(resource_path('src/stats_icon.webp'))))
@@ -205,7 +208,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.stats_button.clicked.connect(lambda: self.switch_page(4))
+        self.stats_button.clicked.connect(lambda: self.switch_page(5))
 
         self.rating_button = QPushButton(self)
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
@@ -226,7 +229,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.rating_button.clicked.connect(lambda: self.switch_page(3))
+        self.rating_button.clicked.connect(lambda: self.switch_page(4))
 
         self.tank_button = QPushButton(self)
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
@@ -247,7 +250,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.tank_button.clicked.connect(lambda: self.switch_page(2))
+        self.tank_button.clicked.connect(lambda: self.switch_page(3))
 
         self.other_button = QPushButton(self)
         self.other_button.setIcon(QIcon(QPixmap(resource_path('src/other_icon.png'))))
@@ -268,7 +271,28 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.other_button.clicked.connect(lambda: self.switch_page(1))
+        self.other_button.clicked.connect(lambda: self.switch_page(2))
+
+        self.stream_button = QPushButton(self)
+        self.stream_button.setIcon(QIcon(QPixmap(resource_path('src/stream_icon.png'))))
+        self.stream_button.setIconSize(QSize(24, 24))
+        self.stream_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
+        """)
+        self.stream_button.clicked.connect(lambda: self.switch_page(1))
 
         self.info_button = QPushButton(self)
         self.info_button.setIcon(QIcon(QPixmap(resource_path('src/info_icon.webp'))))
@@ -316,6 +340,7 @@ class Overlay_info(QWidget):
         v_config_layout.addWidget(self.rating_button)
         v_config_layout.addWidget(self.tank_button)
         v_config_layout.addWidget(self.other_button)
+        v_config_layout.addWidget(self.stream_button)
         v_config_layout.addWidget(self.info_button)
         v_config_layout.addWidget(self.exit_button)
         config_container.setLayout(v_config_layout)
@@ -328,16 +353,38 @@ class Overlay_info(QWidget):
         self.exit_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.info_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.other_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.stream_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
         # -------------------------------------------------------------------------------------------------
 
         main_layout.addWidget(self.stacked_widget)
         self.setLayout(main_layout)
-        self.switch_page(4)
+        self.switch_page(5)
 
     def switch_page(self, index):
         self.stacked_widget.setCurrentIndex(index)
         self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
+        # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
+        if index == 1:  # Если текущая вкладка — Stream
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
+                    border: none;
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            """)
+        else:
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
+                    border: none;
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            """)
+
+        # Изменяем размер окна только по ширине
         if self.isVisible():
             self.resize(self.width(), self.full_height)
 
@@ -423,9 +470,10 @@ class Overlay_info(QWidget):
         self.animation_running = False
 
 class Stats(QWidget):   
-    def __init__(self, api_client):
+    def __init__(self, api_client, stream_page):
         super().__init__()
         self.api_client = api_client
+        self.stream_page = stream_page
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -563,10 +611,15 @@ class Stats(QWidget):
                     self.set_value("Боевой опыт", str(self.api_client.main_stats_structure["exp_battle"]))
                     self.set_value("Cвободный опыт", str(self.api_client.main_stats_structure["exp_free"]))
                     self.set_value("Проведено боев", str(self.api_client.main_stats_structure["battles"]))
+                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"]))
                     if self.api_client.main_stats_structure["battles"] > 0:
                         self.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
                         self.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
                         self.set_value("Опыт", str(self.api_client.main_stats_structure["exp_battle"] // self.api_client.main_stats_structure["battles"]))
+
+                        self.stream_page.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
+                        self.stream_page.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
+                        self.stream_page.set_value("Опыт", str(self.api_client.main_stats_structure["exp_battle"] // self.api_client.main_stats_structure["battles"]))
                     else:
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
@@ -1198,6 +1251,144 @@ class Other(QWidget):
                 print(f"Ошибка при обновлении статистики: {e}")
 
             time.sleep(30)
+
+class Stream(QWidget):   
+    def __init__(self, api_client, config_container):
+        super().__init__()
+        self.api_client = api_client
+        self.config_container = config_container
+        self.config_visible = True
+        self.setup_ui()
+    
+    def setup_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(5)
+        main_layout.setContentsMargins(10, 2, 10, 2)
+        main_layout.setAlignment(Qt.AlignLeft)
+
+        self.data_grid = QGridLayout()
+        self.data_grid.setHorizontalSpacing(0)
+        self.data_grid.setVerticalSpacing(10)
+        self.data_grid.setContentsMargins(0, 0, 0, 0)
+        self.data_grid.setAlignment(Qt.AlignTop)
+
+        data_widget = QWidget()
+        data_widget.setLayout(self.data_grid)
+        data_widget.setStyleSheet("""
+            background-color: rgba(40, 40, 40, 0);  /* Прозрачный фон */
+        """)
+
+        self.add_label_and_value(self.data_grid, "Бои", "-")
+        self.add_label_and_value(self.data_grid, "Победы", "-")
+        self.add_label_and_value(self.data_grid, "Урон", "-")
+        self.add_label_and_value(self.data_grid, "Опыт", "-")
+
+        main_layout.addWidget(data_widget)
+
+    def add_label_and_value(self, grid, key, value):
+        tile_container = QWidget()
+        tile_container.setStyleSheet("""
+            background-color: #383838;  /* Цвет плитки */
+            border-radius: 5px;  /* Скруглённые углы */
+            margin: 5px;  /* Отступы между плитками */
+        """)
+        tile_container.setFixedSize(160, 60)
+
+        v_layout = QVBoxLayout(tile_container)
+        v_layout.setContentsMargins(5, 5, 5, 5)
+        v_layout.setSpacing(2)
+        v_layout.setAlignment(Qt.AlignCenter)
+
+        label = QLabel(key)
+        label.setObjectName(key)
+        label.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: transparent;  /* Прозрачный фон */
+        """)
+        label.setAlignment(Qt.AlignCenter)
+        v_layout.addWidget(label)
+
+        # Значение (value)
+        value_label = QLabel(value)
+        value_label.setObjectName(f"{key}_value")
+        value_label.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: transparent;  /* Прозрачный фон */
+        """)
+        value_label.setAlignment(Qt.AlignCenter)
+        v_layout.addWidget(value_label)
+
+        # Добавляем плитку в сетку
+        grid.addWidget(tile_container, self.data_grid.rowCount(), 0, 1, 1)
+
+    def set_value(self, key, value):
+        # Форматируем значение
+        if isinstance(value, int):
+            value = f"{value:,}".replace(",", " ")  # Форматируем целое число
+        elif isinstance(value, float):
+            value = f"{value:,.2f}".replace(",", " ")  # Форматируем число с плавающей точкой
+        elif isinstance(value, str):
+            try:
+                # Пробуем преобразовать строку в число
+                if "." in value:
+                    numeric_value = float(value.replace(" ", "").replace(",", ""))
+                    value = f"{numeric_value:,.2f}".replace(",", " ")
+                else:
+                    numeric_value = int(value.replace(" ", "").replace(",", ""))
+                    value = f"{numeric_value:,}".replace(",", " ")
+            except ValueError:
+                pass
+
+        print(f"Устанавливаем значение для ключа: {key}, значение: {value}")
+        for i in range(self.data_grid.count()):
+            item = self.data_grid.itemAt(i)
+            if item:
+                tile_container = item.widget()
+                if tile_container:
+                    label = tile_container.findChild(QLabel, key)
+                    if label:
+                        print(f"Найден QLabel для ключа: {key}")
+                        value_label = tile_container.findChild(QLabel, f"{key}_value")
+                        if value_label:
+                            print(f"Найден QLabel для значения: {key}_value")
+                            value_label.setText(value)
+                            if key == "Победы" and value != '-':
+                                try:
+                                    win_percent = float(value.strip('%'))
+                                    if win_percent >= 70.00:
+                                        color = "#9989e6"
+                                    elif 60.00 <= win_percent < 70.00:
+                                        color = "#72d1ff"
+                                    elif 50.00 <= win_percent < 60.00:
+                                        color = "#a8e689"
+                                    else:
+                                        color = "#ffffff"
+                                    value_label.setStyleSheet(f"""
+                                        font-family: Consolas;
+                                        font-size: 16px;
+                                        font-weight: bold;
+                                        color: {color};
+                                        background-color: transparent;
+                                    """)
+                                except ValueError:
+                                    pass  
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:  # Логика для правой кнопки мыши
+            if self.config_visible:
+                self.config_container.hide()  # Скрываем config_container
+            else:
+                self.config_container.show()  # Показываем config_container
+            self.config_visible = not self.config_visible  # Переключаем состояние видимости
+
+        # Передаём событие родительскому виджету
+        super().mousePressEvent(event)
 
 class Info(QWidget):
     def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat):
