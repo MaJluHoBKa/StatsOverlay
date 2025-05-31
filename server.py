@@ -360,6 +360,7 @@ class APIClient:
         self.is_first_main_stats = True
         self.is_first_rating_stats = True
         self.is_first_tech_stats = True
+        self.is_first_other_stats = True
         # self.first_main_stats_economic_structure["credits"] = self.first_main_stats_economic_structure["credits"] + self.main_stats_structure["credits"]
         # self.first_main_stats_economic_structure["gold"] = self.first_main_stats_economic_structure["gold"] + self.main_stats_structure["gold"]
         # self.first_main_stats_economic_structure["exp_battle"] = self.first_main_stats_economic_structure["exp_battle"] + self.main_stats_structure["exp_battle"]

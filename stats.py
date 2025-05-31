@@ -150,9 +150,11 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setContentsMargins(0, 0, 0, 0)
         self.stacked_widget.layout().setSpacing(1)
 
+        self.stats_page = Stats(api_client=self.api_client)
+        self.rating_page = Rating(api_client=self.api_client)
         self.tanks_page = TanksStat(api_client=self.api_client)
         self.other_page = Other(api_client=api_client)
-        self.info_page = Info(api_client=self.api_client, tank_stat=self.tanks_page)
+        self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page)
 
         self.stacked_widget.addWidget(self.info_page)
         self.stacked_widget.setCurrentIndex(0)
@@ -164,11 +166,9 @@ class Overlay_info(QWidget):
         self.stacked_widget.setCurrentIndex(2)
 
 
-        self.rating_page = Rating(api_client=self.api_client)
         self.stacked_widget.addWidget(self.rating_page)
         self.stacked_widget.setCurrentIndex(3)
 
-        self.stats_page = Stats(api_client=self.api_client)
         self.stacked_widget.addWidget(self.stats_page)
         self.stacked_widget.setCurrentIndex(4)
 
@@ -810,8 +810,6 @@ class TanksStat(QWidget):
 
         main_layout.addWidget(header_widget)
 
-
-        # 3. Сетка для данных
         self.data_grid = QGridLayout()
         self.data_grid.setHorizontalSpacing(0)
         self.data_grid.setVerticalSpacing(1)
@@ -924,37 +922,32 @@ class TanksStat(QWidget):
     def update_tech_stats_periodically(self):
         while True:
             try:
-                print("Начало обновления статистики техники...")  # Лог начала обновления
+                print("Начало обновления статистики техники...")
                 success = self.api_client.set_tech_stats()
                 if success:
-                    row_index = 0  # Счётчик для строк
+                    row_index = 0
                     for tank_id, current_stats in self.api_client.tech_stats_array.items():
-                        print(f"Обработка танка ID {tank_id}...")  # Лог обработки танка
+                        print(f"Обработка танка ID {tank_id}...")
 
-                        # Проверяем, есть ли данные о танке в prev_stats_tech_array
                         prev_stats = self.api_client.prev_tech_stats_array.get(tank_id, {})
                         prev_battles = prev_stats.get("battles", 0)
                         current_battles = current_stats.get("battles", 0)
 
-                        print(f"Танк ID {tank_id}: предыдущие бои = {prev_battles}, текущие бои = {current_battles}")  # Лог боёв
+                        print(f"Танк ID {tank_id}: предыдущие бои = {prev_battles}, текущие бои = {current_battles}")
 
-                        # Обновляем строку только если количество боёв увеличилось
                         if current_battles > prev_battles:
-                            print(f"Танк ID {tank_id}: количество боёв увеличилось, обновляем данные...")  # Лог увеличения боёв
+                            print(f"Танк ID {tank_id}: количество боёв увеличилось, обновляем данные...")
 
-                            # Обновляем информацию о танке, если её нет в tech_info_dataset
                             if int(tank_id) not in self.api_client.tech_info_dataset:
-                                print(f"Танк ID {tank_id}: информация отсутствует в tech_info_dataset, загружаем...")  # Лог загрузки информации
+                                print(f"Танк ID {tank_id}: информация отсутствует в tech_info_dataset, загружаем...")
                                 self.api_client.set_tech_info(tank_id)
                                 print(f"Проверка после загрузки: {self.api_client.tech_info_dataset.get(tank_id)}")
                                 time.sleep(0.1)
 
-                            # Проверяем, есть ли данные о танке в tech_info_dataset
                             if int(tank_id) not in self.api_client.tech_info_dataset:
-                                print(f"Ошибка: Танк с ID {tank_id} отсутствует в tech_info_dataset после загрузки.")  # Лог ошибки
+                                print(f"Ошибка: Танк с ID {tank_id} отсутствует в tech_info_dataset после загрузки.")
                                 continue
 
-                            # Получаем данные о танке
                             tank_name = self.api_client.tech_info_dataset[tank_id].get("name")
                             battles = str(current_battles)
                             if current_battles > 0:
@@ -965,26 +958,24 @@ class TanksStat(QWidget):
                                 wins = "-"
                                 damage = "-"
 
-                            print(f"Танк ID {tank_id}: имя = {tank_name}, бои = {battles}, победы = {wins}, урон = {damage}")  # Лог данных танка
+                            print(f"Танк ID {tank_id}: имя = {tank_name}, бои = {battles}, победы = {wins}, урон = {damage}")
 
-                            # Проверяем, существует ли строка для этого танка
                             existing_row = self.get_row_by_tank_id(tank_id)
                             if existing_row is not None:
-                                print(f"Танк ID {tank_id}: строка уже существует, обновляем...")  # Лог обновления строки
+                                print(f"Танк ID {tank_id}: строка уже существует, обновляем...")
                                 self.update_existing_row(existing_row, tank_name, battles, wins, damage)
                             else:
-                                print(f"Танк ID {tank_id}: строка не существует, добавляем новую...")  # Лог добавления строки
-                                new_row_index = self.data_grid.rowCount()  # Определяем индекс для новой строки
+                                print(f"Танк ID {tank_id}: строка не существует, добавляем новую...")
+                                new_row_index = self.data_grid.rowCount()
                                 print(f"Добавление новой строки с индексом {new_row_index} для танка ID {tank_id}")
                                 self.update_tank_row.emit(new_row_index, tank_name, battles, wins, damage)
 
-                            # Обновляем prev_stats_tech_array
                             self.api_client.prev_tech_stats_array[tank_id] = current_stats
-                            print(f"Танк ID {tank_id}: данные обновлены в prev_stats_tech_array.")  # Лог обновления prev_stats_tech_array
+                            print(f"Танк ID {tank_id}: данные обновлены в prev_stats_tech_array.")
                 else:
-                    print("Не удалось обновить статистику.")  # Лог ошибки обновления статистики
+                    print("Не удалось обновить статистику.")
             except Exception as e:
-                print(f"Ошибка при обновлении статистики: {e}")  # Лог исключения
+                print(f"Ошибка при обновлении статистики: {e}")
 
             time.sleep(30)
     
@@ -1012,7 +1003,6 @@ class TanksStat(QWidget):
         return None
     
     def update_existing_row(self, row_index, tank_name, battles, wins, damage):
-        # Получаем виджет строки
         row_widget = self.data_grid.itemAtPosition(row_index, 0).widget()
         if not row_widget:
             print(f"Ошибка: строка с индексом {row_index} не найдена.")
@@ -1103,21 +1093,14 @@ class Other(QWidget):
         self.add_icon_with_label(layout, resource_path('src/time_icon.png'), "Ср. время выживания")
         self.add_icon_with_label(layout, resource_path('src/k_shot_icon.png'), "Коэффициент урона")
         self.add_icon_with_label(layout, resource_path('src/k_tank_icon.png'), "Коэффициент уничтожения", is_bottom=True)
-        # self.add_icon_with_label(layout, resource_path('src/win_icon.webp'), "Победы")
-        # self.add_icon_with_label(layout, resource_path('src/damage_icon.webp'), "Урон")
-        # self.add_icon_with_label(layout, resource_path('src/xp_icon.webp'), "Опыт", is_bottom=True)
 
         self.full_height = self.sizeHint().height()
 
-        # Пример: обновление значений
         self.set_value("Процент попаданий", "-")
         self.set_value("Процент выживания", "-")
         self.set_value("Ср. время выживания", "-")
         self.set_value("Коэффициент урона", "-")
         self.set_value("Коэффициент уничтожения", "-")
-        # self.set_value("Победы", "-")
-        # self.set_value("Урон", "-")
-        # self.set_value("Опыт", "-")
 
     def add_icon_with_label(self, layout, icon_path, key, is_top=False, is_bottom=False):
         container = QWidget()
@@ -1217,10 +1200,13 @@ class Other(QWidget):
             time.sleep(30)
 
 class Info(QWidget):
-    def __init__(self, api_client, tank_stat):
+    def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat):
         super().__init__()
         self.api_client = api_client
+        self.main_stat = main_stat
+        self.rating_stat = rating_stat
         self.tank_stat = tank_stat
+        self.other_stat = other_stat
         self.setup_ui()
     
     def setup_ui(self):
@@ -1260,7 +1246,7 @@ class Info(QWidget):
         info_text.setText("""
         <p><b>Лицензионное соглашение</b></p>
                           
-        <p>Авторизовываясь в приложении, вы соглашаетесь с лицензионным соглашением</p>
+        <p>Используя приложение, вы соглашаетесь с лицензионным соглашением.</p>
         
         <p>Используется API Леста Игры:<br>
         - <a href="https://developers.lesta.ru/documentation/rules/agreement/" style="color: #72d1ff;">Условия использования API</a><br>
@@ -1514,6 +1500,29 @@ class Info(QWidget):
             thread.start()
 
     def reset_data(self):
+        self.main_stat.set_value("Золото", "-")
+        self.main_stat.set_value("Кредиты", "-")
+        self.main_stat.set_value("Боевой опыт", "-")
+        self.main_stat.set_value("Cвободный опыт", "-")
+        self.main_stat.set_value("Проведено боев", "-")
+        self.main_stat.set_value("Победы", "-")
+        self.main_stat.set_value("Урон", "-")
+        self.main_stat.set_value("Опыт", "-")
+
+        self.rating_stat.set_value("Текущий рейтинг", "-")
+        self.rating_stat.set_value("Прогресс рейтинга", "-")
+        self.rating_stat.set_value("Калибровочные бои", "-")
+        self.rating_stat.set_value("Проведено боев", "-")
+        self.rating_stat.set_value("Победы", "-")
+        self.rating_stat.set_value("Урон", "-")
+        self.rating_stat.set_value("Опыт", "-")
+
+        self.other_stat.set_value("Процент попаданий", "-")
+        self.other_stat.set_value("Процент выживания", "-")
+        self.other_stat.set_value("Ср. время выживания", "-")
+        self.other_stat.set_value("Коэффициент урона", "-")
+        self.other_stat.set_value("Коэффициент уничтожения", "-")
+
         self.tank_stat.reset_tank_data.emit()
         self.api_client.save_current_to_first()
 
@@ -1651,7 +1660,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 1, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 6, 10, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -1698,7 +1707,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 6, 1, 23, 59, 59)
+        self.expiration_date = datetime(2025, 6, 10, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -1707,7 +1716,7 @@ class MainApp:
         else:
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 1, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 6, 10, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 QApplication.quit()
