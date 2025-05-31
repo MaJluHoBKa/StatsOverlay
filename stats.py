@@ -611,19 +611,24 @@ class Stats(QWidget):
                     self.set_value("Боевой опыт", str(self.api_client.main_stats_structure["exp_battle"]))
                     self.set_value("Cвободный опыт", str(self.api_client.main_stats_structure["exp_free"]))
                     self.set_value("Проведено боев", str(self.api_client.main_stats_structure["battles"]))
-                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"]))
+                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]))
                     if self.api_client.main_stats_structure["battles"] > 0:
                         self.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
                         self.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
                         self.set_value("Опыт", str(self.api_client.main_stats_structure["exp_battle"] // self.api_client.main_stats_structure["battles"]))
-
-                        self.stream_page.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
-                        self.stream_page.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
-                        self.stream_page.set_value("Опыт", str(self.api_client.main_stats_structure["exp_battle"] // self.api_client.main_stats_structure["battles"]))
                     else:
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
                         self.set_value("Опыт", "-")
+
+                    if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
+                        self.stream_page.set_value("Победы", str(round(((self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]) / (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])) * 100.00, 2)))
+                        self.stream_page.set_value("Урон", str((self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
+                        self.stream_page.set_value("Опыт", str((self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
+                    else:
+                        self.stream_page.set_value("Победы", "-")
+                        self.stream_page.set_value("Урон", "-")
+                        self.stream_page.set_value("Опыт", "-")
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1345,7 +1350,6 @@ class Stream(QWidget):
             except ValueError:
                 pass
 
-        print(f"Устанавливаем значение для ключа: {key}, значение: {value}")
         for i in range(self.data_grid.count()):
             item = self.data_grid.itemAt(i)
             if item:
@@ -1353,12 +1357,10 @@ class Stream(QWidget):
                 if tile_container:
                     label = tile_container.findChild(QLabel, key)
                     if label:
-                        print(f"Найден QLabel для ключа: {key}")
                         value_label = tile_container.findChild(QLabel, f"{key}_value")
                         if value_label:
-                            print(f"Найден QLabel для значения: {key}_value")
-                            value_label.setText(value)
                             if key == "Победы" and value != '-':
+                                value_label.setText(value + "%")
                                 try:
                                     win_percent = float(value.strip('%'))
                                     if win_percent >= 70.00:
@@ -1378,6 +1380,8 @@ class Stream(QWidget):
                                     """)
                                 except ValueError:
                                     pass  
+                            else:
+                                value_label.setText(value)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:  # Логика для правой кнопки мыши
