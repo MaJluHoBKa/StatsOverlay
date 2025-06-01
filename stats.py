@@ -980,21 +980,16 @@ class TanksStat(QWidget):
     def update_tech_stats_periodically(self):
         while True:
             try:
-                print("Начало обновления статистики техники...")
                 success = self.api_client.set_tech_stats()
                 if success:
                     row_index = 0
                     for tank_id, current_stats in self.api_client.tech_stats_array.items():
-                        print(f"Обработка танка ID {tank_id}...")
 
                         prev_stats = self.api_client.prev_tech_stats_array.get(tank_id, {})
                         prev_battles = prev_stats.get("battles", 0)
                         current_battles = current_stats.get("battles", 0)
 
-                        print(f"Танк ID {tank_id}: предыдущие бои = {prev_battles}, текущие бои = {current_battles}")
-
                         if current_battles > prev_battles:
-                            print(f"Танк ID {tank_id}: количество боёв увеличилось, обновляем данные...")
 
                             if int(tank_id) not in self.api_client.tech_info_dataset:
                                 print(f"Танк ID {tank_id}: информация отсутствует в tech_info_dataset, загружаем...")
@@ -1016,20 +1011,15 @@ class TanksStat(QWidget):
                                 wins = "-"
                                 damage = "-"
 
-                            print(f"Танк ID {tank_id}: имя = {tank_name}, бои = {battles}, победы = {wins}, урон = {damage}")
 
                             existing_row = self.get_row_by_tank_id(tank_id)
                             if existing_row is not None:
-                                print(f"Танк ID {tank_id}: строка уже существует, обновляем...")
                                 self.update_existing_row(existing_row, tank_name, battles, wins, damage)
                             else:
-                                print(f"Танк ID {tank_id}: строка не существует, добавляем новую...")
                                 new_row_index = self.data_grid.rowCount()
-                                print(f"Добавление новой строки с индексом {new_row_index} для танка ID {tank_id}")
                                 self.update_tank_row.emit(new_row_index, tank_name, battles, wins, damage)
 
                             self.api_client.prev_tech_stats_array[tank_id] = current_stats
-                            print(f"Танк ID {tank_id}: данные обновлены в prev_stats_tech_array.")
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1111,10 +1101,133 @@ class Other(QWidget):
         self.updating_thread = threading.Thread(target=self.update_other_periodically)
         self.updating_thread.daemon = True
         self.updating_thread.start()
+
+        self.updating_thread_master = threading.Thread(target=self.update_masters_periodically)
+        self.updating_thread_master.daemon = True
+        self.updating_thread_master.start()
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(0)
+
+        main_mastery_container = QWidget()
+        main_mastery_container.setStyleSheet("""
+            border-radius: 10px;
+            background-color: rgba(30, 30, 30, 0);
+            border: 1px solid rgba(57, 57, 57, 255);
+        """)
+
+        mastery_layout = QVBoxLayout()
+        mastery_layout.setSpacing(0)
+
+        mastery_container = QWidget()
+        mastery_container.setStyleSheet("""
+            background-color: rgba(57, 57, 57, 0);
+            border: none;
+        """)
+        
+        medal_layout = QHBoxLayout()
+        medal_layout.setContentsMargins(10, 2, 10, 2)
+        medal_layout.setSpacing(20)
+        medal_layout.setAlignment(Qt.AlignCenter)
+
+        iconMaster = QLabel()
+        iconMaster.setPixmap(QPixmap(resource_path('src/master_icon.png')))
+        iconMaster.setStyleSheet("background-color: rgba(30, 30, 30, 0); border: none;")
+        medal_layout.addWidget(iconMaster)
+
+        iconMaster_1 = QLabel()
+        iconMaster_1.setPixmap(QPixmap(resource_path('src/master1_icon.png')))
+        iconMaster_1.setStyleSheet("background-color: rgba(30, 30, 30, 0); border: none;")
+        medal_layout.addWidget(iconMaster_1)
+
+        iconMaster_2 = QLabel()
+        iconMaster_2.setPixmap(QPixmap(resource_path('src/master2_icon.png')))
+        iconMaster_2.setStyleSheet("background-color: rgba(30, 30, 30, 0); border: none;")
+        medal_layout.addWidget(iconMaster_2)
+
+        iconMaster_3 = QLabel()
+        iconMaster_3.setPixmap(QPixmap(resource_path('src/master3_icon.png')))
+        iconMaster_3.setStyleSheet("background-color: rgba(30, 30, 30, 0); border: none;")
+        medal_layout.addWidget(iconMaster_3)
+
+        mastery_container.setLayout(medal_layout)
+        mastery_layout.addWidget(mastery_container)
+
+        mastery_value_container = QWidget()
+        mastery_value_container.setStyleSheet("""
+            background-color: rgba(57, 57, 57, 0);
+            border: none;
+        """)
+
+        medal_value_layout = QHBoxLayout()
+        medal_value_layout.setContentsMargins(10, 2, 10, 5)
+        medal_value_layout.setSpacing(20)
+        medal_value_layout.setAlignment(Qt.AlignCenter)
+
+        label_master = QLabel(self)
+        label_master.setObjectName("master_label")
+        label_master.setFixedSize(50, 20)
+        label_master.setText("-")
+        label_master.setAlignment(Qt.AlignCenter)
+        label_master.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        medal_value_layout.addWidget(label_master)
+
+
+        label_master_1 = QLabel(self)
+        label_master_1.setObjectName("master_label_1")
+        label_master_1.setFixedSize(50, 20)
+        label_master_1.setText("-")
+        label_master_1.setAlignment(Qt.AlignCenter)
+        label_master_1.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        medal_value_layout.addWidget(label_master_1)
+
+
+        label_master_2 = QLabel(self)
+        label_master_2.setObjectName("master_label_2")
+        label_master_2.setFixedSize(50, 20)
+        label_master_2.setText("-")
+        label_master_2.setAlignment(Qt.AlignCenter)
+        label_master_2.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        medal_value_layout.addWidget(label_master_2)
+
+
+        label_master_3 = QLabel(self)
+        label_master_3.setObjectName("master_label_3")
+        label_master_3.setFixedSize(50, 20)
+        label_master_3.setText("-")
+        label_master_3.setAlignment(Qt.AlignCenter)
+        label_master_3.setStyleSheet("""
+            font-family: Consolas;
+            font-size: 16px;
+            font-weight: bold;
+            color: #e2ded3;
+            background-color: rgba(30, 30, 30, 0);
+        """)
+        medal_value_layout.addWidget(label_master_3)
+
+        mastery_value_container.setLayout(medal_value_layout)
+        mastery_layout.addWidget(mastery_value_container)
+        main_mastery_container.setLayout(mastery_layout)
+        layout.addWidget(main_mastery_container)
 
         container = QWidget()
         container.setStyleSheet("background-color: transparent;")
@@ -1159,6 +1272,11 @@ class Other(QWidget):
         self.set_value("Ср. время выживания", "-")
         self.set_value("Коэффициент урона", "-")
         self.set_value("Коэффициент уничтожения", "-")
+
+        self.labels["master_label"] = label_master
+        self.labels["master_label_1"] = label_master_1
+        self.labels["master_label_2"] = label_master_2
+        self.labels["master_label_3"] = label_master_3
 
     def add_icon_with_label(self, layout, icon_path, key, is_top=False, is_bottom=False):
         container = QWidget()
@@ -1228,6 +1346,10 @@ class Other(QWidget):
             dots = '.' * max(1, max_length - len(key) - len(value))
             self.labels[key].setText(f"{key} {dots} {value}")  
 
+    def set_value_masters(self, key, value):
+        if key in self.labels:
+            self.labels[key].setText(f"{value}")
+
     def convert_seconds_to_minutes_seconds(self, seconds):
         td = timedelta(seconds=seconds)
         return f"{td.seconds // 60}:{td.seconds % 60:02}"
@@ -1256,6 +1378,23 @@ class Other(QWidget):
                 print(f"Ошибка при обновлении статистики: {e}")
 
             time.sleep(30)
+
+    def update_masters_periodically(self):
+        while True:
+            try:
+                success = self.api_client.set_master_stats()
+                if success:
+                    self.set_value_masters("master_label", str(self.api_client.master_structure["mastery"]))
+                    self.set_value_masters("master_label_1", str(self.api_client.master_structure["mastery_1"]))
+                    self.set_value_masters("master_label_2", str(self.api_client.master_structure["mastery_2"]))
+                    self.set_value_masters("master_label_3", str(self.api_client.master_structure["mastery_3"]))
+                else:
+                    print("Не удалось обновить статистику мастеров.")
+            except Exception as e:
+                print(f"Ошибка при обновлении статистики мастеров: {e}")
+
+            time.sleep(30)
+
 
 class Stream(QWidget):   
     def __init__(self, api_client, config_container):
@@ -1293,9 +1432,9 @@ class Stream(QWidget):
     def add_label_and_value(self, grid, key, value):
         tile_container = QWidget()
         tile_container.setStyleSheet("""
-            background-color: #383838;  /* Цвет плитки */
-            border-radius: 5px;  /* Скруглённые углы */
-            margin: 5px;  /* Отступы между плитками */
+            background-color: rgba(57, 57, 57, 80);
+            border-radius: 5px;
+            margin: 5px;
         """)
         tile_container.setFixedSize(160, 60)
 
@@ -1717,6 +1856,11 @@ class Info(QWidget):
         self.other_stat.set_value("Ср. время выживания", "-")
         self.other_stat.set_value("Коэффициент урона", "-")
         self.other_stat.set_value("Коэффициент уничтожения", "-")
+
+        self.other_stat.set_value_masters("master_label", "-")
+        self.other_stat.set_value_masters("master_label_1", "-")
+        self.other_stat.set_value_masters("master_label_2", "-")
+        self.other_stat.set_value_masters("master_label_3", "-")
 
         self.tank_stat.reset_tank_data.emit()
         self.api_client.save_current_to_first()

@@ -24,6 +24,7 @@ class APIClient:
         self.is_first_rating_stats = True
         self.is_first_tech_stats = True
         self.is_first_other_stats = True
+        self.is_first_master_stats = True
 
         self.main_stats_structure = {
             "credits": 0,
@@ -71,6 +72,19 @@ class APIClient:
             "lifeTime": 0,
         }
         
+        self.first_master_structure = {
+            "mastery": 0,
+            "mastery_1": 0,
+            "mastery_2": 0,
+            "mastery_3": 0,
+        }
+        self.master_structure = {
+            "mastery": 0,
+            "mastery_1": 0,
+            "mastery_2": 0,
+            "mastery_3": 0,
+        }
+
         self.rating_stats_structure = {
             "mm_rating": 0,
             "calib_battle": 0,
@@ -279,6 +293,43 @@ class APIClient:
                     self.other_stats_structure["receiverDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_received") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_received") - self.first_other_stats_structure["receiverDamage"]
                     self.other_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") + data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_dealt") - self.first_other_stats_structure["totalDamage"]
                     self.other_stats_structure["lifeTime"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("battle_life_time") - self.first_other_stats_structure["lifeTime"]
+                else:
+                    print("Ошибка: данные не найдены в ответе API.")
+                    return False
+            except requests.exceptions.RequestException as e:
+                print(f"Ошибка при получении данных: {e}")
+                return False
+            return True
+        else:
+            print("Ошибка: Необходимо авторизоваться.")
+            return False
+
+    def set_master_stats(self):
+        if self.is_auth:
+            url = "https://papi.tanksblitz.ru/wotb/account/achievements/"
+            params = {
+                "application_id": self.application_id,
+                "account_id": self.account_id,
+                "fields": "achievements",
+            }
+            try:
+                response = requests.get(url, params=params)
+                response.raise_for_status()
+                data = response.json()
+
+                if self.is_first_master_stats:
+                    if "data" in data and str(self.account_id) in data["data"]:
+                        self.first_master_structure["mastery"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMastery")
+                        self.first_master_structure["mastery_1"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryI")
+                        self.first_master_structure["mastery_2"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryII")
+                        self.first_master_structure["mastery_3"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryIII")
+                        self.is_first_master_stats = False
+
+                if "data" in data and str(self.account_id) in data["data"]:
+                    self.master_structure["mastery"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMastery") - self.first_master_structure["mastery"]
+                    self.master_structure["mastery_1"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryI") - self.first_master_structure["mastery_1"]
+                    self.master_structure["mastery_2"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryII") - self.first_master_structure["mastery_2"]
+                    self.master_structure["mastery_3"] = data.get("data", {}).get(self.account_id, {}).get("achievements", {}).get("markOfMasteryIII") - self.first_master_structure["mastery_3"]
                 else:
                     print("Ошибка: данные не найдены в ответе API.")
                     return False
