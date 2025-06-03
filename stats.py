@@ -2,7 +2,7 @@ import datetime
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, 
                             QSizePolicy, QPushButton, QStackedWidget, QGridLayout, 
-                            QScrollArea, QLineEdit, QMessageBox, QLayout, QGraphicsOpacityEffect)
+                            QScrollArea, QLineEdit, QMessageBox, QLayout, QGraphicsOpacityEffect, QMenu, QAction)
 from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QRect, Qt, QSize, QTimer, QUrl, pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QIcon, QFont, QFontDatabase
 
@@ -159,11 +159,11 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setContentsMargins(0, 0, 0, 0)
         self.stacked_widget.layout().setSpacing(1)
 
-        self.stream_page = Stream(api_client=self.api_client, config_container=config_container)
-        self.stats_page = Stats(api_client=self.api_client, stream_page = self.stream_page)
+        self.stream_page = Stream(api_client=self.api_client, config_container=config_container, stacked_widget=self.stacked_widget)
+        self.stats_page = Stats(api_client=self.api_client)
         self.rating_page = Rating(api_client=self.api_client)
         self.tanks_page = TanksStat(api_client=self.api_client)
-        self.other_page = Other(api_client=api_client)
+        self.other_page = Other(api_client=self.api_client)
         self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page)
 
         self.stacked_widget.addWidget(self.info_page)
@@ -364,25 +364,25 @@ class Overlay_info(QWidget):
     def switch_page(self, index):
         self.stacked_widget.setCurrentIndex(index)
         self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
-        # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
-        if index == 1:  # Если текущая вкладка — Stream
-            self.stacked_widget.setStyleSheet("""
-                QStackedWidget, QStackedWidget > QWidget {
-                    background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
-                    border: none;
-                    border-top-right-radius: 10px;
-                    border-bottom-right-radius: 10px;
-                }
-            """)
-        else:
-            self.stacked_widget.setStyleSheet("""
-                QStackedWidget, QStackedWidget > QWidget {
-                    background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
-                    border: none;
-                    border-top-right-radius: 10px;
-                    border-bottom-right-radius: 10px;
-                }
-            """)
+        # # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
+        # if index == 1:  # Если текущая вкладка — Stream
+        #     self.stacked_widget.setStyleSheet("""
+        #         QStackedWidget, QStackedWidget > QWidget {
+        #             background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
+        #             border: none;
+        #             border-top-right-radius: 10px;
+        #             border-bottom-right-radius: 10px;
+        #         }
+        #     """)
+        # else:
+        #     self.stacked_widget.setStyleSheet("""
+        #         QStackedWidget, QStackedWidget > QWidget {
+        #             background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
+        #             border: none;
+        #             border-top-right-radius: 10px;
+        #             border-bottom-right-radius: 10px;
+        #         }
+        #     """)
 
         # Изменяем размер окна только по ширине
         if self.isVisible():
@@ -470,10 +470,9 @@ class Overlay_info(QWidget):
         self.animation_running = False
 
 class Stats(QWidget):   
-    def __init__(self, api_client, stream_page):
+    def __init__(self, api_client):
         super().__init__()
         self.api_client = api_client
-        self.stream_page = stream_page
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -611,7 +610,6 @@ class Stats(QWidget):
                     self.set_value("Боевой опыт", str(self.api_client.main_stats_structure["exp_battle"]))
                     self.set_value("Cвободный опыт", str(self.api_client.main_stats_structure["exp_free"]))
                     self.set_value("Проведено боев", str(self.api_client.main_stats_structure["battles"]))
-                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]))
                     if self.api_client.main_stats_structure["battles"] > 0:
                         self.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
                         self.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
@@ -620,15 +618,6 @@ class Stats(QWidget):
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
                         self.set_value("Опыт", "-")
-
-                    if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
-                        self.stream_page.set_value("Победы", str(round(((self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]) / (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])) * 100.00, 2)))
-                        self.stream_page.set_value("Урон", str((self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
-                        self.stream_page.set_value("Опыт", str((self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
-                    else:
-                        self.stream_page.set_value("Победы", "-")
-                        self.stream_page.set_value("Урон", "-")
-                        self.stream_page.set_value("Опыт", "-")
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1397,11 +1386,15 @@ class Other(QWidget):
 
 
 class Stream(QWidget):   
-    def __init__(self, api_client, config_container):
+    def __init__(self, api_client, config_container, stacked_widget):
         super().__init__()
         self.api_client = api_client
         self.config_container = config_container
+        self.stacked_widget = stacked_widget
         self.config_visible = True
+        self.all_keys = ["Бои", "Победы", "Рейтинг", "Урон", "Опыт"]
+        self.visible_tiles = set(self.all_keys)
+        self.tiles = {}
         self.setup_ui()
     
     def setup_ui(self):
@@ -1421,18 +1414,14 @@ class Stream(QWidget):
         data_widget.setStyleSheet("""
             background-color: rgba(40, 40, 40, 0);  /* Прозрачный фон */
         """)
-
-        self.add_label_and_value(self.data_grid, "Бои", "-")
-        self.add_label_and_value(self.data_grid, "Победы", "-")
-        self.add_label_and_value(self.data_grid, "Урон", "-")
-        self.add_label_and_value(self.data_grid, "Опыт", "-")
-
+        
         main_layout.addWidget(data_widget)
+        self.rebuild_grid()
 
     def add_label_and_value(self, grid, key, value):
         tile_container = QWidget()
         tile_container.setStyleSheet("""
-            background-color: rgba(57, 57, 57, 80);
+            background-color: rgba(57, 57, 57, 150);
             border-radius: 5px;
             margin: 5px;
         """)
@@ -1468,8 +1457,8 @@ class Stream(QWidget):
         value_label.setAlignment(Qt.AlignCenter)
         v_layout.addWidget(value_label)
 
-        # Добавляем плитку в сетку
-        grid.addWidget(tile_container, self.data_grid.rowCount(), 0, 1, 1)
+        self.tiles[key] = tile_container
+        grid.addWidget(tile_container, grid.rowCount(), 0)
 
     def set_value(self, key, value):
         # Форматируем значение
@@ -1524,14 +1513,113 @@ class Stream(QWidget):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:  # Логика для правой кнопки мыши
-            if self.config_visible:
-                self.config_container.hide()  # Скрываем config_container
-            else:
-                self.config_container.show()  # Показываем config_container
-            self.config_visible = not self.config_visible  # Переключаем состояние видимости
-
+            self.show_context_menu(event.pos())
         # Передаём событие родительскому виджету
         super().mousePressEvent(event)
+
+    def show_context_menu(self, pos):
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: rgb(57, 57, 57);
+                color: #e2ded3;
+                border: 1px solid #444;
+            }
+            QMenu::item:selected {      /* выделенный пункт */
+                background-color: rgb(90, 90, 110);
+                color: #ffffff;
+            }
+        """)
+        for key in self.all_keys:  # Все плитки всегда
+            action = QAction(key, self)
+            action.setCheckable(True)
+            action.setChecked(key in self.visible_tiles)
+            action.toggled.connect(lambda checked, k=key: self.toggle_tile(k, checked))
+            menu.addAction(action)
+
+        action = QAction("Скрыть окно", self)
+        action.setCheckable(True)
+        action.setChecked(not self.config_visible)
+        action.toggled.connect(lambda checked, k="Скрыть окно": self.toggle_visible(k, self.config_visible))
+        menu.addAction(action)
+        menu.exec_(self.mapToGlobal(pos))
+
+    def toggle_tile(self, key, visible):
+        if visible:
+            self.visible_tiles.add(key)
+        else:
+            self.visible_tiles.discard(key)
+        self.rebuild_grid()
+
+    def toggle_visible(self, key, visible):
+        if visible:
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
+                    border: none;
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            """)
+            self.config_container.hide()
+            self.config_visible = False
+        else:
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
+                    border: none;
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            """)
+            self.config_container.show()
+            self.config_visible = True
+    
+    def rebuild_grid(self):
+        while self.data_grid.count():
+            item = self.data_grid.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        self.tiles.clear()
+
+        battles = self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]
+        if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
+            wins = self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]
+            total_damage = self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]
+            exp = self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]
+
+            values = {
+                "Бои": battles,
+                "Победы": round((wins / battles) * 100, 2),
+                "Урон": total_damage // battles,
+                "Опыт": exp // battles,
+                "Рейтинг": "0"
+            }
+
+            if self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"] >= 0:
+                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (+" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")"
+            else:
+                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")" 
+        else:
+            values = {
+                "Бои": battles,
+                "Победы": 0,
+                "Урон": 0,
+                "Опыт": 0,
+                "Рейтинг": "0"
+            }
+            if self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"] >= 0:
+                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (+" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")"
+            else:
+                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")" 
+
+        row = 0
+        for key in self.all_keys:
+            if key in self.visible_tiles:
+                value = values.get(key, "-")
+                self.add_label_and_value(self.data_grid, key, str(value))
+                row += 1
 
 class Info(QWidget):
     def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat):
