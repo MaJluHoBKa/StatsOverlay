@@ -160,10 +160,10 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setSpacing(1)
 
         self.stream_page = Stream(api_client=self.api_client, config_container=config_container, stacked_widget=self.stacked_widget)
-        self.stats_page = Stats(api_client=self.api_client)
-        self.rating_page = Rating(api_client=self.api_client)
+        self.stats_page = Stats(api_client=self.api_client, stream_page = self.stream_page)
+        self.rating_page = Rating(api_client=self.api_client, stream_page = self.stream_page)
         self.tanks_page = TanksStat(api_client=self.api_client)
-        self.other_page = Other(api_client=self.api_client)
+        self.other_page = Other(api_client=api_client)
         self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page)
 
         self.stacked_widget.addWidget(self.info_page)
@@ -470,9 +470,10 @@ class Overlay_info(QWidget):
         self.animation_running = False
 
 class Stats(QWidget):   
-    def __init__(self, api_client):
+    def __init__(self, api_client, stream_page):
         super().__init__()
         self.api_client = api_client
+        self.stream_page = stream_page
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -610,6 +611,7 @@ class Stats(QWidget):
                     self.set_value("Боевой опыт", str(self.api_client.main_stats_structure["exp_battle"]))
                     self.set_value("Cвободный опыт", str(self.api_client.main_stats_structure["exp_free"]))
                     self.set_value("Проведено боев", str(self.api_client.main_stats_structure["battles"]))
+                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]))
                     if self.api_client.main_stats_structure["battles"] > 0:
                         self.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
                         self.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
@@ -618,6 +620,15 @@ class Stats(QWidget):
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
                         self.set_value("Опыт", "-")
+
+                    if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
+                        self.stream_page.set_value("Победы", str(round(((self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]) / (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])) * 100.00, 2)))
+                        self.stream_page.set_value("Урон", str((self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
+                        self.stream_page.set_value("Опыт", str((self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
+                    else:
+                        self.stream_page.set_value("Победы", "-")
+                        self.stream_page.set_value("Урон", "-")
+                        self.stream_page.set_value("Опыт", "-")
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -626,9 +637,10 @@ class Stats(QWidget):
             time.sleep(30)
 
 class Rating(QWidget): 
-    def __init__(self, api_client):
+    def __init__(self, api_client, stream_page):
         super().__init__()
         self.api_client = api_client
+        self.stream_page = stream_page
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -774,6 +786,11 @@ class Rating(QWidget):
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
                         self.set_value("Опыт", "-")
+
+                    if self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"] >= 0:
+                        self.stream_page.set_value("Рейтинг", str(self.api_client.rating_stats_structure["mm_rating"]) + " (+" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")")
+                    else:
+                        self.stream_page.set_value("Рейтинг", str(self.api_client.rating_stats_structure["mm_rating"]) + " (" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")")
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1399,9 +1416,59 @@ class Stream(QWidget):
     
     def setup_ui(self):
         main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(5)
-        main_layout.setContentsMargins(10, 2, 10, 2)
-        main_layout.setAlignment(Qt.AlignLeft)
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(10, 0, 10, 0)
+        main_layout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setViewportMargins(0, 0, 0, 0)
+        scroll_area.setLayoutDirection(Qt.RightToLeft)
+        scroll_area.setStyleSheet("""
+            QScrollArea {
+                background-color: rgba(50, 50, 50, 10);
+                border: none;
+                border-radius: 5px;
+            }
+            QScrollBar:vertical {
+                background: rgba(0, 0, 0, 0);
+                width: 4px;
+                margin: 2px 0;
+                border-radius: 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: #555555;
+                border-radius: 2px;
+            }
+            QScrollBar::groove:vertical {
+                border-radius: 0px;
+            }
+            /* Горизонтальный скроллбар */
+            QScrollBar:horizontal {
+                background: rgba(0, 0, 0, 0);
+                height: 4px;
+                margin: 0 2px;
+                border-radius: 0px;
+            }
+            QScrollBar::handle:horizontal {
+                background: #555555;
+                border-radius: 2px;
+            }
+            QScrollBar::groove:horizontal {
+                border-radius: 0px;
+            }
+            /* Общие настройки */
+            QScrollBar::add-line:vertical, 
+            QScrollBar::sub-line:vertical,
+            QScrollBar::add-line:horizontal, 
+            QScrollBar::sub-line:horizontal {
+                height: 0;
+                width: 0;
+            }
+        """)
+        scroll_area.setMaximumHeight(280)
+        scroll_area.setMaximumWidth(165)
+
 
         self.data_grid = QGridLayout()
         self.data_grid.setHorizontalSpacing(0)
@@ -1415,7 +1482,8 @@ class Stream(QWidget):
             background-color: rgba(40, 40, 40, 0);  /* Прозрачный фон */
         """)
         
-        main_layout.addWidget(data_widget)
+        scroll_area.setWidget(data_widget)
+        main_layout.addWidget(scroll_area)
         self.rebuild_grid()
 
     def add_label_and_value(self, grid, key, value):
