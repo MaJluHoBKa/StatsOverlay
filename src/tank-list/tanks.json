@@ -43,6 +43,66 @@
         {
             "name": "МБ-35 Кулибин",
             "id": 15985
+        },
+        {
+            "name": "Type 5 Ka-Ri",
+            "id": 7521
+        },
+        {
+            "name": "МБ-43 Ньютон",
+            "id": 17009
+        },
+        {
+            "name": "ИС-7",
+            "id": 7169
+        },
+        {
+            "name": "Bisonte C45",
+            "id": 12417
+        },
+        {
+            "name": "Об. 283",
+            "id": 27137
+        },
+        {
+            "name": "HWK 30",
+            "id": 25617
+        },
+        {
+            "name": "WZ-113-II",
+            "id": 13105
+        },
+        {
+            "name": "Aufkl. Panther",
+            "id": 27153
+        },
+        {
+            "name": "E75 Berserker",
+            "id": 27409
+        },
+        {
+            "name": "Bat.-Chatillion 25 t Roland",
+            "id": 19521
+        },
+        {
+            "name": "Char.Mle. 75",
+            "id": 20801
+        },
+        {
+            "name": "Диамант",
+            "id": 29697
+        },
+        {
+            "name": "TL-1 LPC",
+            "id": 29985
+        },
+        {
+            "name": "M46 Blitz",
+            "id": 30497
+        },
+        {
+            "name": "ASTRON Rex 105 mm",
+            "id": 26657
         }
     ]
 }

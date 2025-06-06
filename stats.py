@@ -1409,7 +1409,7 @@ class Stream(QWidget):
         self.config_container = config_container
         self.stacked_widget = stacked_widget
         self.config_visible = True
-        self.all_keys = ["Бои", "Победы", "Рейтинг", "Урон", "Опыт"]
+        self.all_keys = ["Бои", "Победы", "Урон", "Опыт", "Рейтинг", "Мастер"]
         self.visible_tiles = set(self.all_keys)
         self.tiles = {}
         self.setup_ui()
@@ -1423,7 +1423,7 @@ class Stream(QWidget):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setViewportMargins(0, 0, 0, 0)
-        scroll_area.setLayoutDirection(Qt.RightToLeft)
+        scroll_area.setLayoutDirection(Qt.LeftToRight)
         scroll_area.setStyleSheet("""
             QScrollArea {
                 background-color: rgba(50, 50, 50, 10);
@@ -1467,12 +1467,13 @@ class Stream(QWidget):
             }
         """)
         scroll_area.setMaximumHeight(280)
-        scroll_area.setMaximumWidth(165)
+        scroll_area.setMaximumWidth(250)
+        scroll_area.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
 
 
         self.data_grid = QGridLayout()
         self.data_grid.setHorizontalSpacing(0)
-        self.data_grid.setVerticalSpacing(10)
+        self.data_grid.setVerticalSpacing(0)
         self.data_grid.setContentsMargins(0, 0, 0, 0)
         self.data_grid.setAlignment(Qt.AlignTop)
 
@@ -1481,19 +1482,20 @@ class Stream(QWidget):
         data_widget.setStyleSheet("""
             background-color: rgba(40, 40, 40, 0);  /* Прозрачный фон */
         """)
-        
+        data_widget.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
+
         scroll_area.setWidget(data_widget)
         main_layout.addWidget(scroll_area)
         self.rebuild_grid()
 
-    def add_label_and_value(self, grid, key, value):
+    def add_label_and_value(self, grid, key, value, row, col):
         tile_container = QWidget()
         tile_container.setStyleSheet("""
             background-color: rgba(57, 57, 57, 150);
             border-radius: 5px;
             margin: 5px;
         """)
-        tile_container.setFixedSize(160, 60)
+        tile_container.setFixedSize(125, 60)
 
         v_layout = QVBoxLayout(tile_container)
         v_layout.setContentsMargins(5, 5, 5, 5)
@@ -1507,12 +1509,11 @@ class Stream(QWidget):
             font-size: 16px;
             font-weight: bold;
             color: #e2ded3;
-            background-color: transparent;  /* Прозрачный фон */
+            background-color: transparent;
         """)
         label.setAlignment(Qt.AlignCenter)
         v_layout.addWidget(label)
 
-        # Значение (value)
         value_label = QLabel(value)
         value_label.setObjectName(f"{key}_value")
         value_label.setStyleSheet("""
@@ -1520,13 +1521,13 @@ class Stream(QWidget):
             font-size: 16px;
             font-weight: bold;
             color: #e2ded3;
-            background-color: transparent;  /* Прозрачный фон */
+            background-color: transparent;
         """)
         value_label.setAlignment(Qt.AlignCenter)
         v_layout.addWidget(value_label)
 
         self.tiles[key] = tile_container
-        grid.addWidget(tile_container, grid.rowCount(), 0)
+        grid.addWidget(tile_container, row, col)
 
     def set_value(self, key, value):
         # Форматируем значение
@@ -1652,42 +1653,45 @@ class Stream(QWidget):
         self.tiles.clear()
 
         battles = self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]
-        if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
+        if battles > 0:
             wins = self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]
             total_damage = self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]
             exp = self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]
+            master = self.api_client.master_structure["mastery"]
 
             values = {
                 "Бои": battles,
                 "Победы": round((wins / battles) * 100, 2),
                 "Урон": total_damage // battles,
                 "Опыт": exp // battles,
+                "Мастер": master,
                 "Рейтинг": "0"
             }
 
-            if self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"] >= 0:
-                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (+" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")"
-            else:
-                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")" 
+            rating_delta = self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]
+            sign = "+" if rating_delta >= 0 else ""
+            values["Рейтинг"] = f"{self.api_client.rating_stats_structure['mm_rating']} ({sign}{rating_delta})"
         else:
             values = {
                 "Бои": battles,
-                "Победы": 0,
-                "Урон": 0,
-                "Опыт": 0,
+                "Победы": "-",
+                "Урон": "-",
+                "Опыт": "-",
+                "Мастер": "-",
                 "Рейтинг": "0"
             }
-            if self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"] >= 0:
-                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (+" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")"
-            else:
-                values["Рейтинг"] = str(self.api_client.rating_stats_structure["mm_rating"]) + " (" + str(self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]) + ")" 
+            rating_delta = self.api_client.rating_stats_structure["mm_rating"] - self.api_client.first_rating_stats_structure["mm_rating"]
+            sign = "+" if rating_delta >= 0 else ""
+            values["Рейтинг"] = f"{self.api_client.rating_stats_structure['mm_rating']} ({sign}{rating_delta})"
 
-        row = 0
-        for key in self.all_keys:
-            if key in self.visible_tiles:
-                value = values.get(key, "-")
-                self.add_label_and_value(self.data_grid, key, str(value))
-                row += 1
+        visible_keys = [key for key in self.all_keys if key in self.visible_tiles]
+        tiles_per_column = (len(visible_keys) + 1) // 2 if len(visible_keys) > 4 else len(visible_keys)
+
+        for idx, key in enumerate(visible_keys):
+            col = idx % 2 if len(visible_keys) > 4 else 0
+            row = idx // 2 if len(visible_keys) > 4 else idx
+            value = values.get(key, "-")
+            self.add_label_and_value(self.data_grid, key, str(value), row, col)
 
 class Info(QWidget):
     def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat):
