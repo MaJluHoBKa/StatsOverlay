@@ -1,4 +1,5 @@
 import datetime
+import os
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, 
                             QSizePolicy, QPushButton, QStackedWidget, QGridLayout, 
@@ -11,6 +12,7 @@ from server import APIClient
 from datetime import datetime, timedelta
 import threading
 import time
+import globals
 from HWIDActivator import HWIDActivator
 
 def resource_path(relative_path):
@@ -119,6 +121,11 @@ class Overlay_info(QWidget):
     def __init__(self, api_client, offset_x=0):
         super().__init__()
         self.api_client = api_client
+
+        self.api_client.load_stats_from_file()
+        if self.api_client.is_auth:
+            self.api_client.set_unknow_tanks()
+
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
         self.full_height = 200
@@ -403,13 +410,7 @@ class Overlay_info(QWidget):
     
     def quit(self):
         if self.api_client.is_auth:
-            success = self.api_client.exit_auth()
-            if success:
-                self.is_auth = False
-                self.api_client.is_auth = False
-                print("Выход из аккаунта выполнен успешно.")
-            else:
-                print("Ошибка выхода из аккаунта")    
+            self.api_client.save_stats_to_file()
         QApplication.quit()
 
     def animate_hide(self):
@@ -1718,7 +1719,7 @@ class Info(QWidget):
         arrow_icon.setStyleSheet("background-color: transparent;")
         title_layout.addWidget(arrow_icon)
         
-        title = QLabel("STATS OVERLAY v0.8 BETA")
+        title = QLabel("STATS OVERLAY v0.9 BETA")
         title.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
@@ -1901,7 +1902,6 @@ class Info(QWidget):
         main_layout.addWidget(reset_button)
 
         self.auth_button = QPushButton()
-        self.auth_button.setText("Авторизоваться")
         self.auth_button.setStyleSheet("""
             QPushButton {
                 background-color: rgba(70, 70, 70, 150);
@@ -1922,6 +1922,12 @@ class Info(QWidget):
                 color: #cccccc;
             }
         """)
+
+        if(self.api_client.is_auth):
+            self.auth_button.setText("Выход")
+        else:
+            self.auth_button.setText("Авторизоваться")
+
         self.auth_button.clicked.connect(lambda: self.server_auth())  
         self.auth_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         main_layout.addWidget(self.auth_button)
@@ -1940,6 +1946,12 @@ class Info(QWidget):
         """)
         self.message_text.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  
         self.message_text.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        if(self.api_client.is_auth):
+            self.message_text.setText(f"{self.api_client.nickname}")
+        else:
+            self.message_text.setText("Пожалуйста, авторизуйтесь")
+
         message_layout.addWidget(self.message_text)
         main_layout.addLayout(message_layout)
 
@@ -1968,6 +1980,17 @@ class Info(QWidget):
         if self.api_client.is_auth:
             success = self.api_client.exit_auth()
             if success:
+                self.reset_data()
+                documents_path = os.path.expanduser("~/Documents/StatsOverlay")
+                file_path = os.path.join(documents_path, "stats.json")
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        print(f"Файл {file_path} удалён при выходе из аккаунта.")
+                    else:
+                        print(f"Файл {file_path} не найден при попытке удаления.")
+                except Exception as e:
+                    print(f"Ошибка при удалении файла: {e}")
                 self.message_text.setText(f"Выполнен выход из аккаунта")
                 self.auth_button.setText("Авторизация")
                 self.is_auth = False

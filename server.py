@@ -1,5 +1,6 @@
 import json
 from math import floor
+import time
 import requests
 import webbrowser
 from flask import Flask, redirect, request
@@ -16,6 +17,7 @@ class APIClient:
         self.base_url = base_url
         self.application_id = application_id
         self.token = None
+        self.time_pointer = None
         self.account_id = None
         self.nickname = None
         self.is_auth = False
@@ -496,6 +498,93 @@ class APIClient:
             print(f"Ошибка авторизации: {e}")
             return False
 
+    # метод, который будет сохранять все флаги и rirst stats в файл json в папку Документы/StatsOverlay
+    def save_stats_to_file(self, filename="stats.json"):
+        import os
+        import json
+
+        # Путь к папке Документы
+        documents_path = os.path.expanduser("~/Documents/StatsOverlay")
+        if not os.path.exists(documents_path):
+            os.makedirs(documents_path)
+
+        # Полный путь к файлу
+        file_path = os.path.join(documents_path, filename)
+
+        # Сбор данных для сохранения
+        stats_data = {
+            "nickname": self.nickname,
+            "pointer": self.token,
+            "time": self.time_pointer,
+            "is_auth": self.is_auth,
+            "account_id": self.account_id,
+            "is_first_main_stats": self.is_first_main_stats,
+            "is_first_rating_stats": self.is_first_rating_stats,
+            "is_first_tech_stats": self.is_first_tech_stats,
+            "is_first_other_stats": self.is_first_other_stats,
+            "is_first_master_stats": self.is_first_master_stats,
+            "first_main_stats_economic_structure": self.first_main_stats_economic_structure,
+            "first_main_stats_structure": self.first_main_stats_structure,
+            "first_rating_stats_structure": self.first_rating_stats_structure,
+            "first_tech_stats_array": self.first_tech_stats_array,
+            "tech_stats_array": self.tech_stats_array,
+            "prev_tech_stats_array": self.prev_tech_stats_array,
+            "first_other_stats_structure": self.first_other_stats_structure,
+            "first_master_structure": self.first_master_structure,
+            "tech_info_dataset": self.tech_info_dataset,
+        }
+
+        # Сохранение данных в файл
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(stats_data, f, ensure_ascii=False, indent=4)
+        
+        print(f"Статистика успешно сохранена в {file_path}")
+
+    def load_stats_from_file(self, filename="stats.json"):
+        import os
+        import json
+
+        # Путь к файлу
+        documents_path = os.path.expanduser("~/Documents/StatsOverlay")
+        file_path = os.path.join(documents_path, filename)
+
+        # Проверка наличия файла
+        if not os.path.exists(file_path):
+            print(f"Файл {file_path} не найден. Загрузка пропущена.")
+            return
+
+        # Загрузка и установка данных
+        with open(file_path, "r", encoding="utf-8") as f:
+            try:
+                stats_data = json.load(f)
+                
+                self.token = stats_data.get("pointer")
+                self.account_id = stats_data.get("account_id")
+                self.is_auth = stats_data.get("is_auth")
+                self.time_pointer = stats_data.get("time")
+                self.nickname = stats_data.get("nickname")
+
+                self.is_first_main_stats = stats_data.get("is_first_main_stats", True)
+                self.is_first_rating_stats = stats_data.get("is_first_rating_stats", True)
+                self.is_first_tech_stats = stats_data.get("is_first_tech_stats", True)
+                self.is_first_other_stats = stats_data.get("is_first_other_stats", True)
+                self.is_first_master_stats = stats_data.get("is_first_master_stats", True)
+
+                self.first_main_stats_economic_structure = stats_data.get("first_main_stats_economic_structure", {})
+                self.first_main_stats_structure = stats_data.get("first_main_stats_structure", {})
+                self.first_rating_stats_structure = stats_data.get("first_rating_stats_structure", {})
+                self.first_other_stats_structure = stats_data.get("first_other_stats_structure", {})
+                self.first_master_structure = stats_data.get("first_master_structure", {})
+
+                # Кастим ключи обратно в int
+                self.first_tech_stats_array = {
+                    int(k): v for k, v in stats_data.get("first_tech_stats_array", {}).items()
+                }
+
+                print(f"Статистика успешно загружена из {file_path}")
+            except json.JSONDecodeError:
+                print(f"Ошибка: файл {file_path} повреждён или имеет неверный формат.")
+
     def start_local_server(self):
         """
         Запускает локальный сервер для обработки redirect_uri.
@@ -508,7 +597,10 @@ class APIClient:
             self.token = request.args.get("access_token")
             self.account_id = request.args.get("account_id")
             self.nickname = request.args.get("nickname")
+            self.time_pointer = request.args.get("expires_at")
             status = request.args.get("status")
+
+            print("HANDLE RESPONSE: self =", id(self), "nickname =", self.nickname)
 
             if status == "ok" and self.token:
                 print(f"Авторизация успешна! Ник: {self.nickname}")
