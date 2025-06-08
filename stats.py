@@ -596,9 +596,14 @@ class Stats(QWidget):
                         value = f"{numeric_value:,}".replace(",", " ")
                 except ValueError:
                     pass
-
+            
             if key == "Победы" and value != '-':
                 value = f"{value}%"
+            elif key == "Проведено боев" and value != '-':
+                wins = self.api_client.main_stats_structure["wins"]
+                losses = self.api_client.main_stats_structure["losses"]
+                value = f"{value} [{wins}-{losses}]"
+            
             dots = '.' * max(1, max_length - len(key) - len(value))
             self.labels[key].setText(f"{key} {dots} {value}")  
     
@@ -762,6 +767,10 @@ class Rating(QWidget):
 
             if key == "Победы" and value != '-':
                 value = f"{value}%"
+            elif key == "Проведено боев" and value != '-':
+                wins = self.api_client.rating_stats_structure["wins"]
+                losses = self.api_client.rating_stats_structure["battles"] - self.api_client.rating_stats_structure["wins"]
+                value = f"{value} [{wins}-{losses}]"
             dots = '.' * max(1, max_length - len(key) - len(value))
 
             if key == "Прогресс рейтинга" and value != '-':
@@ -937,7 +946,7 @@ class TanksStat(QWidget):
         tank_label = QLabel(str(tank_name))
         tank_label.setStyleSheet(self.getTextStyle() + "text-align: left;")
         tank_label.setFixedWidth(self.COLUMN_WIDTHS['tank'])
-        tank_label.setFixedHeight(20)
+        tank_label.setFixedHeight(25)
         row_layout.addWidget(tank_label)
 
         data = [
@@ -967,7 +976,7 @@ class TanksStat(QWidget):
             
             label.setStyleSheet(style)
             label.setFixedWidth(self.COLUMN_WIDTHS[col_type])
-            label.setFixedHeight(20)
+            label.setFixedHeight(25)
             label.setAlignment(Qt.AlignCenter)
             row_layout.addWidget(label)
         
@@ -2182,7 +2191,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 10, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 6, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -2229,7 +2238,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 6, 10, 23, 59, 59)
+        self.expiration_date = datetime(2025, 6, 30, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -2238,7 +2247,7 @@ class MainApp:
         else:
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 10, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 6, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 QApplication.quit()

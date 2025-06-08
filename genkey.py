@@ -17,7 +17,7 @@ def get_hwid():
 
 def generate_key(hwid):
     """Генерирует ключ активации на основе HWID и секретного слова"""
-    secret_seed = "zaq1xsw2"
+    secret_seed = "zse4xdr5"
     combined = f"{secret_seed}:{hwid}"
     return hashlib.sha256(combined.encode()).hexdigest()[:16].upper()
 
