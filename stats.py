@@ -1436,7 +1436,7 @@ class Stream(QWidget):
         scroll_area.setLayoutDirection(Qt.LeftToRight)
         scroll_area.setStyleSheet("""
             QScrollArea {
-                background-color: rgba(50, 50, 50, 10);
+                background-color: rgba(50, 50, 50, 0);
                 border: none;
                 border-radius: 5px;
             }
@@ -2205,7 +2205,7 @@ class ActivationWindow(QWidget):
                         padding: 8px;
                     }
                 """)
-                self.key_input.setPlaceholderText("Срок действия программы истёк.")
+                self.key_input.setPlaceholderText("Доступно обновление. Текущая версия недоступна.")
                 return
             self.close()
             self.on_activate_callback(True)
@@ -2265,7 +2265,7 @@ class MainApp:
         current_date = datetime.now()
         if current_date > self.expiration_date:
             print("Срок действия программы истёк. Завершаем работу.")
-            QMessageBox.critical(None, "Срок действия истёк", "Срок действия программы истёк. Приложение будет закрыто.")
+            QMessageBox.critical(None, "Обновление!", "Вышла новая версия программы. Приложение будет закрыто.")
             if(self.api_client.is_auth):
                 self.api_client.exit_auth();
             QApplication.quit()
