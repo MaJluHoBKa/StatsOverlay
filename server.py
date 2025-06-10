@@ -114,6 +114,18 @@ class APIClient:
         self.first_tech_stats_array = {}
         self.tech_info_dataset = {}
 
+        self.graphics_value = {
+            "wins": [],
+            "damage": [],
+            "xp": [],
+            "rating": [],
+        }
+        self.graphics_x_value = {
+            "wins": [],
+            "damage": [],
+            "xp": [],
+            "rating": [],
+        }
 
     def reset_stats(self):
         self.main_stats_structure = {
@@ -533,6 +545,8 @@ class APIClient:
             "first_other_stats_structure": self.first_other_stats_structure,
             "first_master_structure": self.first_master_structure,
             "tech_info_dataset": self.tech_info_dataset,
+            "graphics_value": self.graphics_value,
+            "graphics_x_value": self.graphics_x_value,
         }
 
         # Сохранение данных в файл
@@ -576,6 +590,18 @@ class APIClient:
                 self.first_rating_stats_structure = stats_data.get("first_rating_stats_structure", {})
                 self.first_other_stats_structure = stats_data.get("first_other_stats_structure", {})
                 self.first_master_structure = stats_data.get("first_master_structure", {})
+                self.graphics_value = stats_data.get("graphics_value", {
+                    "wins": [],
+                    "damage": [],
+                    "xp": [],
+                    "rating": [],
+                })
+                self.graphics_x_value = stats_data.get("graphics_x_value", {
+                    "wins": [],
+                    "damage": [],
+                    "xp": [],
+                    "rating": [],
+                })
 
                 # Кастим ключи обратно в int
                 self.first_tech_stats_array = {
