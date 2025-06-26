@@ -173,8 +173,8 @@ class Overlay_info(QWidget):
         self.rating_page = Rating(api_client=self.api_client, stream_page = self.stream_page)
         self.tanks_page = TanksStat(api_client=self.api_client)
         self.graphics_page = Graphics(api_client=self.api_client)
-        self.other_page = Other(api_client=api_client)
-        self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page)
+        self.other_page = Other(api_client=api_client, stream_page = self.stream_page)
+        self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page, stream_page = self.stream_page)
 
         self.stacked_widget.addWidget(self.info_page)
         self.stacked_widget.setCurrentIndex(0)
@@ -1344,9 +1344,10 @@ class Graphics(QWidget):
             print(f"График для ключа '{key}' не найден.")
 
 class Other(QWidget):   
-    def __init__(self, api_client):
+    def __init__(self, api_client, stream_page):
         super().__init__()
         self.api_client = api_client
+        self.stream_page = stream_page
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_other_periodically)
@@ -1612,17 +1613,20 @@ class Other(QWidget):
                 if success:
                     if self.api_client.other_stats_structure["shots"] > 0:
                         self.set_value("Процент попаданий", str(round((self.api_client.other_stats_structure["hits"] / self.api_client.other_stats_structure["shots"]) * 100.00, 2)))
+                        self.stream_page.set_value("Точность", str(round((self.api_client.other_stats_structure["hits"] / self.api_client.other_stats_structure["shots"]) * 100.00, 2)))
                     if self.api_client.other_stats_structure["battles"] > 0:
                         self.set_value("Процент выживания", str(round((self.api_client.other_stats_structure["survived"] / self.api_client.other_stats_structure["battles"]) * 100.00, 2)))
                         self.set_value("Ср. время выживания", self.convert_seconds_to_minutes_seconds(self.api_client.other_stats_structure["lifeTime"] // self.api_client.other_stats_structure["battles"]))
                         self.set_value("Коэффициент урона", str(round((self.api_client.other_stats_structure["totalDamage"] / self.api_client.other_stats_structure["receiverDamage"]), 2)))
-                        
+
                         deaths = self.api_client.other_stats_structure["battles"] - self.api_client.other_stats_structure["survived"]
                         if deaths > 0:
                             kill_death_ratio = round(self.api_client.other_stats_structure["frags"] / deaths, 2)
                         else:
                             kill_death_ratio = self.api_client.other_stats_structure["frags"]
                         self.set_value("Коэффициент уничтожения", str(kill_death_ratio))
+
+                        self.stream_page.set_value("Выжил", str(round((self.api_client.other_stats_structure["survived"] / self.api_client.other_stats_structure["battles"]) * 100.00, 2)))
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1653,7 +1657,7 @@ class Stream(QWidget):
         self.config_container = config_container
         self.stacked_widget = stacked_widget
         self.config_visible = True
-        self.all_keys = ["Бои", "Победы", "Урон", "Опыт", "Рейтинг", "Мастер"]
+        self.all_keys = ["Бои", "Победы", "Урон", "Опыт", "Выжил", "Точность", "Рейтинг", "Мастер"]
         self.visible_tiles = set(self.all_keys)
         self.tiles = {}
         self.setup_ui()
@@ -1758,6 +1762,12 @@ class Stream(QWidget):
         label.setAlignment(Qt.AlignCenter)
         v_layout.addWidget(label)
 
+        if key == "Победы" or key == "Выжил" or key == "Точность":
+            if value != "-":
+                value = f"{value}%"
+            else:
+                value = f"{value}"
+                
         value_label = QLabel(value)
         value_label.setObjectName(f"{key}_value")
         value_label.setStyleSheet("""
@@ -1769,6 +1779,27 @@ class Stream(QWidget):
         """)
         value_label.setAlignment(Qt.AlignCenter)
         v_layout.addWidget(value_label)
+
+        if key == "Победы" and value != '-':
+            try:
+                win_percent = float(value.strip('%'))
+                if win_percent >= 70.00:
+                    color = "#9989e6"
+                elif 60.00 <= win_percent < 70.00:
+                    color = "#72d1ff"
+                elif 50.00 <= win_percent < 60.00:
+                    color = "#a8e689"
+                else:
+                    color = "#ffffff"
+                value_label.setStyleSheet(f"""
+                    font-family: Consolas;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: {color};
+                    background-color: transparent;
+                """)
+            except ValueError:
+                pass  
 
         self.tiles[key] = tile_container
         grid.addWidget(tile_container, row, col)
@@ -1799,8 +1830,9 @@ class Stream(QWidget):
                     label = tile_container.findChild(QLabel, key)
                     if label:
                         value_label = tile_container.findChild(QLabel, f"{key}_value")
+                        
                         if value_label:
-                            if key == "Победы" and value != '-':
+                            if key == "Победы" and value != "-":
                                 value_label.setText(value + "%")
                                 try:
                                     win_percent = float(value.strip('%'))
@@ -1821,6 +1853,10 @@ class Stream(QWidget):
                                     """)
                                 except ValueError:
                                     pass  
+                            elif key == "Выжил" and value != "-":
+                                value_label.setText(value + "%")
+                            elif key == "Точность" and value != "-":
+                                value_label.setText(value + "%")
                             else:
                                 value_label.setText(value)
 
@@ -1903,11 +1939,18 @@ class Stream(QWidget):
             exp = self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]
             master = self.api_client.master_structure["mastery"]
 
+            if self.api_client.other_stats_structure["shots"] > 0:
+                shots = round((self.api_client.other_stats_structure["hits"] / self.api_client.other_stats_structure["shots"]) * 100.00, 2)
+
+            survived = round((self.api_client.other_stats_structure["survived"] / self.api_client.other_stats_structure["battles"]) * 100.00, 2)
+
             values = {
                 "Бои": battles,
                 "Победы": round((wins / battles) * 100, 2),
                 "Урон": total_damage // battles,
                 "Опыт": exp // battles,
+                "Выжил": survived,
+                "Точность": shots,
                 "Мастер": master,
                 "Рейтинг": "0"
             }
@@ -1921,6 +1964,8 @@ class Stream(QWidget):
                 "Победы": "-",
                 "Урон": "-",
                 "Опыт": "-",
+                "Выжил": "-",
+                "Точность": "-",
                 "Мастер": "-",
                 "Рейтинг": "0"
             }
@@ -1938,12 +1983,13 @@ class Stream(QWidget):
             self.add_label_and_value(self.data_grid, key, str(value), row, col)
 
 class Info(QWidget):
-    def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat):
+    def __init__(self, api_client, main_stat, rating_stat, tank_stat, other_stat, stream_page):
         super().__init__()
         self.api_client = api_client
         self.main_stat = main_stat
         self.rating_stat = rating_stat
         self.tank_stat = tank_stat
+        self.stream_page = stream_page
         self.other_stat = other_stat
         self.setup_ui()
     
@@ -1962,7 +2008,7 @@ class Info(QWidget):
         arrow_icon.setStyleSheet("background-color: transparent;")
         title_layout.addWidget(arrow_icon)
         
-        title = QLabel("STATS OVERLAY v0.9 BETA")
+        title = QLabel("STATS OVERLAY v1.0")
         title.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
@@ -2288,6 +2334,16 @@ class Info(QWidget):
         self.other_stat.set_value_masters("master_label_2", "-")
         self.other_stat.set_value_masters("master_label_3", "-")
 
+        self.stream_page.set_value("Бои", "-")
+        self.stream_page.set_value("Победы", "-")
+        self.stream_page.set_value("Урон", "-")
+        self.stream_page.set_value("Опыт", "-")
+        self.stream_page.set_value("Выжил", "-")
+        self.stream_page.set_value("Точность", "-")
+        self.stream_page.set_value("Рейтинг", "-")
+        self.stream_page.set_value("Мастер", "-")
+
+
         self.tank_stat.reset_tank_data.emit()
         self.api_client.save_current_to_first()
 
@@ -2425,7 +2481,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 30, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 7, 31, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -2507,7 +2563,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 6, 30, 23, 59, 59)
+        self.expiration_date = datetime(2025, 7, 31, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -2516,7 +2572,7 @@ class MainApp:
         else:
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 6, 30, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 7, 31, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 QApplication.quit()
