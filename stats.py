@@ -3,19 +3,17 @@ import os
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, 
                             QSizePolicy, QPushButton, QStackedWidget, QGridLayout, 
-                            QScrollArea, QLineEdit, QMessageBox, QLayout, QGraphicsOpacityEffect, QMenu, QAction)
-from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QRect, Qt, QSize, QTimer, QUrl, pyqtSignal, QObject
-from PyQt5.QtGui import QPixmap, QIcon, QFont, QFontDatabase
+                            QScrollArea, QLineEdit, QMessageBox, QLayout, QMenu, QAction)
+from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QRect, Qt, QSize, QTimer, QUrl, pyqtSignal
+from PyQt5.QtGui import QPixmap, QIcon, QFontDatabase
 
 from PyQt5.QtGui import QDesktopServices
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.ticker import FormatStrFormatter
 from server import APIClient
 from datetime import datetime, timedelta
 import threading
 import time
-import globals
 from HWIDActivator import HWIDActivator
 
 def resource_path(relative_path):
@@ -1255,10 +1253,15 @@ class Graphics(QWidget):
                 if not self.api_client.graphics_value[key]:
                     self.api_client.graphics_value[key].append(0.0)
                     self.api_client.graphics_x_value[key].append(0.0)
-                    self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
-                    self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
-                    self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
-                    self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
+                    if self.api_client.graphics_value["damage"] and self.api_client.graphics_value["damage"][-1] > 0:
+                        if self.api_client.graphics_value["wins"]:
+                            self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
+                        if self.api_client.graphics_value["damage"]:
+                            self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
+                        if self.api_client.graphics_value["xp"]:
+                            self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
+                        if self.api_client.graphics_value["rating"]:
+                            self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
 
             #нужно сравнить текущее кол-во боев (обычные + рейтинг) с prev_battles, если больше, то добавляем в графики
             current_battles = self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]

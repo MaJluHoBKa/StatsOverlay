@@ -2,6 +2,308 @@
  [('HWIDActivator',
    'D:\\Games\\MOD\\WoT Blitz\\Stats\\HWIDActivator.py',
    'PYMODULE'),
+  ('PIL',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\__init__.py',
+   'PYMODULE'),
+  ('PIL.AvifImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\AvifImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BlpImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\BlpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BmpImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\BmpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BufrStubImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\BufrStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.CurImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\CurImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DcxImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\DcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DdsImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\DdsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.EpsImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\EpsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ExifTags',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ExifTags.py',
+   'PYMODULE'),
+  ('PIL.FitsImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\FitsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FliImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\FliImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FpxImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\FpxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FtexImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\FtexImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GbrImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\GbrImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GifImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\GifImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GimpGradientFile',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\GimpGradientFile.py',
+   'PYMODULE'),
+  ('PIL.GimpPaletteFile',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\GimpPaletteFile.py',
+   'PYMODULE'),
+  ('PIL.GribStubImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\GribStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Hdf5StubImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\Hdf5StubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcnsImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\IcnsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcoImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\IcoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ImImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Image',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\Image.py',
+   'PYMODULE'),
+  ('PIL.ImageChops',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageChops.py',
+   'PYMODULE'),
+  ('PIL.ImageCms',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageCms.py',
+   'PYMODULE'),
+  ('PIL.ImageColor',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageColor.py',
+   'PYMODULE'),
+  ('PIL.ImageFile',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageFile.py',
+   'PYMODULE'),
+  ('PIL.ImageFilter',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageFilter.py',
+   'PYMODULE'),
+  ('PIL.ImageMath',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageMath.py',
+   'PYMODULE'),
+  ('PIL.ImageMode',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageMode.py',
+   'PYMODULE'),
+  ('PIL.ImageOps',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageOps.py',
+   'PYMODULE'),
+  ('PIL.ImagePalette',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImagePalette.py',
+   'PYMODULE'),
+  ('PIL.ImageQt',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageQt.py',
+   'PYMODULE'),
+  ('PIL.ImageSequence',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageSequence.py',
+   'PYMODULE'),
+  ('PIL.ImageShow',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageShow.py',
+   'PYMODULE'),
+  ('PIL.ImageTk',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageTk.py',
+   'PYMODULE'),
+  ('PIL.ImageWin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImageWin.py',
+   'PYMODULE'),
+  ('PIL.ImtImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\ImtImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IptcImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\IptcImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Jpeg2KImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\Jpeg2KImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\JpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegPresets',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\JpegPresets.py',
+   'PYMODULE'),
+  ('PIL.McIdasImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\McIdasImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MicImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\MicImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpegImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\MpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpoImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\MpoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MspImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\MspImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PaletteFile',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PaletteFile.py',
+   'PYMODULE'),
+  ('PIL.PalmImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PalmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcdImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PcdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcxImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PdfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfParser',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PdfParser.py',
+   'PYMODULE'),
+  ('PIL.PixarImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PixarImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PngImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PngImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PpmImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PsdImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\PsdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.QoiImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\QoiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SgiImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\SgiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SpiderImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\SpiderImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SunImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\SunImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TgaImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\TgaImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\TiffImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffTags',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\TiffTags.py',
+   'PYMODULE'),
+  ('PIL.WebPImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\WebPImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.WmfImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\WmfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XVThumbImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\XVThumbImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XbmImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\XbmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XpmImagePlugin',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\XpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL._binary',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\_binary.py',
+   'PYMODULE'),
+  ('PIL._deprecate',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\_deprecate.py',
+   'PYMODULE'),
+  ('PIL._typing',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\_typing.py',
+   'PYMODULE'),
+  ('PIL._util',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\_util.py',
+   'PYMODULE'),
+  ('PIL._version',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\_version.py',
+   'PYMODULE'),
+  ('PIL.features',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PIL\\features.py',
+   'PYMODULE'),
   ('PyQt5',
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\PyQt5\\__init__.py',
@@ -48,9 +350,17 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\__init__.py',
    'PYMODULE'),
+  ('_pyi_rth_utils._win32',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\_win32.py',
+   'PYMODULE'),
   ('_pyi_rth_utils.qt',
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\qt.py',
+   'PYMODULE'),
+  ('_pyi_rth_utils.tempfile',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\PyInstaller\\fake-modules\\_pyi_rth_utils\\tempfile.py',
    'PYMODULE'),
   ('_pyrepl',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\_pyrepl\\__init__.py',
@@ -236,6 +546,9 @@
   ('base64',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\base64.py',
    'PYMODULE'),
+  ('bdb',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\bdb.py',
+   'PYMODULE'),
   ('bisect',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\bisect.py',
    'PYMODULE'),
@@ -360,6 +673,9 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\click\\utils.py',
    'PYMODULE'),
+  ('cmd',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\cmd.py',
+   'PYMODULE'),
   ('code',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\code.py',
    'PYMODULE'),
@@ -390,6 +706,9 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\colorama\\winterm.py',
    'PYMODULE'),
+  ('colorsys',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\colorsys.py',
+   'PYMODULE'),
   ('concurrent',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\concurrent\\__init__.py',
    'PYMODULE'),
@@ -413,6 +732,42 @@
    'PYMODULE'),
   ('contextvars',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\contextvars.py',
+   'PYMODULE'),
+  ('contourpy',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\__init__.py',
+   'PYMODULE'),
+  ('contourpy._version',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\_version.py',
+   'PYMODULE'),
+  ('contourpy.array',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\array.py',
+   'PYMODULE'),
+  ('contourpy.chunk',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\chunk.py',
+   'PYMODULE'),
+  ('contourpy.convert',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\convert.py',
+   'PYMODULE'),
+  ('contourpy.dechunk',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\dechunk.py',
+   'PYMODULE'),
+  ('contourpy.enum_util',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\enum_util.py',
+   'PYMODULE'),
+  ('contourpy.typecheck',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\typecheck.py',
+   'PYMODULE'),
+  ('contourpy.types',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\contourpy\\types.py',
    'PYMODULE'),
   ('copy',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\copy.py',
@@ -649,6 +1004,10 @@
   ('curses.has_key',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\curses\\has_key.py',
    'PYMODULE'),
+  ('cycler',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\cycler\\__init__.py',
+   'PYMODULE'),
   ('dataclasses',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\dataclasses.py',
    'PYMODULE'),
@@ -667,9 +1026,53 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\_version.py',
    'PYMODULE'),
+  ('dateutil.easter',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\easter.py',
+   'PYMODULE'),
+  ('dateutil.parser',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\parser\\__init__.py',
+   'PYMODULE'),
+  ('dateutil.parser._parser',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\parser\\_parser.py',
+   'PYMODULE'),
+  ('dateutil.parser.isoparser',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\parser\\isoparser.py',
+   'PYMODULE'),
   ('dateutil.relativedelta',
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\relativedelta.py',
+   'PYMODULE'),
+  ('dateutil.rrule',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\rrule.py',
+   'PYMODULE'),
+  ('dateutil.tz',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\tz\\__init__.py',
+   'PYMODULE'),
+  ('dateutil.tz._common',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\tz\\_common.py',
+   'PYMODULE'),
+  ('dateutil.tz._factories',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\tz\\_factories.py',
+   'PYMODULE'),
+  ('dateutil.tz.tz',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\tz\\tz.py',
+   'PYMODULE'),
+  ('dateutil.tz.win',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\tz\\win.py',
+   'PYMODULE'),
+  ('dateutil.zoneinfo',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\dateutil\\zoneinfo\\__init__.py',
    'PYMODULE'),
   ('decimal',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\decimal.py',
@@ -679,6 +1082,9 @@
    'PYMODULE'),
   ('dis',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\dis.py',
+   'PYMODULE'),
+  ('doctest',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\doctest.py',
    'PYMODULE'),
   ('email',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\email\\__init__.py',
@@ -739,6 +1145,9 @@
    'PYMODULE'),
   ('email.utils',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\email\\utils.py',
+   'PYMODULE'),
+  ('fileinput',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\fileinput.py',
    'PYMODULE'),
   ('flask',
    'D:\\Games\\MOD\\WoT '
@@ -846,17 +1255,6 @@
    'PYMODULE'),
   ('glob',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\glob.py',
-   'PYMODULE'),
-  ('globals',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\globals\\__init__.py',
-   'PYMODULE'),
-  ('globals.api', '-', 'PYMODULE'),
-  ('globals.api.src', '-', 'PYMODULE'),
-  ('globals.api.src.service', '-', 'PYMODULE'),
-  ('globals.api.src.service.GlobalsManager',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\globals\\api\\src\\service\\GlobalsManager.py',
    'PYMODULE'),
   ('gzip',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\gzip.py',
@@ -1119,6 +1517,14 @@
   ('json.scanner',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\json\\scanner.py',
    'PYMODULE'),
+  ('kiwisolver',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\kiwisolver\\__init__.py',
+   'PYMODULE'),
+  ('kiwisolver.exceptions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\kiwisolver\\exceptions.py',
+   'PYMODULE'),
   ('logging',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\logging\\__init__.py',
    'PYMODULE'),
@@ -1133,8 +1539,437 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\markupsafe\\_native.py',
    'PYMODULE'),
+  ('matplotlib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib._afm',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_afm.py',
+   'PYMODULE'),
+  ('matplotlib._api',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_api\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib._api.deprecation',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_api\\deprecation.py',
+   'PYMODULE'),
+  ('matplotlib._blocking_input',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_blocking_input.py',
+   'PYMODULE'),
+  ('matplotlib._cm',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_cm.py',
+   'PYMODULE'),
+  ('matplotlib._cm_bivar',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_cm_bivar.py',
+   'PYMODULE'),
+  ('matplotlib._cm_listed',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_cm_listed.py',
+   'PYMODULE'),
+  ('matplotlib._cm_multivar',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_cm_multivar.py',
+   'PYMODULE'),
+  ('matplotlib._color_data',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_color_data.py',
+   'PYMODULE'),
+  ('matplotlib._constrained_layout',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_constrained_layout.py',
+   'PYMODULE'),
+  ('matplotlib._docstring',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_docstring.py',
+   'PYMODULE'),
+  ('matplotlib._enums',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_enums.py',
+   'PYMODULE'),
+  ('matplotlib._fontconfig_pattern',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_fontconfig_pattern.py',
+   'PYMODULE'),
+  ('matplotlib._layoutgrid',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_layoutgrid.py',
+   'PYMODULE'),
+  ('matplotlib._mathtext',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_mathtext.py',
+   'PYMODULE'),
+  ('matplotlib._mathtext_data',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_mathtext_data.py',
+   'PYMODULE'),
+  ('matplotlib._pylab_helpers',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_pylab_helpers.py',
+   'PYMODULE'),
+  ('matplotlib._text_helpers',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_text_helpers.py',
+   'PYMODULE'),
+  ('matplotlib._tight_bbox',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_tight_bbox.py',
+   'PYMODULE'),
+  ('matplotlib._tight_layout',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_tight_layout.py',
+   'PYMODULE'),
+  ('matplotlib._version',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\_version.py',
+   'PYMODULE'),
+  ('matplotlib.artist',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\artist.py',
+   'PYMODULE'),
+  ('matplotlib.axes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\axes\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.axes._axes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\axes\\_axes.py',
+   'PYMODULE'),
+  ('matplotlib.axes._base',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\axes\\_base.py',
+   'PYMODULE'),
+  ('matplotlib.axes._secondary_axes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\axes\\_secondary_axes.py',
+   'PYMODULE'),
+  ('matplotlib.axis',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\axis.py',
+   'PYMODULE'),
+  ('matplotlib.backend_bases',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backend_bases.py',
+   'PYMODULE'),
+  ('matplotlib.backend_managers',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backend_managers.py',
+   'PYMODULE'),
+  ('matplotlib.backend_tools',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backend_tools.py',
+   'PYMODULE'),
+  ('matplotlib.backends',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_agg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_agg.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_qt',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_qt.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_qt5agg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_qt5agg.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_qtagg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_qtagg.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_webagg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_webagg.py',
+   'PYMODULE'),
+  ('matplotlib.backends.backend_webagg_core',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\backend_webagg_core.py',
+   'PYMODULE'),
+  ('matplotlib.backends.qt_compat',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\qt_compat.py',
+   'PYMODULE'),
+  ('matplotlib.backends.qt_editor',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\qt_editor\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.backends.qt_editor._formlayout',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\qt_editor\\_formlayout.py',
+   'PYMODULE'),
+  ('matplotlib.backends.qt_editor.figureoptions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\qt_editor\\figureoptions.py',
+   'PYMODULE'),
+  ('matplotlib.backends.registry',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\backends\\registry.py',
+   'PYMODULE'),
+  ('matplotlib.bezier',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\bezier.py',
+   'PYMODULE'),
+  ('matplotlib.category',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\category.py',
+   'PYMODULE'),
+  ('matplotlib.cbook',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\cbook.py',
+   'PYMODULE'),
+  ('matplotlib.cm',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\cm.py',
+   'PYMODULE'),
+  ('matplotlib.collections',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\collections.py',
+   'PYMODULE'),
+  ('matplotlib.colorbar',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\colorbar.py',
+   'PYMODULE'),
+  ('matplotlib.colorizer',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\colorizer.py',
+   'PYMODULE'),
+  ('matplotlib.colors',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\colors.py',
+   'PYMODULE'),
+  ('matplotlib.container',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\container.py',
+   'PYMODULE'),
+  ('matplotlib.contour',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\contour.py',
+   'PYMODULE'),
+  ('matplotlib.dates',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\dates.py',
+   'PYMODULE'),
+  ('matplotlib.dviread',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\dviread.py',
+   'PYMODULE'),
+  ('matplotlib.figure',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\figure.py',
+   'PYMODULE'),
+  ('matplotlib.font_manager',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\font_manager.py',
+   'PYMODULE'),
+  ('matplotlib.gridspec',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\gridspec.py',
+   'PYMODULE'),
+  ('matplotlib.hatch',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\hatch.py',
+   'PYMODULE'),
+  ('matplotlib.image',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\image.py',
+   'PYMODULE'),
+  ('matplotlib.inset',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\inset.py',
+   'PYMODULE'),
+  ('matplotlib.layout_engine',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\layout_engine.py',
+   'PYMODULE'),
+  ('matplotlib.legend',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\legend.py',
+   'PYMODULE'),
+  ('matplotlib.legend_handler',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\legend_handler.py',
+   'PYMODULE'),
+  ('matplotlib.lines',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\lines.py',
+   'PYMODULE'),
+  ('matplotlib.markers',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\markers.py',
+   'PYMODULE'),
+  ('matplotlib.mathtext',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\mathtext.py',
+   'PYMODULE'),
+  ('matplotlib.mlab',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\mlab.py',
+   'PYMODULE'),
+  ('matplotlib.offsetbox',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\offsetbox.py',
+   'PYMODULE'),
+  ('matplotlib.patches',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\patches.py',
+   'PYMODULE'),
+  ('matplotlib.path',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\path.py',
+   'PYMODULE'),
+  ('matplotlib.patheffects',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\patheffects.py',
+   'PYMODULE'),
+  ('matplotlib.projections',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\projections\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.projections.geo',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\projections\\geo.py',
+   'PYMODULE'),
+  ('matplotlib.projections.polar',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\projections\\polar.py',
+   'PYMODULE'),
+  ('matplotlib.pyplot',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\pyplot.py',
+   'PYMODULE'),
+  ('matplotlib.quiver',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\quiver.py',
+   'PYMODULE'),
+  ('matplotlib.rcsetup',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\rcsetup.py',
+   'PYMODULE'),
+  ('matplotlib.scale',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\scale.py',
+   'PYMODULE'),
+  ('matplotlib.spines',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\spines.py',
+   'PYMODULE'),
+  ('matplotlib.stackplot',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\stackplot.py',
+   'PYMODULE'),
+  ('matplotlib.streamplot',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\streamplot.py',
+   'PYMODULE'),
+  ('matplotlib.style',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\style\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.style.core',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\style\\core.py',
+   'PYMODULE'),
+  ('matplotlib.table',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\table.py',
+   'PYMODULE'),
+  ('matplotlib.texmanager',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\texmanager.py',
+   'PYMODULE'),
+  ('matplotlib.text',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\text.py',
+   'PYMODULE'),
+  ('matplotlib.textpath',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\textpath.py',
+   'PYMODULE'),
+  ('matplotlib.ticker',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\ticker.py',
+   'PYMODULE'),
+  ('matplotlib.transforms',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\transforms.py',
+   'PYMODULE'),
+  ('matplotlib.tri',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\__init__.py',
+   'PYMODULE'),
+  ('matplotlib.tri._triangulation',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_triangulation.py',
+   'PYMODULE'),
+  ('matplotlib.tri._tricontour',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_tricontour.py',
+   'PYMODULE'),
+  ('matplotlib.tri._trifinder',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_trifinder.py',
+   'PYMODULE'),
+  ('matplotlib.tri._triinterpolate',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_triinterpolate.py',
+   'PYMODULE'),
+  ('matplotlib.tri._tripcolor',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_tripcolor.py',
+   'PYMODULE'),
+  ('matplotlib.tri._triplot',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_triplot.py',
+   'PYMODULE'),
+  ('matplotlib.tri._trirefine',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_trirefine.py',
+   'PYMODULE'),
+  ('matplotlib.tri._tritools',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\tri\\_tritools.py',
+   'PYMODULE'),
+  ('matplotlib.typing',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\typing.py',
+   'PYMODULE'),
+  ('matplotlib.units',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\units.py',
+   'PYMODULE'),
+  ('matplotlib.widgets',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\matplotlib\\widgets.py',
+   'PYMODULE'),
   ('mimetypes',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\mimetypes.py',
+   'PYMODULE'),
+  ('mpl_toolkits', '-', 'PYMODULE'),
+  ('mpl_toolkits.mplot3d',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\mpl_toolkits\\mplot3d\\__init__.py',
+   'PYMODULE'),
+  ('mpl_toolkits.mplot3d.art3d',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\mpl_toolkits\\mplot3d\\art3d.py',
+   'PYMODULE'),
+  ('mpl_toolkits.mplot3d.axes3d',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\mpl_toolkits\\mplot3d\\axes3d.py',
+   'PYMODULE'),
+  ('mpl_toolkits.mplot3d.axis3d',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\mpl_toolkits\\mplot3d\\axis3d.py',
+   'PYMODULE'),
+  ('mpl_toolkits.mplot3d.proj3d',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\mpl_toolkits\\mplot3d\\proj3d.py',
    'PYMODULE'),
   ('multiprocessing',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\multiprocessing\\__init__.py',
@@ -1214,6 +2049,570 @@
   ('numbers',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\numbers.py',
    'PYMODULE'),
+  ('numpy',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\__init__.py',
+   'PYMODULE'),
+  ('numpy.__config__',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\__config__.py',
+   'PYMODULE'),
+  ('numpy._array_api_info',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_array_api_info.py',
+   'PYMODULE'),
+  ('numpy._core',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\__init__.py',
+   'PYMODULE'),
+  ('numpy._core._add_newdocs',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_add_newdocs.py',
+   'PYMODULE'),
+  ('numpy._core._add_newdocs_scalars',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_add_newdocs_scalars.py',
+   'PYMODULE'),
+  ('numpy._core._asarray',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_asarray.py',
+   'PYMODULE'),
+  ('numpy._core._dtype',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_dtype.py',
+   'PYMODULE'),
+  ('numpy._core._dtype_ctypes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_dtype_ctypes.py',
+   'PYMODULE'),
+  ('numpy._core._exceptions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_exceptions.py',
+   'PYMODULE'),
+  ('numpy._core._internal',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_internal.py',
+   'PYMODULE'),
+  ('numpy._core._machar',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_machar.py',
+   'PYMODULE'),
+  ('numpy._core._methods',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_methods.py',
+   'PYMODULE'),
+  ('numpy._core._string_helpers',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_string_helpers.py',
+   'PYMODULE'),
+  ('numpy._core._type_aliases',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_type_aliases.py',
+   'PYMODULE'),
+  ('numpy._core._ufunc_config',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\_ufunc_config.py',
+   'PYMODULE'),
+  ('numpy._core.arrayprint',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\arrayprint.py',
+   'PYMODULE'),
+  ('numpy._core.defchararray',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\defchararray.py',
+   'PYMODULE'),
+  ('numpy._core.einsumfunc',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\einsumfunc.py',
+   'PYMODULE'),
+  ('numpy._core.fromnumeric',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\fromnumeric.py',
+   'PYMODULE'),
+  ('numpy._core.function_base',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\function_base.py',
+   'PYMODULE'),
+  ('numpy._core.getlimits',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\getlimits.py',
+   'PYMODULE'),
+  ('numpy._core.memmap',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\memmap.py',
+   'PYMODULE'),
+  ('numpy._core.multiarray',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\multiarray.py',
+   'PYMODULE'),
+  ('numpy._core.numeric',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\numeric.py',
+   'PYMODULE'),
+  ('numpy._core.numerictypes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\numerictypes.py',
+   'PYMODULE'),
+  ('numpy._core.overrides',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\overrides.py',
+   'PYMODULE'),
+  ('numpy._core.printoptions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\printoptions.py',
+   'PYMODULE'),
+  ('numpy._core.records',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\records.py',
+   'PYMODULE'),
+  ('numpy._core.shape_base',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\shape_base.py',
+   'PYMODULE'),
+  ('numpy._core.strings',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\strings.py',
+   'PYMODULE'),
+  ('numpy._core.umath',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_core\\umath.py',
+   'PYMODULE'),
+  ('numpy._distributor_init',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_distributor_init.py',
+   'PYMODULE'),
+  ('numpy._expired_attrs_2_0',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_expired_attrs_2_0.py',
+   'PYMODULE'),
+  ('numpy._globals',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_globals.py',
+   'PYMODULE'),
+  ('numpy._pytesttester',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_pytesttester.py',
+   'PYMODULE'),
+  ('numpy._typing',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\__init__.py',
+   'PYMODULE'),
+  ('numpy._typing._add_docstring',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_add_docstring.py',
+   'PYMODULE'),
+  ('numpy._typing._array_like',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_array_like.py',
+   'PYMODULE'),
+  ('numpy._typing._char_codes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_char_codes.py',
+   'PYMODULE'),
+  ('numpy._typing._dtype_like',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_dtype_like.py',
+   'PYMODULE'),
+  ('numpy._typing._nbit',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_nbit.py',
+   'PYMODULE'),
+  ('numpy._typing._nbit_base',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_nbit_base.py',
+   'PYMODULE'),
+  ('numpy._typing._nested_sequence',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_nested_sequence.py',
+   'PYMODULE'),
+  ('numpy._typing._scalars',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_scalars.py',
+   'PYMODULE'),
+  ('numpy._typing._shape',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_shape.py',
+   'PYMODULE'),
+  ('numpy._typing._ufunc',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_typing\\_ufunc.py',
+   'PYMODULE'),
+  ('numpy._utils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_utils\\__init__.py',
+   'PYMODULE'),
+  ('numpy._utils._convertions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_utils\\_convertions.py',
+   'PYMODULE'),
+  ('numpy._utils._inspect',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\_utils\\_inspect.py',
+   'PYMODULE'),
+  ('numpy.char',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\char\\__init__.py',
+   'PYMODULE'),
+  ('numpy.core',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\core\\__init__.py',
+   'PYMODULE'),
+  ('numpy.core._utils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\core\\_utils.py',
+   'PYMODULE'),
+  ('numpy.ctypeslib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ctypeslib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.ctypeslib._ctypeslib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ctypeslib\\_ctypeslib.py',
+   'PYMODULE'),
+  ('numpy.dtypes',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\dtypes.py',
+   'PYMODULE'),
+  ('numpy.exceptions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\exceptions.py',
+   'PYMODULE'),
+  ('numpy.f2py',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\__init__.py',
+   'PYMODULE'),
+  ('numpy.f2py.__version__',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\__version__.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\_backends\\__init__.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._backend',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\_backends\\_backend.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._distutils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\_backends\\_distutils.py',
+   'PYMODULE'),
+  ('numpy.f2py._backends._meson',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\_backends\\_meson.py',
+   'PYMODULE'),
+  ('numpy.f2py._isocbind',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\_isocbind.py',
+   'PYMODULE'),
+  ('numpy.f2py.auxfuncs',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\auxfuncs.py',
+   'PYMODULE'),
+  ('numpy.f2py.capi_maps',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\capi_maps.py',
+   'PYMODULE'),
+  ('numpy.f2py.cb_rules',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\cb_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.cfuncs',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\cfuncs.py',
+   'PYMODULE'),
+  ('numpy.f2py.common_rules',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\common_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.crackfortran',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\crackfortran.py',
+   'PYMODULE'),
+  ('numpy.f2py.diagnose',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\diagnose.py',
+   'PYMODULE'),
+  ('numpy.f2py.f2py2e',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\f2py2e.py',
+   'PYMODULE'),
+  ('numpy.f2py.f90mod_rules',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\f90mod_rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.func2subr',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\func2subr.py',
+   'PYMODULE'),
+  ('numpy.f2py.rules',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\rules.py',
+   'PYMODULE'),
+  ('numpy.f2py.symbolic',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\symbolic.py',
+   'PYMODULE'),
+  ('numpy.f2py.use_rules',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\f2py\\use_rules.py',
+   'PYMODULE'),
+  ('numpy.fft',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\fft\\__init__.py',
+   'PYMODULE'),
+  ('numpy.fft._helper',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\fft\\_helper.py',
+   'PYMODULE'),
+  ('numpy.fft._pocketfft',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\fft\\_pocketfft.py',
+   'PYMODULE'),
+  ('numpy.fft.helper',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\fft\\helper.py',
+   'PYMODULE'),
+  ('numpy.lib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.lib._array_utils_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_array_utils_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arraypad_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_arraypad_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arraysetops_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_arraysetops_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._arrayterator_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_arrayterator_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._datasource',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_datasource.py',
+   'PYMODULE'),
+  ('numpy.lib._format_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_format_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._function_base_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_function_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._histograms_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_histograms_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._index_tricks_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_index_tricks_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._iotools',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_iotools.py',
+   'PYMODULE'),
+  ('numpy.lib._nanfunctions_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_nanfunctions_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._npyio_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_npyio_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._polynomial_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_polynomial_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._scimath_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_scimath_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._shape_base_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_shape_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._stride_tricks_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_stride_tricks_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._twodim_base_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_twodim_base_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._type_check_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_type_check_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._ufunclike_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_ufunclike_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._utils_impl',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_utils_impl.py',
+   'PYMODULE'),
+  ('numpy.lib._version',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\_version.py',
+   'PYMODULE'),
+  ('numpy.lib.array_utils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\array_utils.py',
+   'PYMODULE'),
+  ('numpy.lib.format',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\format.py',
+   'PYMODULE'),
+  ('numpy.lib.introspect',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\introspect.py',
+   'PYMODULE'),
+  ('numpy.lib.mixins',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\mixins.py',
+   'PYMODULE'),
+  ('numpy.lib.npyio',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\npyio.py',
+   'PYMODULE'),
+  ('numpy.lib.recfunctions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\recfunctions.py',
+   'PYMODULE'),
+  ('numpy.lib.scimath',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\scimath.py',
+   'PYMODULE'),
+  ('numpy.lib.stride_tricks',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\lib\\stride_tricks.py',
+   'PYMODULE'),
+  ('numpy.linalg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\linalg\\__init__.py',
+   'PYMODULE'),
+  ('numpy.linalg._linalg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\linalg\\_linalg.py',
+   'PYMODULE'),
+  ('numpy.linalg.linalg',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\linalg\\linalg.py',
+   'PYMODULE'),
+  ('numpy.ma',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ma\\__init__.py',
+   'PYMODULE'),
+  ('numpy.ma.core',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ma\\core.py',
+   'PYMODULE'),
+  ('numpy.ma.extras',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ma\\extras.py',
+   'PYMODULE'),
+  ('numpy.ma.mrecords',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\ma\\mrecords.py',
+   'PYMODULE'),
+  ('numpy.matlib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\matlib.py',
+   'PYMODULE'),
+  ('numpy.matrixlib',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\matrixlib\\__init__.py',
+   'PYMODULE'),
+  ('numpy.matrixlib.defmatrix',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\matrixlib\\defmatrix.py',
+   'PYMODULE'),
+  ('numpy.polynomial',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\__init__.py',
+   'PYMODULE'),
+  ('numpy.polynomial._polybase',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\_polybase.py',
+   'PYMODULE'),
+  ('numpy.polynomial.chebyshev',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\chebyshev.py',
+   'PYMODULE'),
+  ('numpy.polynomial.hermite',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\hermite.py',
+   'PYMODULE'),
+  ('numpy.polynomial.hermite_e',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\hermite_e.py',
+   'PYMODULE'),
+  ('numpy.polynomial.laguerre',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\laguerre.py',
+   'PYMODULE'),
+  ('numpy.polynomial.legendre',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\legendre.py',
+   'PYMODULE'),
+  ('numpy.polynomial.polynomial',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\polynomial.py',
+   'PYMODULE'),
+  ('numpy.polynomial.polyutils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\polynomial\\polyutils.py',
+   'PYMODULE'),
+  ('numpy.random',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\random\\__init__.py',
+   'PYMODULE'),
+  ('numpy.random._pickle',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\random\\_pickle.py',
+   'PYMODULE'),
+  ('numpy.rec',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\rec\\__init__.py',
+   'PYMODULE'),
+  ('numpy.strings',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\strings\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\testing\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing._private',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\testing\\_private\\__init__.py',
+   'PYMODULE'),
+  ('numpy.testing._private.extbuild',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\testing\\_private\\extbuild.py',
+   'PYMODULE'),
+  ('numpy.testing._private.utils',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\testing\\_private\\utils.py',
+   'PYMODULE'),
+  ('numpy.testing.overrides',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\testing\\overrides.py',
+   'PYMODULE'),
+  ('numpy.typing',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\typing\\__init__.py',
+   'PYMODULE'),
+  ('numpy.version',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\numpy\\version.py',
+   'PYMODULE'),
   ('opcode',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\opcode.py',
    'PYMODULE'),
@@ -1290,6 +2689,9 @@
   ('pathlib._local',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pathlib\\_local.py',
    'PYMODULE'),
+  ('pdb',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pdb.py',
+   'PYMODULE'),
   ('pickle',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pickle.py',
    'PYMODULE'),
@@ -1321,99 +2723,49 @@
   ('pydoc_data.topics',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\pydoc_data\\topics.py',
    'PYMODULE'),
-  ('python_helper',
+  ('pyparsing',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\__init__.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\__init__.py',
    'PYMODULE'),
-  ('python_helper.api', '-', 'PYMODULE'),
-  ('python_helper.api.src', '-', 'PYMODULE'),
-  ('python_helper.api.src.annotation', '-', 'PYMODULE'),
-  ('python_helper.api.src.annotation.EnumAnnotation',
+  ('pyparsing.actions',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\annotation\\EnumAnnotation.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\actions.py',
    'PYMODULE'),
-  ('python_helper.api.src.annotation.EnvironmentAnnotation',
+  ('pyparsing.common',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\annotation\\EnvironmentAnnotation.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\common.py',
    'PYMODULE'),
-  ('python_helper.api.src.annotation.MethodAnnotation',
+  ('pyparsing.core',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\annotation\\MethodAnnotation.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\core.py',
    'PYMODULE'),
-  ('python_helper.api.src.annotation.TestAnnotation',
+  ('pyparsing.diagram',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\annotation\\TestAnnotation.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\diagram\\__init__.py',
    'PYMODULE'),
-  ('python_helper.api.src.domain', '-', 'PYMODULE'),
-  ('python_helper.api.src.domain.Constant',
+  ('pyparsing.exceptions',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\domain\\Constant.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\exceptions.py',
    'PYMODULE'),
-  ('python_helper.api.src.domain.FileOperation',
+  ('pyparsing.helpers',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\domain\\FileOperation.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\helpers.py',
    'PYMODULE'),
-  ('python_helper.api.src.helper', '-', 'PYMODULE'),
-  ('python_helper.api.src.helper.LogHelperHelper',
+  ('pyparsing.results',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\helper\\LogHelperHelper.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\results.py',
    'PYMODULE'),
-  ('python_helper.api.src.helper.ObjectHelperHelper',
+  ('pyparsing.testing',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\helper\\ObjectHelperHelper.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\testing.py',
    'PYMODULE'),
-  ('python_helper.api.src.helper.RandomHelperHelper',
+  ('pyparsing.unicode',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\helper\\RandomHelperHelper.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\unicode.py',
    'PYMODULE'),
-  ('python_helper.api.src.helper.SettingHelperHelper',
+  ('pyparsing.util',
    'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\helper\\SettingHelperHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.helper.StringHelperHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\helper\\StringHelperHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service', '-', 'PYMODULE'),
-  ('python_helper.api.src.service.DateTimeHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\DateTimeHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.EnvironmentHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\EnvironmentHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.FileHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\FileHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.LogHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\LogHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.ObjectHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\ObjectHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.RandomHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\RandomHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.ReflectionHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\ReflectionHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.SettingHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\SettingHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.StringHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\StringHelper.py',
-   'PYMODULE'),
-  ('python_helper.api.src.service.TestHelper',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\python_helper\\api\\src\\service\\TestHelper.py',
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\pyparsing\\util.py',
    'PYMODULE'),
   ('queue',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\queue.py',
@@ -1869,10 +3221,6 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\setuptools\\_vendor\\tomli\\_types.py',
    'PYMODULE'),
-  ('setuptools._vendor.typing_extensions',
-   'D:\\Games\\MOD\\WoT '
-   'Blitz\\Stats\\venv\\Lib\\site-packages\\setuptools\\_vendor\\typing_extensions.py',
-   'PYMODULE'),
   ('setuptools._vendor.wheel',
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\setuptools\\_vendor\\wheel\\__init__.py',
@@ -2141,6 +3489,10 @@
    'D:\\Games\\MOD\\WoT '
    'Blitz\\Stats\\venv\\Lib\\site-packages\\setuptools\\windows_support.py',
    'PYMODULE'),
+  ('shiboken6',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\shiboken6\\__init__.py',
+   'PYMODULE'),
   ('shlex',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\shlex.py',
    'PYMODULE'),
@@ -2218,6 +3570,10 @@
    'PYMODULE'),
   ('typing',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\typing.py',
+   'PYMODULE'),
+  ('typing_extensions',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\typing_extensions.py',
    'PYMODULE'),
   ('unittest',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\unittest\\__init__.py',
@@ -2607,6 +3963,21 @@
   ('xml',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\__init__.py',
    'PYMODULE'),
+  ('xml.etree',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\etree\\__init__.py',
+   'PYMODULE'),
+  ('xml.etree.ElementInclude',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\etree\\ElementInclude.py',
+   'PYMODULE'),
+  ('xml.etree.ElementPath',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\etree\\ElementPath.py',
+   'PYMODULE'),
+  ('xml.etree.ElementTree',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\etree\\ElementTree.py',
+   'PYMODULE'),
+  ('xml.etree.cElementTree',
+   'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\etree\\cElementTree.py',
+   'PYMODULE'),
   ('xml.parsers',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xml\\parsers\\__init__.py',
    'PYMODULE'),
@@ -2636,6 +4007,71 @@
    'PYMODULE'),
   ('xmlrpc.client',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\xmlrpc\\client.py',
+   'PYMODULE'),
+  ('yaml',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\__init__.py',
+   'PYMODULE'),
+  ('yaml.composer',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\composer.py',
+   'PYMODULE'),
+  ('yaml.constructor',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\constructor.py',
+   'PYMODULE'),
+  ('yaml.cyaml',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\cyaml.py',
+   'PYMODULE'),
+  ('yaml.dumper',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\dumper.py',
+   'PYMODULE'),
+  ('yaml.emitter',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\emitter.py',
+   'PYMODULE'),
+  ('yaml.error',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\error.py',
+   'PYMODULE'),
+  ('yaml.events',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\events.py',
+   'PYMODULE'),
+  ('yaml.loader',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\loader.py',
+   'PYMODULE'),
+  ('yaml.nodes',
+   'D:\\Games\\MOD\\WoT Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\nodes.py',
+   'PYMODULE'),
+  ('yaml.parser',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\parser.py',
+   'PYMODULE'),
+  ('yaml.reader',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\reader.py',
+   'PYMODULE'),
+  ('yaml.representer',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\representer.py',
+   'PYMODULE'),
+  ('yaml.resolver',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\resolver.py',
+   'PYMODULE'),
+  ('yaml.scanner',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\scanner.py',
+   'PYMODULE'),
+  ('yaml.serializer',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\serializer.py',
+   'PYMODULE'),
+  ('yaml.tokens',
+   'D:\\Games\\MOD\\WoT '
+   'Blitz\\Stats\\venv\\Lib\\site-packages\\yaml\\tokens.py',
    'PYMODULE'),
   ('zipfile',
    'C:\\Users\\ASUS_GAMING\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\zipfile\\__init__.py',

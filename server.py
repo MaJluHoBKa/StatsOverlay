@@ -174,6 +174,7 @@ class APIClient:
                     self.main_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") - self.first_main_stats_structure["totalDamage"]
                     self.main_stats_structure["losses"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("losses") - self.first_main_stats_structure["losses"]
                     self.main_stats_structure["wins"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("wins") - self.first_main_stats_structure["wins"]
+                    print("Данные MAIN получены и записаны.")
                 else:
                     print("Ошибка: данные не найдены в ответе API.")
                     return False
@@ -214,6 +215,9 @@ class APIClient:
                     self.rating_stats_structure["wins"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("wins") - self.first_rating_stats_structure["wins"]
                     self.rating_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("damage_dealt") - self.first_rating_stats_structure["totalDamage"]
                     self.rating_stats_structure["exp_battle"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("rating", {}).get("xp") - self.first_rating_stats_structure["exp_battle"]
+
+                    print("Данные RATING получены и записаны.")
+                
                 else:
                     print("Ошибка: данные не найдены в ответе API.")
                     return False
