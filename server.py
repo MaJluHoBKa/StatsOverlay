@@ -5,6 +5,7 @@ import requests
 import webbrowser
 from flask import Flask, redirect, request
 import threading
+from classes import stats as stats_cpp_module
 
 def resource_path(relative_path):
         import sys, os
