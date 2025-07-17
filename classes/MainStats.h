@@ -19,7 +19,7 @@ struct StatsData
         return {
             credits - other.credits,
             gold - other.gold,
-            exp_battle - other.battles,
+            exp_battle - other.exp_battle,
             exp_free - other.exp_free,
             battles - other.battles,
             wins - other.wins,
@@ -47,14 +47,44 @@ public:
         currentData = newData - firstData;
     }
 
-    const StatsData &getFirstData() const
+    int64_t getGold() const
     {
-        return firstData;
+        return currentData.gold;
     }
 
-    const StatsData &getCurrentData() const
+    int64_t getCredits() const
     {
-        return currentData;
+        return currentData.credits;
+    }
+
+    int64_t getExpBattle() const
+    {
+        return currentData.exp_battle;
+    }
+
+    int64_t getExpFree() const
+    {
+        return currentData.exp_free;
+    }
+
+    int64_t getBattles() const
+    {
+        return currentData.battles;
+    }
+
+    int64_t getWins() const
+    {
+        return currentData.wins;
+    }
+
+    int64_t getLosses() const
+    {
+        return currentData.losses;
+    }
+
+    int64_t getTotalDamage() const
+    {
+        return currentData.totalDamage;
     }
 
     int64_t getAvgDamage() const

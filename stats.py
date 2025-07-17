@@ -626,8 +626,8 @@ class Stats(QWidget):
             if key == "Победы" and value != '-':
                 value = f"{value}%"
             elif key == "Проведено боев" and value != '-':
-                wins = self.api_client.main_stats_structure["wins"]
-                losses = self.api_client.main_stats_structure["losses"]
+                wins = self.api_client.mainStats.getWins()
+                losses = self.api_client.mainStats.getLosses()
                 value = f"{value} [{wins}-{losses}]"
             
             dots = '.' * max(1, max_length - len(key) - len(value))
@@ -638,25 +638,25 @@ class Stats(QWidget):
             try:
                 success = self.api_client.set_main_stats()
                 if success:
-                    self.set_value("Золото", str(self.api_client.main_stats_structure["gold"]))
-                    self.set_value("Кредиты", str(self.api_client.main_stats_structure["credits"]))
-                    self.set_value("Боевой опыт", str(self.api_client.main_stats_structure["exp_battle"]))
-                    self.set_value("Cвободный опыт", str(self.api_client.main_stats_structure["exp_free"]))
-                    self.set_value("Проведено боев", str(self.api_client.main_stats_structure["battles"]))
-                    self.stream_page.set_value("Бои", str(self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]))
-                    if self.api_client.main_stats_structure["battles"] > 0:
-                        self.set_value("Победы", str(round((self.api_client.main_stats_structure["wins"] / self.api_client.main_stats_structure["battles"]) * 100.00, 2)))
-                        self.set_value("Урон", str(self.api_client.main_stats_structure["totalDamage"] // self.api_client.main_stats_structure["battles"]))
-                        self.set_value("Опыт", str(self.api_client.main_stats_structure["exp_battle"] // self.api_client.main_stats_structure["battles"]))
+                    self.set_value("Золото", str(self.api_client.mainStats.getGold()))
+                    self.set_value("Кредиты", str(self.api_client.mainStats.getCredits()))
+                    self.set_value("Боевой опыт", str(self.api_client.mainStats.getExpBattle()))
+                    self.set_value("Cвободный опыт", str(self.api_client.mainStats.getExpFree()))
+                    self.set_value("Проведено боев", str(self.api_client.mainStats.getBattles()))
+                    self.stream_page.set_value("Бои", str(self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"]))
+                    if self.api_client.mainStats.getBattles() > 0:
+                        self.set_value("Победы", str(self.api_client.mainStats.getPercentWins()))
+                        self.set_value("Урон", str(self.api_client.mainStats.getAvgDamage()))
+                        self.set_value("Опыт", str(self.api_client.mainStats.getAvgExp()))
                     else:
                         self.set_value("Победы", "-")
                         self.set_value("Урон", "-")
                         self.set_value("Опыт", "-")
 
-                    if self.api_client.main_stats_structure["battles"] > 0 or self.api_client.rating_stats_structure["battles"] > 0:
-                        self.stream_page.set_value("Победы", str(round(((self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]) / (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])) * 100.00, 2)))
-                        self.stream_page.set_value("Урон", str((self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
-                        self.stream_page.set_value("Опыт", str((self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]) // (self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"])))
+                    if self.api_client.mainStats.getBattles() > 0 or self.api_client.rating_stats_structure["battles"] > 0:
+                        self.stream_page.set_value("Победы", str(round(((self.api_client.mainStats.getWins() + self.api_client.rating_stats_structure["wins"]) / (self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"])) * 100.00, 2)))
+                        self.stream_page.set_value("Урон", str((self.api_client.mainStats.getTotalDamage() + self.api_client.rating_stats_structure["totalDamage"]) // (self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"])))
+                        self.stream_page.set_value("Опыт", str((self.api_client.mainStats.getExpBattle() + self.api_client.rating_stats_structure["exp_battle"]) // (self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"])))
                     else:
                         self.stream_page.set_value("Победы", "-")
                         self.stream_page.set_value("Урон", "-")
@@ -1264,7 +1264,7 @@ class Graphics(QWidget):
                             self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
 
             #нужно сравнить текущее кол-во боев (обычные + рейтинг) с prev_battles, если больше, то добавляем в графики
-            current_battles = self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]
+            current_battles = self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"]
             if current_battles <= self.prev_battles or current_battles == 0:
                 time.sleep(30)
                 continue
@@ -1273,17 +1273,17 @@ class Graphics(QWidget):
                 
             # Добавляем новые значения в api_client.graphics_value
             
-            wins = self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]
+            wins = self.api_client.mainStats.getWins() + self.api_client.rating_stats_structure["wins"]
             self.api_client.graphics_value["wins"].append(round((wins / current_battles) * 100.00, 2))
             self.api_client.graphics_x_value["wins"].append(current_battles)
             self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
             
-            damage = (self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]) // current_battles
+            damage = (self.api_client.mainStats.getTotalDamage() + self.api_client.rating_stats_structure["totalDamage"]) // current_battles
             self.api_client.graphics_value["damage"].append(damage)
             self.api_client.graphics_x_value["damage"].append(current_battles)
             self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
 
-            xp = (self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]) // current_battles
+            xp = (self.api_client.mainStats.getExpBattle() + self.api_client.rating_stats_structure["exp_battle"]) // current_battles
             self.api_client.graphics_value["xp"].append(xp)
             self.api_client.graphics_x_value["xp"].append(current_battles)
             self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
@@ -1935,11 +1935,11 @@ class Stream(QWidget):
 
         self.tiles.clear()
 
-        battles = self.api_client.main_stats_structure["battles"] + self.api_client.rating_stats_structure["battles"]
+        battles = self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"]
         if battles > 0:
-            wins = self.api_client.main_stats_structure["wins"] + self.api_client.rating_stats_structure["wins"]
-            total_damage = self.api_client.main_stats_structure["totalDamage"] + self.api_client.rating_stats_structure["totalDamage"]
-            exp = self.api_client.main_stats_structure["exp_battle"] + self.api_client.rating_stats_structure["exp_battle"]
+            wins = self.api_client.mainStats.getWins() + self.api_client.rating_stats_structure["wins"]
+            total_damage = self.api_client.mainStats.getTotalDamage() + self.api_client.rating_stats_structure["totalDamage"]
+            exp = self.api_client.mainStats.getExpBattle() + self.api_client.rating_stats_structure["exp_battle"]
             master = self.api_client.master_structure["mastery"]
 
             if self.api_client.other_stats_structure["shots"] > 0:

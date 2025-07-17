@@ -29,30 +29,7 @@ class APIClient:
         self.is_first_other_stats = True
         self.is_first_master_stats = True
 
-        self.main_stats_structure = {
-            "credits": 0,
-            "gold": 0,
-            "exp_battle": 0,
-            "exp_free": 0,
-            "battles": 0,
-            "wins": 0,
-            "losses": 0,
-            "totalDamage": 0,
-            "avgAssist": 0,
-            "avgBlock": 0,
-        }
-        self.first_main_stats_economic_structure = {
-            "credits": 0,
-            "gold": 0,
-            "exp_battle": 0,
-            "exp_free": 0,
-        }
-        self.first_main_stats_structure = {
-            "battles": 0,
-            "wins": 0,
-            "losses": 0,
-            "totalDamage": 0,
-        }
+        self.mainStats = stats_cpp_module.MainStats();
 
         self.first_other_stats_structure = {
             "battles": 0,
@@ -128,19 +105,6 @@ class APIClient:
             "rating": [],
         }
 
-    def reset_stats(self):
-        self.main_stats_structure = {
-            "credits": 0,
-            "exp_battle": 0,
-            "exp_free": 0,
-            "battles": 0,
-            "winRate": 0.0,
-            "avgDamage": 0,
-            "avgAssist": 0,
-            "avgBlock": 0,
-            "avgExp": 0,
-        }
-
     def set_main_stats(self):
         if self.is_auth:
             url = "https://papi.tanksblitz.ru/wotb/account/info/"
@@ -155,26 +119,30 @@ class APIClient:
                 data = response.json()
                 if self.is_first_main_stats:
                     if "data" in data and str(self.account_id) in data["data"]:
-                        self.first_main_stats_economic_structure["credits"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("credits")
-                        self.first_main_stats_economic_structure["gold"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("gold")
-                        self.first_main_stats_economic_structure["exp_battle"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("xp")
-                        self.first_main_stats_economic_structure["exp_free"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("free_xp")
-                        
-                        self.first_main_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles")
-                        self.first_main_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt")
-                        self.first_main_stats_structure["losses"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("losses")
-                        self.first_main_stats_structure["wins"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("wins")
+                        tmpData = stats_cpp_module.StatsData()
+                        tmpData.credits = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("credits")
+                        tmpData.gold = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("gold")
+                        tmpData.exp_battle = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("xp")
+                        tmpData.exp_free = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("free_xp")
+                        tmpData.battles = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles")
+                        tmpData.totalDamage = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt")
+                        tmpData.losses = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("losses")
+                        tmpData.wins = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("wins")
+                        self.mainStats.initialStats(tmpData)
+                        self.mainStats.updateStats(tmpData)
                         self.is_first_main_stats = False
 
                 if "data" in data and str(self.account_id) in data["data"]:
-                    self.main_stats_structure["credits"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("credits") - self.first_main_stats_economic_structure["credits"]
-                    self.main_stats_structure["gold"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("gold") - self.first_main_stats_economic_structure["gold"]
-                    self.main_stats_structure["exp_battle"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("xp") - self.first_main_stats_economic_structure["exp_battle"]
-                    self.main_stats_structure["exp_free"] = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("free_xp") - self.first_main_stats_economic_structure["exp_free"]
-                    self.main_stats_structure["battles"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles") - self.first_main_stats_structure["battles"]
-                    self.main_stats_structure["totalDamage"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt") - self.first_main_stats_structure["totalDamage"]
-                    self.main_stats_structure["losses"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("losses") - self.first_main_stats_structure["losses"]
-                    self.main_stats_structure["wins"] = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("wins") - self.first_main_stats_structure["wins"]
+                    tmpData = stats_cpp_module.StatsData()
+                    tmpData.credits = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("credits")
+                    tmpData.gold = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("gold")
+                    tmpData.exp_battle = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("xp")
+                    tmpData.exp_free = data.get("data", {}).get(self.account_id, {}).get("private", {}).get("free_xp")
+                    tmpData.battles = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("battles")
+                    tmpData.totalDamage = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("damage_dealt")
+                    tmpData.losses = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("losses")
+                    tmpData.wins = data.get("data", {}).get(self.account_id, {}).get("statistics", {}).get("all", {}).get("wins")
+                    self.mainStats.updateStats(tmpData)
                     print("Данные MAIN получены и записаны.")
                 else:
                     print("Ошибка: данные не найдены в ответе API.")
@@ -432,30 +400,6 @@ class APIClient:
         self.is_first_tech_stats = True
         self.is_first_other_stats = True
         self.is_first_master_stats = True
-        # self.first_main_stats_economic_structure["credits"] = self.first_main_stats_economic_structure["credits"] + self.main_stats_structure["credits"]
-        # self.first_main_stats_economic_structure["gold"] = self.first_main_stats_economic_structure["gold"] + self.main_stats_structure["gold"]
-        # self.first_main_stats_economic_structure["exp_battle"] = self.first_main_stats_economic_structure["exp_battle"] + self.main_stats_structure["exp_battle"]
-        # self.first_main_stats_economic_structure["exp_free"] = self.first_main_stats_economic_structure["exp_free"] + self.main_stats_structure["exp_free"]
-        # self.first_main_stats_structure["battles"] = self.first_main_stats_structure["battles"] + self.main_stats_structure["battles"]
-        # self.first_main_stats_structure["wins"] = self.first_main_stats_structure["wins"] + self.main_stats_structure["wins"]
-        # self.first_main_stats_structure["losses"] = self.first_main_stats_structure["losses"] + self.main_stats_structure["losses"]
-        # self.first_main_stats_structure["totalDamage"] = self.first_main_stats_structure["totalDamage"] + self.main_stats_structure["totalDamage"]
-
-        # self.first_rating_stats_structure["mm_rating"] = self.rating_stats_structure["mm_rating"]
-        # self.first_rating_stats_structure["exp_battle"] = self.first_rating_stats_structure["exp_battle"] + self.rating_stats_structure["exp_battle"]
-        # self.first_rating_stats_structure["battles"] = self.first_rating_stats_structure["battles"] + self.rating_stats_structure["battles"]
-        # self.first_rating_stats_structure["wins"] = self.first_rating_stats_structure["wins"] + self.rating_stats_structure["wins"]
-        # self.first_rating_stats_structure["totalDamage"] = self.first_rating_stats_structure["totalDamage"] + self.rating_stats_structure["totalDamage"]
-
-        # for tank_id, current_stats in self.tech_stats_array.items():
-        #     first_stats = self.first_tech_stats_array.get(tank_id, {"battles": 0, "totalDamage": 0, "wins": 0})
-        
-        #     self.first_tech_stats_array[tank_id] = {
-        #         "battles": first_stats["battles"] + current_stats.get("battles", 0),
-        #         "totalDamage": first_stats["totalDamage"] + current_stats.get("totalDamage", 0),
-        #         "wins": first_stats["wins"] + current_stats.get("wins", 0),
-        #     }
-        # self.tech_info_dataset.clear()
 
     def authenticate(self):
         """
@@ -542,7 +486,7 @@ class APIClient:
             "is_first_other_stats": self.is_first_other_stats,
             "is_first_master_stats": self.is_first_master_stats,
             "first_main_stats_economic_structure": self.first_main_stats_economic_structure,
-            "first_main_stats_structure": self.first_main_stats_structure,
+            # "first_main_stats_structure": self.first_main_stats_structure,
             "first_rating_stats_structure": self.first_rating_stats_structure,
             "first_tech_stats_array": self.first_tech_stats_array,
             "tech_stats_array": self.tech_stats_array,
@@ -591,7 +535,7 @@ class APIClient:
                 self.is_first_master_stats = stats_data.get("is_first_master_stats", True)
 
                 self.first_main_stats_economic_structure = stats_data.get("first_main_stats_economic_structure", {})
-                self.first_main_stats_structure = stats_data.get("first_main_stats_structure", {})
+                # self.first_main_stats_structure = stats_data.get("first_main_stats_structure", {})
                 self.first_rating_stats_structure = stats_data.get("first_rating_stats_structure", {})
                 self.first_other_stats_structure = stats_data.get("first_other_stats_structure", {})
                 self.first_master_structure = stats_data.get("first_master_structure", {})
