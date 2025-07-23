@@ -125,6 +125,7 @@ class Overlay_info(QWidget):
         self.api_client.load_stats_from_file()
         if self.api_client.is_auth:
             self.api_client.set_unknow_tanks()
+            self.api_client.prolong_token()
 
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
@@ -2011,7 +2012,7 @@ class Info(QWidget):
         arrow_icon.setStyleSheet("background-color: transparent;")
         title_layout.addWidget(arrow_icon)
         
-        title = QLabel("STATS OVERLAY v1.0")
+        title = QLabel("STATS OVERLAY v1.0.1")
         title.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
@@ -2484,7 +2485,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 7, 31, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 8, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -2566,7 +2567,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 7, 31, 23, 59, 59)
+        self.expiration_date = datetime(2025, 8, 30, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -2575,7 +2576,7 @@ class MainApp:
         else:
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 7, 31, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 8, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 QApplication.quit()

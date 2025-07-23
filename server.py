@@ -651,3 +651,28 @@ class APIClient:
         auth_thread = threading.Thread(target=self.authenticate)
         auth_thread.daemon = True  # Поток завершится, если основной поток завершится
         auth_thread.start()
+
+    def prolong_token(self):
+        url = "https://api.tanki.su/wot/auth/prolongate/"
+
+        data = {
+            "application_id": self.application_id,
+            "access_token": self.token
+        }
+
+        try:
+            response = requests.post(url, data=data)
+            response.raise_for_status()
+            data = response.json()
+
+            if data.get("status") == "ok":
+                self.token = data["data"]["access_token"]
+                self.token_expiration = data["data"]["expires_at"]
+                print(f"✅ Новый токен сохранён.")
+                return True
+            else:
+                print(f"⚠️ Ошибка от API: {data}")
+                return False
+        except requests.exceptions.RequestException as e:
+            print(f"❌ Ошибка запроса: {e}")
+            return False
