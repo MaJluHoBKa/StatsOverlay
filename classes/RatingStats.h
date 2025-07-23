@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cmath>
 
 struct RatingData
 {
@@ -23,7 +24,7 @@ struct RatingData
     }
 };
 
-class MainStats
+class RatingStats
 {
 private:
     RatingData firstData;
@@ -42,13 +43,60 @@ public:
         currentData = newData - firstData;
     }
 
-    const RatingData &getFirstData() const
+    int64_t getRating() const
     {
-        return firstData;
+        return currentData.mm_rating;
     }
 
-    const RatingData &getCurrentData() const
+    int64_t getCalibBattles() const
     {
-        return currentData;
+        return currentData.calib_battles;
+    }
+
+    int64_t getExpBattle() const
+    {
+        return currentData.exp_battle;
+    }
+
+    int64_t getBattles() const
+    {
+        return currentData.battles;
+    }
+
+    int64_t getWins() const
+    {
+        return currentData.wins;
+    }
+
+    int64_t getTotalDamage() const
+    {
+        return currentData.totalDamage;
+    }
+
+    int64_t getAvgDamage() const
+    {
+        if (currentData.battles <= 0)
+        {
+            return -1;
+        }
+        return currentData.totalDamage / currentData.battles;
+    }
+
+    int64_t getAvgExp() const
+    {
+        if (currentData.battles <= 0)
+        {
+            return -1;
+        }
+        return currentData.exp_battle / currentData.battles;
+    }
+
+    float getPercentWins() const
+    {
+        if (currentData.battles <= 0)
+        {
+            return -1.0f;
+        }
+        return round(static_cast<float>(currentData.wins) / static_cast<float>(currentData.battles) * 100.0) / 100.0;
     }
 };
