@@ -52,7 +52,8 @@ public:
         {
             return -1.0f;
         }
-        return round(static_cast<float>(currentData.hits) / static_cast<float>(currentData.shots) * 100.0) / 100.0;
+        float percent = static_cast<float>(currentData.hits) / currentData.shots * 100.0f;
+        return std::round(percent * 100.0f) / 100.0f;
     }
 
     float getPercentSurvived() const
@@ -61,7 +62,8 @@ public:
         {
             return -1.0f;
         }
-        return round(static_cast<float>(currentData.survived) / static_cast<float>(currentData.battles) * 100.0) / 100.0;
+        float percent = static_cast<float>(currentData.survived) / currentData.battles * 100.0f;
+        return std::round(percent * 100.0f) / 100.0f;
     }
 
     int64_t getLifeTime() const

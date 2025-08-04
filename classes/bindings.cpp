@@ -117,15 +117,13 @@ PYBIND11_MODULE(stats, m)
         .def(py::init<const std::string &>())
         .def("initialStats", &VehicleStats::initialStats)
         .def("updateStats", &VehicleStats::updateStats)
-        .def("getUpdatedVehicle", [](const VehicleStats &vs)
+        .def("getUpdatedVehicle", [](const VehicleStats &vs) -> const VehicleData *
              {
-        const VehicleData *v = vs.getUpdatedVehicle();
-        if (v) {
-            return *v;
-        } else {
-            return VehicleData{}; // возвращает пустой объект, если nullptr
-        } })
-        .def("setNames", &VehicleStats::setNames);
+                 return vs.getUpdatedVehicle(); // если nullptr — pybind11 вернёт None
+             },
+             py::return_value_policy::reference)
+        .def("setNames", &VehicleStats::setNames)
+        .def("getName", &VehicleStats::getName);
 
     py::class_<ApiController>(m, "ApiController")
         .def(py::init<>())
@@ -146,5 +144,6 @@ PYBIND11_MODULE(stats, m)
         .def("getMasteryStats", &ApiController::getMasteryStats)
         .def("getOtherStats", &ApiController::getOtherStats)
         .def("getVehicleStats", &ApiController::getVehicleStats)
-        .def("getNickname", &ApiController::getNickname);
+        .def("getNickname", &ApiController::getNickname)
+        .def("getVehicleName", &ApiController::getVehicleName);
 }

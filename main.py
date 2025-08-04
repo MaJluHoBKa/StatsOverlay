@@ -221,7 +221,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.stats_button.clicked.connect(lambda: self.switch_page(6))
+        self.stats_button.clicked.connect(lambda: self.switch_page(5))
 
         self.rating_button = QPushButton(self)
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
@@ -242,7 +242,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.rating_button.clicked.connect(lambda: self.switch_page(5))
+        self.rating_button.clicked.connect(lambda: self.switch_page(4))
 
         self.tank_button = QPushButton(self)
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
@@ -263,7 +263,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.tank_button.clicked.connect(lambda: self.switch_page(4))
+        self.tank_button.clicked.connect(lambda: self.switch_page(3))
 
         self.graphics_button = QPushButton(self)
         self.graphics_button.setIcon(QIcon(QPixmap(resource_path('src/graphics_icon.png'))))
@@ -1030,46 +1030,28 @@ class TanksStat(QWidget):
     def update_tech_stats_periodically(self):
         while True:
             try:
-                success = self.api_client.set_tech_stats()
+                success = self.api_client.update_vehicles_stats()
+                print(f"tanks: {success}")
                 if success:
                     row_index = 0
-                    for tank_id, current_stats in self.api_client.tech_stats_array.items():
-
-                        prev_stats = self.api_client.prev_tech_stats_array.get(tank_id, {})
-                        prev_battles = prev_stats.get("battles", 0)
-                        current_battles = current_stats.get("battles", 0)
-
-                        if current_battles > prev_battles:
-
-                            if int(tank_id) not in self.api_client.tech_info_dataset:
-                                print(f"Танк ID {tank_id}: информация отсутствует в tech_info_dataset, загружаем...")
-                                self.api_client.set_tech_info(tank_id)
-                                print(f"Проверка после загрузки: {self.api_client.tech_info_dataset.get(tank_id)}")
-                                time.sleep(0.1)
-
-                            if int(tank_id) not in self.api_client.tech_info_dataset:
-                                print(f"Ошибка: Танк с ID {tank_id} отсутствует в tech_info_dataset после загрузки.")
-                                continue
-
-                            tank_name = self.api_client.tech_info_dataset[tank_id].get("name")
-                            battles = str(current_battles)
-                            if current_battles > 0:
-                                wins = str(round(
-                                    (current_stats.get("wins", 0) / current_battles) * 100.00, 2)) + "%"
-                                damage = str(current_stats.get("totalDamage", 0) // current_battles)
-                            else:
-                                wins = "-"
-                                damage = "-"
-
-
-                            existing_row = self.get_row_by_tank_id(tank_id)
-                            if existing_row is not None:
-                                self.update_existing_row(existing_row, tank_name, battles, wins, damage)
-                            else:
-                                new_row_index = self.data_grid.rowCount()
-                                self.update_tank_row.emit(new_row_index, tank_name, battles, wins, damage)
-
-                            self.api_client.prev_tech_stats_array[tank_id] = current_stats
+                    vehicle = self.api_client.get_updated_vehicles()
+                    if vehicle is not None:
+                        tank_name = self.api_client.getVehicleName(vehicle.id)
+                        battles = str(vehicle.battles)
+                        if vehicle.battles > 0:
+                            wins = str(round(vehicle.wins / vehicle.battles * 100.00, 2)) + "%"
+                            damage = str(vehicle.totalDamage // vehicle.battles)
+                        else:
+                            wins = "-"
+                            damage = "-"
+                    
+                    
+                        existing_row = self.get_row_by_tank_id(vehicle.id)
+                        if existing_row is not None:
+                            self.update_existing_row(existing_row, tank_name, battles, wins, damage)
+                        else:
+                            new_row_index = self.data_grid.rowCount()
+                            self.update_tank_row.emit(new_row_index, tank_name, battles, wins, damage)
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:
@@ -1078,7 +1060,7 @@ class TanksStat(QWidget):
             time.sleep(30)
     
     def get_row_by_tank_id(self, tank_id):
-        tank_name = self.api_client.tech_info_dataset[tank_id].get("name", "Неизвестно")
+        tank_name = self.api_client.getVehicleName(tank_id)
         print(f"Ищем строку для танка: {tank_name} (ID: {tank_id})")  # Лог начала поиска
         for row in range(self.data_grid.rowCount()):
             item = self.data_grid.itemAtPosition(row, 0)  # Получаем виджет из первой колонки

@@ -111,6 +111,7 @@ public:
         {
             return -1.0f;
         }
-        return round(static_cast<float>(currentData.wins) / static_cast<float>(currentData.battles) * 100.0) / 100.0;
+        float percent = static_cast<float>(currentData.wins) / currentData.battles * 100.0f;
+        return std::round(percent * 100.0f) / 100.0f;
     }
 };

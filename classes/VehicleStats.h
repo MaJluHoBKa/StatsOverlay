@@ -115,20 +115,29 @@ public:
                 //           << " Battle: " << v.second.battles
                 //           << " Damage: " << (v.second.totalDamage / v.second.battles)
                 //           << " Wins: " << std::round(winrate * 100.0) / 100.0 << "%" << std::endl;
-                // return &v.second;
+                return &v.second;
             }
         }
         return nullptr;
     }
 
+    std::string getName(int64_t id)
+    {
+        if (names_vehicles.count(id))
+        {
+            return names_vehicles[id];
+        }
+        return "Unknown";
+    }
+
     void setNames(const json &names)
     {
-        for (auto i : names)
+        for (auto &[key, value] : names.items())
         {
-            if (i.contains("id") && i.contains("name"))
+            if (value.contains("tank_id") && value.contains("name"))
             {
-                int64_t id = i["id"].get<int64_t>();
-                std::string name = i["name"];
+                int64_t id = value["tank_id"].get<int64_t>();
+                std::string name = value["name"];
                 names_vehicles[id] = name;
             }
         }

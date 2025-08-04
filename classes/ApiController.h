@@ -461,6 +461,13 @@ public:
 
     bool update_vehicles_stats()
     {
+        if (this->isFirstVehiclesStats)
+        {
+            if (!get_vehicles_names())
+            {
+                return false;
+            }
+        }
         CURL *curl;
         CURLcode res;
         std::string readBuffer;
@@ -549,6 +556,11 @@ public:
     const VehicleData *get_updated_vehicles() const
     {
         return vehicleStats.getUpdatedVehicle();
+    }
+
+    std::string getVehicleName(int64_t id)
+    {
+        return vehicleStats.getName(id);
     }
 
     MainStats getMainStats() const
