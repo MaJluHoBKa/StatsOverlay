@@ -35,17 +35,25 @@ public:
     void initialStats(const RatingData &stats)
     {
         firstData = stats;
+        firstData.mm_rating = 3000 + stats.mm_rating * 10;
     }
 
     void updateStats(const RatingData &newStats)
     {
         newData = newStats;
         currentData = newData - firstData;
+        currentData.calib_battles = 10 - newStats.calib_battles;
+        currentData.mm_rating = 3000 + newStats.mm_rating * 10;
     }
 
     int64_t getRating() const
     {
         return currentData.mm_rating;
+    }
+
+    int64_t getDiffRating() const
+    {
+        return currentData.mm_rating - firstData.mm_rating;
     }
 
     int64_t getCalibBattles() const

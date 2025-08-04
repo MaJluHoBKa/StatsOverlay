@@ -5,6 +5,9 @@ import subprocess
 import uuid
 import os
 
+import ctypes
+ctypes.WinDLL(r"D:\Games\MOD\WoT Blitz\Stats\classes\libcurl.dll")
+
 def get_hwid():
     """Генерирует HWID на основе стабильных характеристик системы"""
     hwid_components = {

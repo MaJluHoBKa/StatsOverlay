@@ -1,8 +1,14 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include "json.hpp"
 #include "MainStats.h"
 #include "RatingStats.h"
+#include "MasteryStats.h"
+#include "OtherStats.h"
+#include "VehicleStats.h"
+#include "ApiController.h"
 
+using json = nlohmann::json;
 namespace py = pybind11;
 
 PYBIND11_MODULE(stats, m)
@@ -52,6 +58,7 @@ PYBIND11_MODULE(stats, m)
         .def("initialStats", &RatingStats::initialStats)
         .def("updateStats", &RatingStats::updateStats)
         .def("getRating", &RatingStats::getRating)
+        .def("getDiffRating", &RatingStats::getDiffRating) // <--- Новый метод
         .def("getCalibBattles", &RatingStats::getCalibBattles)
         .def("getExpBattle", &RatingStats::getExpBattle)
         .def("getBattles", &RatingStats::getBattles)
@@ -60,4 +67,84 @@ PYBIND11_MODULE(stats, m)
         .def("getAvgDamage", &RatingStats::getAvgDamage)
         .def("getAvgExp", &RatingStats::getAvgExp)
         .def("getPercentWins", &RatingStats::getPercentWins);
+
+    py::class_<MasteryData>(m, "MasteryData")
+        .def(py::init<>())
+        .def_readwrite("mastery", &MasteryData::mastery)
+        .def_readwrite("mastery_1", &MasteryData::mastery_1)
+        .def_readwrite("mastery_2", &MasteryData::mastery_2)
+        .def_readwrite("mastery_3", &MasteryData::mastery_3)
+        .def("__sub__", &MasteryData::operator-);
+
+    py::class_<MasteryStats>(m, "MasteryStats")
+        .def(py::init<>())
+        .def("initialStats", &MasteryStats::initialStats)
+        .def("updateStats", &MasteryStats::updateStats)
+        .def("getFirstData", &MasteryStats::getFirstData, py::return_value_policy::reference_internal)
+        .def("getCurrentData", &MasteryStats::getCurrentData, py::return_value_policy::reference_internal);
+
+    py::class_<OtherData>(m, "OtherData")
+        .def(py::init<>())
+        .def_readwrite("battles", &OtherData::battles)
+        .def_readwrite("hits", &OtherData::hits)
+        .def_readwrite("shots", &OtherData::shots)
+        .def_readwrite("survived", &OtherData::survived)
+        .def_readwrite("frags", &OtherData::frags)
+        .def_readwrite("receiverDamage", &OtherData::receiverDamage)
+        .def_readwrite("totalDamage", &OtherData::totalDamage)
+        .def_readwrite("lifeTime", &OtherData::lifeTime)
+        .def("__sub__", &OtherData::operator-);
+
+    py::class_<OtherStats>(m, "OtherStats")
+        .def(py::init<>())
+        .def("initialStats", &OtherStats::initialStats)
+        .def("updateStats", &OtherStats::updateStats)
+        .def("getPercentHits", &OtherStats::getPercentHits)
+        .def("getPercentSurvived", &OtherStats::getPercentSurvived)
+        .def("getLifeTime", &OtherStats::getLifeTime)
+        .def("getDamageK", &OtherStats::getDamageK)
+        .def("getFragsK", &OtherStats::getFragsK);
+
+    py::class_<VehicleData>(m, "VehicleData")
+        .def(py::init<>())
+        .def_readwrite("id", &VehicleData::id)
+        .def_readwrite("battles", &VehicleData::battles)
+        .def_readwrite("totalDamage", &VehicleData::totalDamage)
+        .def_readwrite("wins", &VehicleData::wins)
+        .def("__sub__", &VehicleData::operator-);
+
+    py::class_<VehicleStats>(m, "VehicleStats")
+        .def(py::init<const std::string &>())
+        .def("initialStats", &VehicleStats::initialStats)
+        .def("updateStats", &VehicleStats::updateStats)
+        .def("getUpdatedVehicle", [](const VehicleStats &vs)
+             {
+        const VehicleData *v = vs.getUpdatedVehicle();
+        if (v) {
+            return *v;
+        } else {
+            return VehicleData{}; // возвращает пустой объект, если nullptr
+        } })
+        .def("setNames", &VehicleStats::setNames);
+
+    py::class_<ApiController>(m, "ApiController")
+        .def(py::init<>())
+        .def("is_auth", &ApiController::is_auth)
+        .def("login", &ApiController::login)
+        .def("logout", &ApiController::logout)
+        .def("prolongate", &ApiController::prolongate)
+        .def("update_main_stats", &ApiController::update_main_stats)
+        .def("update_rating_stats", &ApiController::update_rating_stats)
+        .def("update_mastery_stats", &ApiController::update_mastery_stats)
+        .def("update_other_stats", &ApiController::update_other_stats)
+        .def("update_vehicles_stats", &ApiController::update_vehicles_stats)
+        .def("get_vehicles_names", &ApiController::get_vehicles_names)
+        .def("get_updated_vehicles", &ApiController::get_updated_vehicles,
+             py::return_value_policy::reference)
+        .def("getMainStats", &ApiController::getMainStats)
+        .def("getRatingStats", &ApiController::getRatingStats)
+        .def("getMasteryStats", &ApiController::getMasteryStats)
+        .def("getOtherStats", &ApiController::getOtherStats)
+        .def("getVehicleStats", &ApiController::getVehicleStats)
+        .def("getNickname", &ApiController::getNickname);
 }
