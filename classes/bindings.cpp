@@ -103,7 +103,11 @@ PYBIND11_MODULE(stats, m)
         .def("getPercentSurvived", &OtherStats::getPercentSurvived)
         .def("getLifeTime", &OtherStats::getLifeTime)
         .def("getDamageK", &OtherStats::getDamageK)
-        .def("getFragsK", &OtherStats::getFragsK);
+        .def("getFragsK", &OtherStats::getFragsK)
+        .def("getBattles", &OtherStats::getBattles)
+        .def("getShots", &OtherStats::getShots)
+        .def("getReceiverDamage", &OtherStats::getReceiverDamage)
+        .def("getDeaths", &OtherStats::getDeaths);
 
     py::class_<VehicleData>(m, "VehicleData")
         .def(py::init<>())

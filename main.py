@@ -1605,14 +1605,16 @@ class Other(QWidget):
                 success = self.api_client.update_other_stats()
                 if success:
                     otherStats = self.api_client.getOtherStats()
-                    self.set_value("Процент попаданий", str(otherStats.getPercentHits()))
-                    self.set_value("Процент выживания", str(otherStats.getPercentSurvived()))
-                    self.set_value("Ср. время выживания", self.convert_seconds_to_minutes_seconds(otherStats.getLifeTime()))
-                    self.set_value("Коэффициент урона", str(otherStats.getDamageK()))
-                    self.set_value("Коэффициент уничтожения", str(otherStats.getFragsK()))
-                    
-                    self.stream_page.set_value("Точность", str(otherStats.getPercentHits()))
-                    self.stream_page.set_value("Выжил", str(otherStats.getPercentSurvived()))
+                    if otherStats.getShots() > 0:
+                        self.set_value("Процент попаданий", str(otherStats.getPercentHits()))
+                        self.stream_page.set_value("Точность", str(otherStats.getPercentHits()))
+                    if otherStats.getBattles() > 0:
+                        self.set_value("Процент выживания", str(otherStats.getPercentSurvived()))
+                        self.stream_page.set_value("Выжил", str(otherStats.getPercentSurvived()))
+                        self.set_value("Ср. время выживания", self.convert_seconds_to_minutes_seconds(otherStats.getLifeTime()))
+                        self.set_value("Коэффициент уничтожения", str(otherStats.getFragsK()))
+                    if otherStats.getReceiverDamage() > 0:
+                        self.set_value("Коэффициент урона", str(otherStats.getDamageK()))
                 else:
                     print("Не удалось обновить статистику.")
             except Exception as e:

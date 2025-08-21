@@ -90,11 +90,31 @@ public:
         {
             return -1.0f;
         }
-        int deaths = currentData.battles - currentData.survived;
+        int64_t deaths = currentData.battles - currentData.survived;
         if (deaths > 0)
         {
             return round(static_cast<float>(currentData.frags) / static_cast<float>(deaths) * 100.0) / 100.0;
         }
         return static_cast<float>(currentData.frags);
+    }
+
+    int64_t getBattles() const
+    {
+        return currentData.battles;
+    }
+
+    int64_t getShots() const
+    {
+        return currentData.shots;
+    }
+
+    int64_t getReceiverDamage() const
+    {
+        return currentData.receiverDamage;
+    }
+
+    int64_t getDeaths() const
+    {
+        return currentData.battles - currentData.survived;
     }
 };

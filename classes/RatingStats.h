@@ -15,8 +15,8 @@ struct RatingData
     RatingData operator-(const RatingData &other) const
     {
         return {
-            mm_rating - other.mm_rating,
-            calib_battles - other.calib_battles,
+            mm_rating,
+            calib_battles,
             exp_battle - other.exp_battle,
             battles - other.battles,
             wins - other.wins,

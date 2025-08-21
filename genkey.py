@@ -101,4 +101,4 @@ if __name__ == "__main__":
     print(f"HWID: {hwid}")
     print(f"Ключ активации: {activation_key}")
     
-    input("\nНажмите Enter для выхода...")
+    input("\nНажмите Enter для выхода...")  
