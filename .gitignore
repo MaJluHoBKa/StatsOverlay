@@ -1,0 +1,4 @@
+vcpkg-master/
+__pycache__/
+.vscode/
+build/

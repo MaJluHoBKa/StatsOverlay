@@ -173,7 +173,7 @@ class Overlay_info(QWidget):
         self.stats_page = Stats(api_client=self.api_client, stream_page = self.stream_page)
         self.rating_page = Rating(api_client=self.api_client, stream_page = self.stream_page)
         self.tanks_page = TanksStat(api_client=self.api_client)
-        # self.graphics_page = Graphics(api_client=self.api_client)
+        self.graphics_page = Graphics(api_client=self.api_client)
         self.other_page = Other(api_client=api_client, stream_page = self.stream_page)
         self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page, stream_page = self.stream_page)
 
@@ -186,17 +186,17 @@ class Overlay_info(QWidget):
         self.stacked_widget.addWidget(self.other_page)
         self.stacked_widget.setCurrentIndex(2)
 
-        # self.stacked_widget.addWidget(self.graphics_page)
-        # self.stacked_widget.setCurrentIndex(3)
-
-        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.addWidget(self.graphics_page)
         self.stacked_widget.setCurrentIndex(3)
 
-        self.stacked_widget.addWidget(self.rating_page)
+        self.stacked_widget.addWidget(self.tanks_page)
         self.stacked_widget.setCurrentIndex(4)
 
-        self.stacked_widget.addWidget(self.stats_page)
+        self.stacked_widget.addWidget(self.rating_page)
         self.stacked_widget.setCurrentIndex(5)
+
+        self.stacked_widget.addWidget(self.stats_page)
+        self.stacked_widget.setCurrentIndex(6)
 
         main_layout = QHBoxLayout()
         main_layout.setSpacing(0)
@@ -221,7 +221,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.stats_button.clicked.connect(lambda: self.switch_page(5))
+        self.stats_button.clicked.connect(lambda: self.switch_page(6))
 
         self.rating_button = QPushButton(self)
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
@@ -242,7 +242,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.rating_button.clicked.connect(lambda: self.switch_page(4))
+        self.rating_button.clicked.connect(lambda: self.switch_page(5))
 
         self.tank_button = QPushButton(self)
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
@@ -263,7 +263,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.tank_button.clicked.connect(lambda: self.switch_page(3))
+        self.tank_button.clicked.connect(lambda: self.switch_page(4))
 
         self.graphics_button = QPushButton(self)
         self.graphics_button.setIcon(QIcon(QPixmap(resource_path('src/graphics_icon.png'))))
@@ -395,32 +395,11 @@ class Overlay_info(QWidget):
 
         main_layout.addWidget(self.stacked_widget)
         self.setLayout(main_layout)
-        self.switch_page(5)
+        self.switch_page(6)
 
     def switch_page(self, index):
         self.stacked_widget.setCurrentIndex(index)
         self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
-        # # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
-        # if index == 1:  # Если текущая вкладка — Stream
-        #     self.stacked_widget.setStyleSheet("""
-        #         QStackedWidget, QStackedWidget > QWidget {
-        #             background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
-        #             border: none;
-        #             border-top-right-radius: 10px;
-        #             border-bottom-right-radius: 10px;
-        #         }
-        #     """)
-        # else:
-        #     self.stacked_widget.setStyleSheet("""
-        #         QStackedWidget, QStackedWidget > QWidget {
-        #             background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
-        #             border: none;
-        #             border-top-right-radius: 10px;
-        #             border-bottom-right-radius: 10px;
-        #         }
-        #     """)
-
-        # Изменяем размер окна только по ширине
         if self.isVisible():
             self.resize(self.width(), self.full_height)
 
@@ -1124,217 +1103,203 @@ class TanksStat(QWidget):
             if widget is not None:
                 widget.deleteLater()
 
-# class Graphics(QWidget):   
-#     def __init__(self, api_client):
-#         super().__init__()
-#         self.api_client = api_client
-#         #self.stats = self.api_client.graphics_value
-#         self.prev_battles = -1
-#         self.prev_rating_battles = 0
-#         self.graph_widgets = {}
-#         self.setStyleSheet("background: transparent;")
-#         self.setup_ui()
+class Graphics(QWidget):   
+    def __init__(self, api_client):
+        super().__init__()
+        self.api_client = api_client
+        self.stats = controller.GraphicsPoints()
+        self.prev_battles = -1
+        self.prev_rating_battles = 0
+        self.graph_widgets = {}
+        self.setStyleSheet("background: transparent;")
+        self.setup_ui()
 
-#         # self.updating_thread = threading.Thread(target=self.update_grapgics_periodically)
-#         # self.updating_thread.daemon = True
-#         # self.updating_thread.start()
+        self.updating_thread = threading.Thread(target=self.update_grapgics_periodically)
+        self.updating_thread.daemon = True
+        self.updating_thread.start()
 
     
-#     def setup_ui(self):
-#         main_layout = QVBoxLayout(self)
-#         main_layout.setSpacing(5)
-#         main_layout.setContentsMargins(10, 2, 10, 2)
-#         main_layout.setAlignment(Qt.AlignTop)
+    def setup_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(5)
+        main_layout.setContentsMargins(10, 2, 10, 2)
+        main_layout.setAlignment(Qt.AlignTop)
 
-#         title_layout = QHBoxLayout()
-#         title_layout.setSpacing(10)
-#         title_layout.setContentsMargins(10, 2, 10, 2)
+        title_layout = QHBoxLayout()
+        title_layout.setSpacing(10)
+        title_layout.setContentsMargins(10, 2, 10, 2)
         
-#         arrow_icon = QLabel()
-#         arrow_icon.setPixmap(QPixmap(resource_path('src/arrow_icon.webp')))
-#         arrow_icon.setStyleSheet("background-color: transparent;")
-#         title_layout.addWidget(arrow_icon)
+        arrow_icon = QLabel()
+        arrow_icon.setPixmap(QPixmap(resource_path('src/arrow_icon.webp')))
+        arrow_icon.setStyleSheet("background-color: transparent;")
+        title_layout.addWidget(arrow_icon)
         
-#         title = QLabel("График статистики")
-#         title.setStyleSheet("""
-#             font-family: Segoe UI;
-#             font-weight: bold;
-#             font-size: 14px;
-#             color: #e2ded3;
-#             background-color: transparent;
-#         """)
-#         title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  
-#         title.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         title_layout.addWidget(title)
-#         main_layout.addLayout(title_layout)
+        title = QLabel("График статистики")
+        title.setStyleSheet("""
+            font-family: Segoe UI;
+            font-weight: bold;
+            font-size: 14px;
+            color: #e2ded3;
+            background-color: transparent;
+        """)
+        title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  
+        title.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        title_layout.addWidget(title)
+        main_layout.addLayout(title_layout)
 
-#         header_widget = QWidget()
-#         header_widget.setStyleSheet("""
-#             background-color: #383838;
-#             border-radius: 3px;
-#         """)
-#         header_widget.setFixedHeight(25)
-#         header_layout = QHBoxLayout(header_widget)
-#         header_layout.setSpacing(0)
-#         header_layout.setContentsMargins(0, 0, 0, 0)
+        header_widget = QWidget()
+        header_widget.setStyleSheet("""
+            background-color: #383838;
+            border-radius: 3px;
+        """)
+        header_widget.setFixedHeight(25)
+        header_layout = QHBoxLayout(header_widget)
+        header_layout.setSpacing(0)
+        header_layout.setContentsMargins(0, 0, 0, 0)
 
-#         for index, (col_type, icon_path) in enumerate([
-#             ('wins', 'src/win_icon.webp'),
-#             ('damage', 'src/damage_icon.webp'),
-#             ('xp', 'src/xp_icon.webp'),
-#             ('rating', 'src/rating_icon.webp')
-#         ]):
-#             button = QPushButton()
-#             button.setIcon(QIcon(QPixmap(resource_path(icon_path))))
-#             button.setIconSize(QSize(24, 24))
-#             button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-#             button.setStyleSheet("""
-#                 QPushButton {
-#                     background-color: transparent;
-#                     border: none;
-#                 }
-#                 QPushButton:hover {
-#                     background-color: rgba(255, 255, 255, 0.1);
-#                 }
-#                 QPushButton:pressed {
-#                     background-color: rgba(255, 255, 255, 0.2);
-#                 }
-#             """)
-#             button.setCursor(Qt.PointingHandCursor)
-#             button.clicked.connect(lambda checked, i=index: self.switch_graphics(i))
-#             header_layout.addWidget(button)
+        for index, (col_type, icon_path) in enumerate([
+            ('wins', 'src/win_icon.webp'),
+            ('damage', 'src/damage_icon.webp'),
+            ('xp', 'src/xp_icon.webp'),
+            ('rating', 'src/rating_icon.webp')
+        ]):
+            button = QPushButton()
+            button.setIcon(QIcon(QPixmap(resource_path(icon_path))))
+            button.setIconSize(QSize(24, 24))
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: transparent;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+            button.setCursor(Qt.PointingHandCursor)
+            button.clicked.connect(lambda checked, i=index: self.switch_graphics(i))
+            header_layout.addWidget(button)
 
-#         main_layout.addWidget(header_widget)
+        main_layout.addWidget(header_widget)
 
-#         self.stacked_graphics = QStackedWidget()
-#         self.stacked_graphics.setMaximumHeight(200)
-#         self.stacked_graphics.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-#         main_layout.addWidget(self.stacked_graphics)
+        self.stacked_graphics = QStackedWidget()
+        self.stacked_graphics.setMaximumHeight(200)
+        self.stacked_graphics.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        main_layout.addWidget(self.stacked_graphics)
 
-#         # Добавляем 4 "графика" (замени на реальные виджеты с графиками)
+        for title in ["wins", "damage", "xp", "rating"]:
+            data = self.stats.getYValues(title)
+            chart = SimplePlotWidget(title, data)
+            self.graph_widgets[title] = chart
 
-#         for title, data in self.stats.items():
-#             chart = SimplePlotWidget(title, data)
-#             self.graph_widgets[title] = chart
+            container = QWidget()
+            container_layout = QVBoxLayout(container)
+            container_layout.setContentsMargins(0, 0, 0, 0)
+            container_layout.setAlignment(Qt.AlignCenter)
+            container_layout.addWidget(chart)
 
-#             container = QWidget()
-#             container_layout = QVBoxLayout(container)
-#             container_layout.setContentsMargins(0, 0, 0, 0)
-#             container_layout.setAlignment(Qt.AlignCenter)
-#             container_layout.addWidget(chart)
-    
-#             self.stacked_graphics.addWidget(container)
+            self.stacked_graphics.addWidget(container)
 
-#         # По умолчанию показываем первый график
-#         self.stacked_graphics.setCurrentIndex(0)
+        self.stacked_graphics.setCurrentIndex(0)
 
 
-#     def switch_graphics(self, index):
-#         self.stacked_graphics.setCurrentIndex(index)
+    def switch_graphics(self, index):
+        self.stacked_graphics.setCurrentIndex(index)
 
-#     #функия переодического добавления точек в график и в api_client.graphics_value
-#     def update_grapgics_periodically(self):
-#         while True:
-#             for key in self.stats.keys():
-#                 if key not in self.api_client.graphics_value:
-#                     self.api_client.graphics_value[key] = []
-#                     self.api_client.graphics_x_value[key] = []
+    def update_grapgics_periodically(self):
+        isFirst = True;
+        while True:
+            mainStats = self.api_client.getMainStats()
+            ratingStats = self.api_client.getRatingStats()
+            # for key in ["wins", "damage", "xp", "rating"]:
+            #     if isFirst:
+            #         self.stats.setXYPoint(key, 0, 0)
+            #         if self.api_client.graphics_value["damage"] and self.api_client.graphics_value["damage"][-1] > 0:
+            #             if self.api_client.graphics_value["wins"]:
+            #                 self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
+            #             if self.api_client.graphics_value["damage"]:
+            #                 self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
+            #             if self.api_client.graphics_value["xp"]:
+            #                 self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
+            #             if self.api_client.graphics_value["rating"]:
+            #                 self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
 
-#                 if not self.api_client.graphics_value[key]:
-#                     self.api_client.graphics_value[key].append(0.0)
-#                     self.api_client.graphics_x_value[key].append(0.0)
-#                     if self.api_client.graphics_value["damage"] and self.api_client.graphics_value["damage"][-1] > 0:
-#                         if self.api_client.graphics_value["wins"]:
-#                             self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
-#                         if self.api_client.graphics_value["damage"]:
-#                             self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
-#                         if self.api_client.graphics_value["xp"]:
-#                             self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
-#                         if self.api_client.graphics_value["rating"]:
-#                             self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
+            #нужно сравнить текущее кол-во боев (обычные + рейтинг) с prev_battles, если больше, то добавляем в графики
+            current_battles = mainStats.getBattles() + ratingStats.getBattles()
+            if current_battles <= self.prev_battles or current_battles == 0:
+                time.sleep(30)
+                continue
 
-#             #нужно сравнить текущее кол-во боев (обычные + рейтинг) с prev_battles, если больше, то добавляем в графики
-#             current_battles = self.api_client.mainStats.getBattles() + self.api_client.rating_stats_structure["battles"]
-#             if current_battles <= self.prev_battles or current_battles == 0:
-#                 time.sleep(30)
-#                 continue
-
-#             self.prev_battles = current_battles
+            self.prev_battles = current_battles
                 
-#             # Добавляем новые значения в api_client.graphics_value
+            # Добавляем новые значения в api_client.graphics_value
             
-#             wins = self.api_client.mainStats.getWins() + self.api_client.rating_stats_structure["wins"]
-#             self.api_client.graphics_value["wins"].append(round((wins / current_battles) * 100.00, 2))
-#             self.api_client.graphics_x_value["wins"].append(current_battles)
-#             self.add_value_to_graphics("wins", self.api_client.graphics_value["wins"][-1])
+            wins = mainStats.getWins() + ratingStats.getWins()
+            self.stats.setXYPoint("wins", current_battles, round((wins / current_battles) * 100.00, 2))
+            self.add_value_to_graphics("wins", self.stats.getLastYPoint("wins"))
             
-#             damage = (self.api_client.mainStats.getTotalDamage() + self.api_client.rating_stats_structure["totalDamage"]) // current_battles
-#             self.api_client.graphics_value["damage"].append(damage)
-#             self.api_client.graphics_x_value["damage"].append(current_battles)
-#             self.add_value_to_graphics("damage", self.api_client.graphics_value["damage"][-1])
+            damage = (mainStats.getTotalDamage() + ratingStats.getTotalDamage()) // current_battles
+            self.stats.setXYPoint("damage", current_battles, damage)
+            self.add_value_to_graphics("damage", round(self.stats.getLastYPoint("damage")))
 
-#             xp = (self.api_client.mainStats.getExpBattle() + self.api_client.rating_stats_structure["exp_battle"]) // current_battles
-#             self.api_client.graphics_value["xp"].append(xp)
-#             self.api_client.graphics_x_value["xp"].append(current_battles)
-#             self.add_value_to_graphics("xp", self.api_client.graphics_value["xp"][-1])
+            xp = (mainStats.getExpBattle() + ratingStats.getExpBattle()) // current_battles
+            self.stats.setXYPoint("xp", current_battles, xp)
+            self.add_value_to_graphics("xp", round(self.stats.getLastYPoint("xp")))
 
-#             rating = self.api_client.rating_stats_structure["mm_rating"]
-#             current_rating_battle = self.api_client.rating_stats_structure["battles"]
-#             if current_rating_battle > self.prev_rating_battles:
-#                 self.prev_rating_battles = current_rating_battle
-#                 self.api_client.graphics_value["rating"].append(rating)
-#                 self.api_client.graphics_x_value["rating"].append(current_rating_battle)
-#                 self.add_value_to_graphics("rating", self.api_client.graphics_value["rating"][-1])
+            rating = ratingStats.getRating()
+            current_rating_battle = ratingStats.getBattles()
+            if current_rating_battle > self.prev_rating_battles:
+                self.prev_rating_battles = current_rating_battle
+                self.stats.setXYPoint("rating", current_rating_battle, rating)
+                self.add_value_to_graphics("rating", round(self.stats.getLastYPoint("rating")))
 
-#             for key, value in self.api_client.graphics_value.items():
-#                 if key in self.stats:
-#                     self.stats[key] = value.copy()
-#                 else:
-#                     print(f"Ключ {key} не найден в stats.")
-#             time.sleep(30)
+            time.sleep(30)
 
-#     def add_value_to_graphics(self, key, value):
-#         widget = self.graph_widgets.get(key)
-#         if widget:
-#             data = self.api_client.graphics_value[key]
-#             if not data:
-#                 return
-#             widget.ax.clear()
+    def add_value_to_graphics(self, key, value):
+        widget = self.graph_widgets.get(key)
+        if widget:
+            data = self.stats.getYValues(key)
+            if not data:
+                return
+            widget.ax.clear()
 
-#             x = self.api_client.graphics_x_value[key]
-#             y = self.api_client.graphics_value[key]
+            x = self.stats.getXValues(key)
+            y = self.stats.getYValues(key)
 
-#             if key == "wins":
-#                 win_percent = y[-1]  # последнее значение
-#                 if win_percent >= 70.00:
-#                     color = "#9989e6"
-#                 elif 60.00 <= win_percent < 70.00:
-#                     color = "#72d1ff"
-#                 elif 50.00 <= win_percent < 60.00:
-#                     color = "#a8e689"
-#                 else:
-#                     color = "#ffffff"
-#             else:
-#                 color = "#e2ded3"
+            if key == "wins":
+                win_percent = y[-1]  # последнее значение
+                if win_percent >= 70.00:
+                    color = "#9989e6"
+                elif 60.00 <= win_percent < 70.00:
+                    color = "#72d1ff"
+                elif 50.00 <= win_percent < 60.00:
+                    color = "#a8e689"
+                else:
+                    color = "#ffffff"
+            else:
+                color = "#e2ded3"
 
-#             widget.ax.plot(x, y, marker='o', color=color)
-#             widget.ax.fill_between(x, y, color=color, alpha=0.2)
-#             widget.ax.grid(True, color='gray', linestyle='--', alpha=0.3)
+            widget.ax.plot(x, y, marker='o', color=color)
+            widget.ax.fill_between(x, y, color=color, alpha=0.2)
+            widget.ax.grid(True, color='gray', linestyle='--', alpha=0.3)
 
-#             for label in widget.ax.get_xticklabels() + widget.ax.get_yticklabels():
-#                 label.set_fontname("Consolas")
-#                 label.set_fontsize(9)
-#                 label.set_color("#e2ded3")
+            for label in widget.ax.get_xticklabels() + widget.ax.get_yticklabels():
+                label.set_fontname("Consolas")
+                label.set_fontsize(9)
+                label.set_color("#e2ded3")
 
-#             widget.ax.set_facecolor('none')
-#             widget.ax.tick_params(colors='#e2ded3')
-#             for spine in widget.ax.spines.values():
-#                 spine.set_visible(False)
+            widget.ax.set_facecolor('none')
+            widget.ax.tick_params(colors='#e2ded3')
+            for spine in widget.ax.spines.values():
+                spine.set_visible(False)
 
-#             widget.fig.subplots_adjust(left=0.12, right=1.00, top=1.00, bottom=0.12)
-#             widget.draw()
-#         else:
-#             print(f"График для ключа '{key}' не найден.")
+            widget.fig.subplots_adjust(left=0.12, right=1.00, top=1.00, bottom=0.12)
+            widget.draw()
+        else:
+            print(f"График для ключа '{key}' не найден.")
 
 class Other(QWidget):   
     def __init__(self, api_client, stream_page):

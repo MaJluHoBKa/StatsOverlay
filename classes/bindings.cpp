@@ -6,6 +6,7 @@
 #include "MasteryStats.h"
 #include "OtherStats.h"
 #include "VehicleStats.h"
+#include "GraphicsPoints.h"
 #include "ApiController.h"
 
 using json = nlohmann::json;
@@ -128,6 +129,14 @@ PYBIND11_MODULE(stats, m)
              py::return_value_policy::reference)
         .def("setNames", &VehicleStats::setNames)
         .def("getName", &VehicleStats::getName);
+
+    py::class_<GraphicsPoints>(m, "GraphicsPoints")
+        .def(py::init<>())
+        .def("setXYPoint", &GraphicsPoints::setXYPoint)
+        .def("getLastXPoint", &GraphicsPoints::getLastXPoint)
+        .def("getLastYPoint", &GraphicsPoints::getLastYPoint)
+        .def("getXValues", &GraphicsPoints::getXValues, py::return_value_policy::reference_internal)
+        .def("getYValues", &GraphicsPoints::getYValues, py::return_value_policy::reference_internal);
 
     py::class_<ApiController>(m, "ApiController")
         .def(py::init<>())
