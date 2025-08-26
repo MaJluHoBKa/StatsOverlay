@@ -300,7 +300,7 @@ public:
                 {
                     auto &data = j["data"][this->account_id];
                     RatingData ratingData;
-                    ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<int64_t>();
+                    ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<double>();
                     ratingData.calib_battles = data["statistics"]["rating"]["calibration_battles_left"].get<int64_t>();
                     ratingData.battles = data["statistics"]["rating"]["battles"].get<int64_t>();
                     ratingData.exp_battle = data["statistics"]["rating"]["xp"].get<int64_t>();

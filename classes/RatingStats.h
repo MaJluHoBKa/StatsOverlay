@@ -5,7 +5,7 @@
 
 struct RatingData
 {
-    int64_t mm_rating = 0;
+    double mm_rating = 0;
     int64_t calib_battles = 0;
     int64_t exp_battle = 0;
     int64_t battles = 0;
@@ -35,7 +35,7 @@ public:
     void initialStats(const RatingData &stats)
     {
         firstData = stats;
-        firstData.mm_rating = 3000 + stats.mm_rating * 10;
+        firstData.mm_rating = 3000.0 + stats.mm_rating * 10.0;
     }
 
     void updateStats(const RatingData &newStats)
@@ -43,17 +43,17 @@ public:
         newData = newStats;
         currentData = newData - firstData;
         currentData.calib_battles = 10 - newStats.calib_battles;
-        currentData.mm_rating = 3000 + newStats.mm_rating * 10;
+        currentData.mm_rating = 3000.0 + newStats.mm_rating * 10.0;
     }
 
     int64_t getRating() const
     {
-        return currentData.mm_rating;
+        return static_cast<int64_t>(currentData.mm_rating);
     }
 
     int64_t getDiffRating() const
     {
-        return currentData.mm_rating - firstData.mm_rating;
+        return static_cast<int64_t>(currentData.mm_rating - firstData.mm_rating);
     }
 
     int64_t getCalibBattles() const
