@@ -139,7 +139,7 @@ class Overlay_info(QWidget):
         self.move(0 + offset_x, (screen_geometry.height() - self.height()) // 2)
 
         self.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 220);
+            background-color: rgba(30, 30, 30, 255);
             border: 0px solid #404040;
             border-radius: 0px;
         """)
@@ -157,7 +157,7 @@ class Overlay_info(QWidget):
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.setStyleSheet("""
             QStackedWidget, QStackedWidget > QWidget {
-                background-color: rgba(30, 30, 30, 220);
+                background-color: rgba(30, 30, 30, 255);
                 border: none;
                 border-top-right-radius: 10px;
                 border-bottom-right-radius: 10px;
@@ -502,6 +502,9 @@ class Stats(QWidget):
         super().__init__()
         self.api_client = api_client
         self.stream_page = stream_page
+        self.old_values = {}
+        self.old_colors = {}
+        self.old_arrows = {}
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -575,10 +578,12 @@ class Stats(QWidget):
         icon.setStyleSheet("background-color: rgba(30, 30, 30, 0);")
 
         label = QLabel()
+        label.setTextFormat(Qt.RichText)
 
         label.setStyleSheet("""
             font-family: Consolas;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: bold;
             color: #e2ded3;
             background-color: rgba(30, 30, 30, 0);
         """)
@@ -605,34 +610,78 @@ class Stats(QWidget):
         layout.addWidget(container)
 
     def set_value(self, key, value):
-        max_length = 36 
-        if key in self.labels:
-            # Проверяем, является ли значение числом
-            if isinstance(value, int):
-                value = f"{value:,}".replace(",", " ")  # Форматируем целое число
-            elif isinstance(value, float):
-                value = f"{value:,.2f}".replace(",", " ")  # Форматируем число с плавающей точкой
-            elif isinstance(value, str):
-                try:
-                    # Пробуем преобразовать строку в число
-                    if "." in value:
-                        numeric_value = float(value.replace(" ", "").replace(",", ""))
-                        value = f"{numeric_value:,.2f}".replace(",", " ")
-                    else:
-                        numeric_value = int(value.replace(" ", "").replace(",", ""))
-                        value = f"{numeric_value:,}".replace(",", " ")
-                except ValueError:
-                    pass
-            
-            if key == "Победы" and value != '-':
-                value = f"{value}%"
-            elif key == "Проведено боев" and value != '-':
-                wins = self.api_client.main_stats_structure["wins"]
-                losses = self.api_client.main_stats_structure["losses"]
-                value = f"{value} [{wins}-{losses}]"
-            
-            dots = '.' * max(1, max_length - len(key) - len(value))
-            self.labels[key].setText(f"{key} {dots} {value}")  
+        max_length = 36
+        numeric_value = None
+        value_str = str(value)
+
+        # Преобразуем значение в число, если возможно
+        if isinstance(value, (int, float)):
+            numeric_value = float(value)
+            value_str = f"{value:,.2f}".replace(",", " ") if isinstance(value, float) else f"{int(value):,}".replace(",", " ")
+        elif isinstance(value, str):
+            try:
+                cleaned = value.replace(" ", "").replace(",", "").replace("%", "")
+                if "." in cleaned:
+                    numeric_value = float(cleaned)
+                    value_str = f"{numeric_value:,.2f}".replace(",", " ")
+                else:
+                    numeric_value = int(cleaned)
+                    value_str = f"{numeric_value:,}".replace(",", " ")
+            except ValueError:
+                value_str = value
+
+        # Специальная логика для Победы и Проведено боев
+        if key == "Победы" and value_str != '-':
+            value_str += "%"
+        elif key == "Проведено боев" and value_str != '-':
+            battles = self.api_client.main_stats_structure["battles"]
+            wins = self.api_client.main_stats_structure["wins"]
+            losses = self.api_client.main_stats_structure["losses"]
+            value_str = f"{value_str} [{wins}-{losses}]"
+
+        # Получаем старые значения
+        prev_numeric = self.old_values.get(key)
+        prev_color = self.old_colors.get(key, "#AAAAAA")
+        prev_arrow = self.old_arrows.get(key, "")
+
+        # Определяем стрелку и цвет
+        color = prev_color
+        arrow = prev_arrow
+
+        if numeric_value is not None:
+            if prev_numeric is None or prev_numeric == '-':
+                # Раньше было '-', теперь число → рост
+                color = "#66ff66"  # тусклый зелёный для тире
+                arrow = "↑"
+            elif numeric_value > prev_numeric:
+                color = "#66ff66"
+                arrow = "↑"
+            elif numeric_value < prev_numeric:
+                color = "#ff6666"
+                arrow = "↓"
+            # если равно — оставляем предыдущие цвет и стрелку
+
+            # Обновляем хранилище
+            self.old_values[key] = numeric_value
+            self.old_colors[key] = color
+            self.old_arrows[key] = arrow
+
+        # Формируем тире с эффектом неона
+        dots = '—' * max(1, max_length - len(key) - len(value_str) - len(arrow))
+        colored_dots = f'''
+            <span style="
+                color:{color};
+                text-shadow: 0 0 2px {color},
+                             0 0 4px {color},
+                             0 0 6px {color};">
+            {dots}</span>
+        '''
+
+        # Стрелка после value, цвет как тире
+        arrow_html = f'<span style="color:{color};">{arrow}</span>' if arrow else ""
+
+        # Обновляем текст QLabel
+        self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
     
     def update_stats_periodically(self):
         while True:
@@ -674,6 +723,9 @@ class Rating(QWidget):
         super().__init__()
         self.api_client = api_client
         self.stream_page = stream_page
+        self.old_values = {}
+        self.old_colors = {}
+        self.old_arrows = {}
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_stats_periodically)
@@ -745,10 +797,12 @@ class Rating(QWidget):
         icon.setStyleSheet("background-color: rgba(30, 30, 30, 0);")
 
         label = QLabel()
+        label.setTextFormat(Qt.RichText)
 
         label.setStyleSheet("""
             font-family: Consolas;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: bold;
             color: #e2ded3;
             background-color: rgba(30, 30, 30, 0);
         """)
@@ -776,35 +830,77 @@ class Rating(QWidget):
 
     def set_value(self, key, value):
         max_length = 36
+        numeric_value = None
+        value_str = str(value)
+
         if key in self.labels:
-            if isinstance(value, int):
-                value = f"{value:,}".replace(",", " ")
-            elif isinstance(value, float):
-                value = f"{value:,.2f}".replace(",", " ")
+            # Преобразуем в число, если возможно
+            if isinstance(value, (int, float)):
+                numeric_value = float(value)
+                value_str = f"{value:,.2f}".replace(",", " ") if isinstance(value, float) else f"{int(value):,}".replace(",", " ")
             elif isinstance(value, str):
                 try:
-                    if "." in value:
-                        numeric_value = float(value.replace(" ", "").replace(",", ""))
-                        value = f"{numeric_value:,.2f}".replace(",", " ")
+                    cleaned = value.replace(" ", "").replace(",", "").replace("%", "")
+                    if "." in cleaned:
+                        numeric_value = float(cleaned)
+                        value_str = f"{numeric_value:,.2f}".replace(",", " ")
                     else:
-                        numeric_value = int(value.replace(" ", "").replace(",", ""))
-                        value = f"{numeric_value:,}".replace(",", " ")
+                        numeric_value = int(cleaned)
+                        value_str = f"{numeric_value:,}".replace(",", " ")
                 except ValueError:
-                    pass
+                    value_str = value
 
-            if key == "Победы" and value != '-':
-                value = f"{value}%"
-            elif key == "Проведено боев" and value != '-':
+            # Спец.логика для Победы и Проведено боев
+            if key == "Победы" and value_str != '-':
+                value_str += "%"
+            elif key == "Проведено боев" and value_str != '-':
                 wins = self.api_client.rating_stats_structure["wins"]
-                losses = self.api_client.rating_stats_structure["battles"] - self.api_client.rating_stats_structure["wins"]
-                value = f"{value} [{wins}-{losses}]"
-            dots = '.' * max(1, max_length - len(key) - len(value))
+                losses = self.api_client.rating_stats_structure["battles"] - wins
+                value_str = f"{value_str} [{wins}-{losses}]"
 
-            if key == "Прогресс рейтинга" and value != '-':
-                if(value[0] != '-'):
-                    value = f"+{value}"
-            dots = '.' * max(1, max_length - len(key) - len(value))
-            self.labels[key].setText(f"{key} {dots} {value}")  
+            # Спец.логика для Прогресс рейтинга (добавляем +)
+            if key == "Прогресс рейтинга" and value_str != '-' and not value_str.startswith('-') and not value_str.startswith('+'):
+                value_str = f"+{value_str}"
+
+            # Получаем старые значения
+            prev_numeric = self.old_values.get(key)
+            prev_color = self.old_colors.get(key, "#AAAAAA")
+            prev_arrow = self.old_arrows.get(key, "")
+
+            # Определяем стрелку и цвет
+            color = prev_color
+            arrow = prev_arrow
+
+            if numeric_value is not None:
+                if prev_numeric is None or prev_numeric == '-':
+                    color = "#66ff66"
+                    arrow = "↑"
+                elif numeric_value > prev_numeric:
+                    color = "#66ff66"
+                    arrow = "↑"
+                elif numeric_value < prev_numeric:
+                    color = "#ff6666"
+                    arrow = "↓"
+                # если равно — оставляем старые цвет и стрелку
+
+                # сохраняем
+                self.old_values[key] = numeric_value
+                self.old_colors[key] = color
+                self.old_arrows[key] = arrow
+
+            # Формируем точки
+            dots = '—' * max(1, max_length - len(key) - len(value_str) - len(arrow))
+            colored_dots = f'''
+                <span style="
+                    color:{color};
+                    text-shadow: 0 0 2px {color},
+                                 0 0 4px {color},
+                                 0 0 6px {color};">
+                {dots}</span>
+            '''
+            arrow_html = f'<span style="color:{color};">{arrow}</span>' if arrow else ""
+
+            self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
     
     def update_stats_periodically(self):
         while True:
@@ -1352,6 +1448,9 @@ class Other(QWidget):
         super().__init__()
         self.api_client = api_client
         self.stream_page = stream_page
+        self.old_values = {}
+        self.old_colors = {}
+        self.old_arrows = {}
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_other_periodically)
@@ -1545,10 +1644,12 @@ class Other(QWidget):
         icon.setStyleSheet("background-color: rgba(30, 30, 30, 0);")
 
         label = QLabel()
+        label.setTextFormat(Qt.RichText)
 
         label.setStyleSheet("""
             font-family: Consolas;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: bold;
             color: #e2ded3;
             background-color: rgba(30, 30, 30, 0);
         """)
@@ -1575,32 +1676,75 @@ class Other(QWidget):
         layout.addWidget(container)
 
     def set_value(self, key, value):
-        max_length = 36 
+        max_length = 36
+        numeric_value = None
+        value_str = str(value)
+
         if key in self.labels:
-            if key not in ["Ср. время выживания"]:  # Исключаем ключи, которые не нужно форматировать
-                # Проверяем, является ли значение числом
+            if key not in ["Ср. время выживания"]:  # Исключаем ключи
                 if isinstance(value, int):
-                    value = f"{value:,}".replace(",", " ")  # Форматируем целое число
+                    numeric_value = float(value)
+                    value_str = f"{value:,}".replace(",", " ")
                 elif isinstance(value, float):
-                    value = f"{value:,.2f}".replace(",", " ")  # Форматируем число с плавающей точкой
+                    numeric_value = float(value)
+                    value_str = f"{value:,.2f}".replace(",", " ")
                 elif isinstance(value, str):
                     try:
-                        # Пробуем преобразовать строку в число
-                        if "." in value:
-                            numeric_value = float(value.replace(" ", "").replace(",", ""))
-                            value = f"{numeric_value:,.2f}".replace(",", " ")
+                        cleaned = value.replace(" ", "").replace(",", "").replace("%", "")
+                        if "." in cleaned:
+                            numeric_value = float(cleaned)
+                            value_str = f"{numeric_value:,.2f}".replace(",", " ")
                         else:
-                            numeric_value = int(value.replace(" ", "").replace(",", ""))
-                            value = f"{numeric_value:,}".replace(",", " ")
+                            numeric_value = int(cleaned)
+                            value_str = f"{numeric_value:,}".replace(",", " ")
                     except ValueError:
-                        pass
+                        value_str = value
 
-            if key == "Процент попаданий" and value != '-':
-                value = f"{value}%"
-            elif key == "Процент выживания" and value != '-':
-                value = f"{value}%"
-            dots = '.' * max(1, max_length - len(key) - len(value))
-            self.labels[key].setText(f"{key} {dots} {value}")  
+            # Логика для %
+            if key in ["Процент попаданий", "Процент выживания"] and value_str != '-':
+                value_str += "%"
+
+            # Получаем старые значения
+            prev_numeric = self.old_values.get(key)
+            prev_color = self.old_colors.get(key, "#AAAAAA")
+            prev_arrow = self.old_arrows.get(key, "")
+
+            # Определяем стрелку и цвет
+            color = prev_color
+            arrow = prev_arrow
+
+            if numeric_value is not None:
+                if prev_numeric is None or prev_numeric == '-':
+                    color = "#66ff66"
+                    arrow = "↑"
+                elif numeric_value > prev_numeric:
+                    color = "#66ff66"
+                    arrow = "↑"
+                elif numeric_value < prev_numeric:
+                    color = "#ff6666"
+                    arrow = "↓"
+                # если равно — оставляем прежние
+
+                # сохраняем
+                self.old_values[key] = numeric_value
+                self.old_colors[key] = color
+                self.old_arrows[key] = arrow
+
+            # Формируем точки
+            dots = '—' * max(1, max_length - len(key) - len(value_str) - len(arrow))
+            colored_dots = f'''
+                <span style="
+                    color:{color};
+                    text-shadow: 0 0 2px {color},
+                                 0 0 4px {color},
+                                 0 0 6px {color};">
+                {dots}</span>
+            '''
+            # Стрелка ярче, чем точки
+            arrow_color = "#00ff00" if arrow == "↑" else "#ff0000" if arrow == "↓" else color
+            arrow_html = f'<span style="color:{arrow_color};">{arrow}</span>' if arrow else ""
+
+            self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
 
     def set_value_masters(self, key, value):
         if key in self.labels:
@@ -2123,7 +2267,7 @@ class Info(QWidget):
                 background-color: rgba(70, 70, 70, 150);
                 color: #e2ded3;
                 border: 1px solid #333333;
-                font-size: 12px;
+                font-size: 13px;
                 font-family: Consolas;
                 font-weight: bold;
                 padding: 5px;
@@ -2149,7 +2293,7 @@ class Info(QWidget):
                 background-color: rgba(70, 70, 70, 150);
                 color: #e2ded3;
                 border: 1px solid #333333;
-                font-size: 12px;
+                font-size: 13px;
                 font-family: Consolas;
                 font-weight: bold;
                 padding: 5px;
@@ -2175,7 +2319,7 @@ class Info(QWidget):
                 background-color: rgba(70, 70, 70, 150);
                 color: #e2ded3;
                 border: 1px solid #333333;
-                font-size: 12px;
+                font-size: 13px;
                 font-family: Consolas;
                 font-weight: bold;
                 padding: 5px;
@@ -2200,7 +2344,7 @@ class Info(QWidget):
                 background-color: rgba(70, 70, 70, 150);
                 color: #e2ded3;
                 border: 1px solid #333333;
-                font-size: 12px;
+                font-size: 13px;
                 font-family: Consolas;
                 font-weight: bold;
                 padding: 5px;
