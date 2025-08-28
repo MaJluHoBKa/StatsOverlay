@@ -43,8 +43,8 @@ class Overlay(QWidget):
             font_family = "Consolas"
 
         self.setStyleSheet("""
-            background-color: rgba(30, 30, 30, 153);  /* Темный фон с прозрачностью */
-            border: 1px solid #808080;  /* Темный бордер */
+            background-color: rgba(30, 30, 30, 255);  /* Темный фон с прозрачностью */
+            border: 2px solid #808080;  /* Темный бордер */
             border-radius: 10px;
         """)
 
@@ -614,74 +614,74 @@ class Stats(QWidget):
         numeric_value = None
         value_str = str(value)
 
-        # Преобразуем значение в число, если возможно
-        if isinstance(value, (int, float)):
-            numeric_value = float(value)
-            value_str = f"{value:,.2f}".replace(",", " ") if isinstance(value, float) else f"{int(value):,}".replace(",", " ")
-        elif isinstance(value, str):
-            try:
-                cleaned = value.replace(" ", "").replace(",", "").replace("%", "")
-                if "." in cleaned:
-                    numeric_value = float(cleaned)
-                    value_str = f"{numeric_value:,.2f}".replace(",", " ")
-                else:
-                    numeric_value = int(cleaned)
-                    value_str = f"{numeric_value:,}".replace(",", " ")
-            except ValueError:
-                value_str = value
+        if key in self.labels:
+            # Проверяем, является ли значение числом
+            if isinstance(value, int):
+                numeric_value = float(value)
+                value_str = f"{value:,}".replace(",", " ")
+            elif isinstance(value, float):
+                numeric_value = float(value)
+                value_str = f"{value:,.2f}".replace(",", " ")
+            elif isinstance(value, str):
+                try:
+                    cleaned = value.replace(" ", "").replace(",", "").replace("%", "")
+                    if "." in cleaned:
+                        numeric_value = float(cleaned)
+                        value_str = f"{numeric_value:,.2f}".replace(",", " ")
+                    else:
+                        numeric_value = int(cleaned)
+                        value_str = f"{numeric_value:,}".replace(",", " ")
+                except ValueError:
+                    value_str = value
 
-        # Специальная логика для Победы и Проведено боев
-        if key == "Победы" and value_str != '-':
-            value_str += "%"
-        elif key == "Проведено боев" and value_str != '-':
-            battles = self.api_client.main_stats_structure["battles"]
-            wins = self.api_client.main_stats_structure["wins"]
-            losses = self.api_client.main_stats_structure["losses"]
-            value_str = f"{value_str} [{wins}-{losses}]"
+            # Победы и проведено боев
+            if key == "Победы" and value_str != '-':
+                value_str += "%"
+            elif key == "Проведено боев" and value_str != '-':
+                wins = self.api_client.main_stats_structure["wins"]
+                losses = self.api_client.main_stats_structure["losses"]
+                value_str = f"{value_str} [{wins}-{losses}]"
 
-        # Получаем старые значения
-        prev_numeric = self.old_values.get(key)
-        prev_color = self.old_colors.get(key, "#AAAAAA")
-        prev_arrow = self.old_arrows.get(key, "")
+            # Получаем предыдущее состояние
+            prev_numeric = self.old_values.get(key)
+            prev_color = self.old_colors.get(key, "#AAAAAA")
+            prev_arrow = self.old_arrows.get(key, "")
 
-        # Определяем стрелку и цвет
-        color = prev_color
-        arrow = prev_arrow
+            color = prev_color
+            arrow = prev_arrow
 
-        if numeric_value is not None:
-            if prev_numeric is None or prev_numeric == '-':
-                # Раньше было '-', теперь число → рост
-                color = "#66ff66"  # тусклый зелёный для тире
-                arrow = "↑"
-            elif numeric_value > prev_numeric:
-                color = "#66ff66"
-                arrow = "↑"
-            elif numeric_value < prev_numeric:
-                color = "#ff6666"
-                arrow = "↓"
-            # если равно — оставляем предыдущие цвет и стрелку
+            if numeric_value is not None:
+                if prev_numeric is None or prev_numeric == '-':
+                    color = "#66ff66"  # первый раз — тускло зелёный
+                    arrow = "↑"
+                elif numeric_value > prev_numeric:
+                    color = "#66ff66"
+                    arrow = "↑"
+                elif numeric_value < prev_numeric:
+                    color = "#ff6666"
+                    arrow = "↓"
+                # если равно — оставляем старые
 
-            # Обновляем хранилище
-            self.old_values[key] = numeric_value
-            self.old_colors[key] = color
-            self.old_arrows[key] = arrow
+                # сохраняем
+                self.old_values[key] = numeric_value
+                self.old_colors[key] = color
+                self.old_arrows[key] = arrow
 
-        # Формируем тире с эффектом неона
-        dots = '—' * max(1, max_length - len(key) - len(value_str) - len(arrow))
-        colored_dots = f'''
-            <span style="
-                color:{color};
-                text-shadow: 0 0 2px {color},
-                             0 0 4px {color},
-                             0 0 6px {color};">
-            {dots}</span>
-        '''
+            # Формируем точки
+            dots = '—' * max(1, max_length - len(key) - len(value_str) - len(arrow))
+            colored_dots = f'''
+                <span style="
+                    color:{color};
+                    text-shadow: 0 0 2px {color},
+                                 0 0 4px {color},
+                                 0 0 6px {color};">
+                {dots}</span>
+            '''
+            # стрелка яркая
+            arrow_color = "#00ff00" if arrow == "↑" else "#ff0000" if arrow == "↓" else color
+            arrow_html = f'<span style="color:{arrow_color};">{arrow}</span>' if arrow else ""
 
-        # Стрелка после value, цвет как тире
-        arrow_html = f'<span style="color:{color};">{arrow}</span>' if arrow else ""
-
-        # Обновляем текст QLabel
-        self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
+            self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
     
     def update_stats_periodically(self):
         while True:
@@ -898,7 +898,8 @@ class Rating(QWidget):
                                  0 0 6px {color};">
                 {dots}</span>
             '''
-            arrow_html = f'<span style="color:{color};">{arrow}</span>' if arrow else ""
+            arrow_color = "#00ff00" if arrow == "↑" else "#ff0000" if arrow == "↓" else color
+            arrow_html = f'<span style="color:{arrow_color};">{arrow}</span>' if arrow else ""
 
             self.labels[key].setText(f"{key} {colored_dots} {value_str} {arrow_html}")  
     
@@ -1469,7 +1470,7 @@ class Other(QWidget):
         main_mastery_container.setStyleSheet("""
             border-radius: 10px;
             background-color: rgba(30, 30, 30, 0);
-            border: 1px solid rgba(57, 57, 57, 255);
+            border: 2px solid rgba(57, 57, 57, 255);
         """)
 
         mastery_layout = QVBoxLayout()
@@ -2063,7 +2064,7 @@ class Stream(QWidget):
         else:
             self.stacked_widget.setStyleSheet("""
                 QStackedWidget, QStackedWidget > QWidget {
-                    background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
+                    background-color: rgba(30, 30, 30, 255);  /* Стандартный фон */
                     border: none;
                     border-top-right-radius: 10px;
                     border-bottom-right-radius: 10px;
@@ -2156,7 +2157,7 @@ class Info(QWidget):
         arrow_icon.setStyleSheet("background-color: transparent;")
         title_layout.addWidget(arrow_icon)
         
-        title = QLabel("STATS OVERLAY v1.0.1")
+        title = QLabel("STATS OVERLAY v1.1.0")
         title.setStyleSheet("""
             font-family: Segoe UI;
             font-weight: bold;
@@ -2264,9 +2265,9 @@ class Info(QWidget):
         donate_button.setText("Поддержать автора")
         donate_button.setStyleSheet("""
             QPushButton {
-                background-color: rgba(70, 70, 70, 150);
+                background-color: rgba(49, 17, 85, 150);
                 color: #e2ded3;
-                border: 1px solid #333333;
+                border: 1px solid #220033;
                 font-size: 13px;
                 font-family: Consolas;
                 font-weight: bold;
@@ -2629,7 +2630,7 @@ class ActivationWindow(QWidget):
         if HWIDActivator.activate(key):
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 8, 30, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 9, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 # Если текущая дата превышает лимит, блокируем доступ
@@ -2711,7 +2712,7 @@ class MainApp:
         self.overlay1 = None
         self.overlay2 = None
 
-        self.expiration_date = datetime(2025, 8, 30, 23, 59, 59)
+        self.expiration_date = datetime(2025, 9, 30, 23, 59, 59)
         self.start_expiration_timer()
         
         # Проверяем активацию
@@ -2720,7 +2721,7 @@ class MainApp:
         else:
             # Проверяем текущую дату
             current_date = datetime.now()
-            expiration_date = datetime(2025, 8, 30, 23, 59, 59)  # Установленная дата и время
+            expiration_date = datetime(2025, 9, 30, 23, 59, 59)  # Установленная дата и время
 
             if current_date > expiration_date:
                 QApplication.quit()
