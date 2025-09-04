@@ -87,7 +87,12 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "cinttypes": "cpp",
+        "coroutine": "cpp",
+        "resumable": "cpp",
+        "future": "cpp",
+        "queue": "cpp"
     },
     "cmake.sourceDirectory": "D:/Games/MOD/WoT Blitz/Stats/vcpkg-master/ports/cello"
 }

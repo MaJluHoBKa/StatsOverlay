@@ -127,6 +127,9 @@ class APIClient:
             "rating": [],
         }
 
+        self.players_stats = {}
+        self.player_tanks = {}
+
     def reset_stats(self):
         self.main_stats_structure = {
             "credits": 0,
@@ -359,12 +362,179 @@ class APIClient:
             print("Ошибка: Необходимо авторизоваться.")
             return False
 
+    def get_players(self, unique_nicks, tank_ids, team):
+        if self.is_auth:
+            url = "https://papi.tanksblitz.ru/wotb/account/list/"
+            params = {
+                "application_id": self.application_id,
+                "search": ",".join(unique_nicks),
+                "type" : "exact",
+                "limit": "100"
+            }
+            try:
+                response = requests.get(url, params=params)
+                response.raise_for_status()
+                data = response.json()
+                players_id = []
+
+                if "data" in data and isinstance(data["data"], list):
+                    for player in data["data"]:
+                        if "account_id" in player:
+                            players_id.append(str(player["account_id"]))                          
+                else:
+                    print("Ошибка: данные не найдены в ответе API.")
+                    return False
+                
+                url = "https://papi.tanksblitz.ru/wotb/account/info/"
+                params = {
+                    "application_id": self.application_id,
+                    "account_id": ",".join(players_id),
+                    "fields" : "statistics.all.battles,statistics.all.wins,statistics.all.damage_dealt,nickname",
+                }   
+                
+                try:
+                    response = requests.get(url, params=params)
+                    response.raise_for_status()
+                    data = response.json()
+
+                    if "data" in data and isinstance(data["data"], dict):
+                        ids = 0
+                        # создаем соответствие nickname -> tank_id
+                        nick_to_tank = {nick: tid for nick, tid in zip(unique_nicks, tank_ids)}
+                        for account_id, info in data["data"].items():
+                            stats = info.get("statistics", {}).get("all", {})
+                            battles = stats.get("battles", 0)
+                            wins = stats.get("wins", 0)
+                            damage = stats.get("damage_dealt", 0)
+                            nickname = info.get("nickname")
+                            tank_id = nick_to_tank.get(nickname)
+
+
+                            avg_damage = damage // battles if battles > 0 else 0
+                            winrate = round((wins / battles * 100), 2) if battles > 0 else 0.0
+
+                            url = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/"
+                            params = {
+                                "application_id": self.application_id,
+                                "fields" : "tier,name",
+                                "tank_id": tank_id
+                            } 
+
+                            try:
+                                response = requests.get(url, params=params)
+                                response.raise_for_status()
+                                data = response.json()
+                                
+                                tank_tier = "0"
+                                tank_name = "Unknown"
+
+                                if "data" in data and isinstance(data["data"], dict):
+                                    for tid, tank_info in data["data"].items():
+                                        if tank_info:
+                                            tank_tier = str(tank_info.get("tier", "0"))
+                                            tank_name = tank_info.get("name", "Unknown")
+                                        elif tank_id in self.tech_info_dataset:
+                                            tank_tier = str(self.tech_info_dataset[tank_id].get("tier", "0"))
+                                            tank_name = self.tech_info_dataset[tank_id].get("name", "Unknown")
+
+                                        # fallback из self.tech_info_dataset, если имя не найдено
+                                        if not tank_name and tank_id in self.tech_info_dataset:
+                                            tank_name = self.tech_info_dataset[tank_id].get("name", "Unknown")
+                                            tank_tier = str(self.tech_info_dataset[tank_id].get("tier", "0"))
+
+                                        team_index = None
+                                        if nickname in unique_nicks:
+                                            team_index = unique_nicks.index(nickname)
+
+                                        self.players_stats[account_id] = {
+                                            "nickname": nickname,
+                                            "battles": battles,
+                                            "avg_damage": avg_damage,
+                                            "winrate": winrate,
+                                            "tank_tier": tank_tier,
+                                            "tank_name": tank_name,
+                                            "team": team[team_index] if team_index is not None else "0"  # используем массив team
+                                        }
+                                    ids += 1
+
+                            except requests.exceptions.RequestException as e:
+                                print(f"Ошибка при получении данных: {e}")
+                                return False  
+                        
+                        allies = []
+                        enemies = []
+
+                        player_team = None
+                        for acc_id, stats in self.players_stats.items():
+                            if stats.get("nickname") == self.nickname:
+                                player_team = stats.get("team")
+                                break
+                            
+                        # Если ник не найден, считаем союзников командой 2
+                        if player_team is None:
+                            player_team = 2
+
+                        # Разбиваем на союзников и противников
+                        for acc_id, stats in self.players_stats.items():
+                            if stats.get("team") == player_team:
+                                allies.append((acc_id, stats))
+                            else:
+                                enemies.append((acc_id, stats))
+
+                        allies_indexed = [(i, acc_id, stats) for i, (acc_id, stats) in enumerate(allies)]
+                        enemies_indexed = [(i, acc_id, stats) for i, (acc_id, stats) in enumerate(enemies)]
+                        
+                        allies_sorted = sorted(
+                            allies_indexed,
+                            key=lambda x: (
+                                int(x[2].get("tank_tier", 0)),            # тир
+                                x[2].get("tank_name", "").strip().lower(), # имя танка
+                                x[0]                                      # исходный порядок
+                            )
+                        )
+                        
+                        enemies_sorted = sorted(
+                            enemies_indexed,
+                            key=lambda x: (
+                                int(x[2].get("tank_tier", 0)),
+                                x[2].get("tank_name", "").strip().lower(),
+                                x[0]
+                            )
+                        )
+                        
+                        # возвращаем к обычной форме
+                        allies_sorted = [(acc_id, stats) for _, acc_id, stats in allies_sorted]
+                        enemies_sorted = [(acc_id, stats) for _, acc_id, stats in enemies_sorted]
+
+                        # собираем обратно в словарь в правильном порядке
+                        from collections import OrderedDict
+                        self.players_stats = OrderedDict(allies_sorted + enemies_sorted)
+
+                        return True  
+                                    
+                    else:
+                        print("Ошибка: данные не найдены в ответе API.")
+                        return False  
+
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Ошибка при получении данных: {e}")
+                    return False
+
+            except requests.exceptions.RequestException as e:
+                print(f"Ошибка при получении данных: {e}")
+                return False
+        else:
+            print("Ошибка: Необходимо авторизоваться.")
+            return False
+
+
     def set_tech_info(self, id):
         if self.is_auth:
             url = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/"
             params = {
                 "application_id": self.application_id,
-                "fields": "name,tank_id",
+                "fields": "name,tank_id,tier",
                 "tank_id": id,
             }
             try:
@@ -379,12 +549,14 @@ class APIClient:
                             if tank_info is None:
                                 self.tech_info_dataset[int(tank_id)] = {
                                     "name": tank_id,
-                                    "tank_id": tank_id
+                                    "tank_id": tank_id,
+                                    "tier": 0,
                                 }
                             else:
                                 self.tech_info_dataset[int(tank_id)] = {
                                     "name": tank_info.get("name"),
-                                    "tank_id": tank_info.get("tank_id")
+                                    "tank_id": tank_info.get("tank_id"),
+                                    "tier": tank_info.get("tier")
                                 }
                             # if tank_info is None:
                             #     print(f"Танк ID {tank_id}: данные отсутствуют, пропускаем...")
@@ -417,11 +589,13 @@ class APIClient:
         for tank_info in tanks_json.get("tanks", []):
             tank_id = tank_info.get("id")
             tank_name = tank_info.get("name")
+            tier = tank_info.get("tier")
 
             if tank_id is not None and tank_name:
                 self.tech_info_dataset[tank_id] = {
                     "name": tank_name,
-                    "tank_id": tank_id
+                    "tank_id": tank_id,
+                    "tier": tier
                 }
             print(f"Танк ID: {tank_id}, Имя: {self.tech_info_dataset[tank_id]['name']}")
 

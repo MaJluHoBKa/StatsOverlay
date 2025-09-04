@@ -3,18 +3,22 @@ import os
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, 
                             QSizePolicy, QPushButton, QStackedWidget, QGridLayout, 
-                            QScrollArea, QLineEdit, QMessageBox, QLayout, QMenu, QAction)
+                            QScrollArea, QLineEdit, QMessageBox, QLayout, QMenu, QAction, QCheckBox)
 from PyQt5.QtCore import QPropertyAnimation, QEasingCurve, QRect, Qt, QSize, QTimer, QUrl, pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon, QFontDatabase
 
 from PyQt5.QtGui import QDesktopServices
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from parse_replay import ReplayParser
 from server import APIClient
 from datetime import datetime, timedelta
 import threading
 import time
+import ctypes
+import json
 from HWIDActivator import HWIDActivator
+import keyboard
 
 def resource_path(relative_path):
         import sys, os
@@ -58,9 +62,19 @@ class Overlay(QWidget):
             icon_label.setAlignment(Qt.AlignCenter)
             layout.addWidget(icon_label)
 
+        keyboard.add_hotkey('ctrl+=', lambda: QTimer.singleShot(0, self.hide_overlay))
+
         self.setLayout(layout)
         self.setMouseTracking(True)
         self._drag_active = False
+
+    def hide_overlay(self):
+        if self.overlay_info:
+            if self.overlay_info_visible:
+                self.overlay_info.animate_hide()
+            else:
+                self.overlay_info.animate_show()
+            self.overlay_info_visible = not self.overlay_info_visible
 
     def mousePressEvent(self, event):
             if event.button() == Qt.RightButton:
@@ -121,6 +135,17 @@ class Overlay_info(QWidget):
     def __init__(self, api_client, offset_x=0):
         super().__init__()
         self.api_client = api_client
+        self.current_index_page = 7
+
+        keyboard.add_hotkey(
+            'ctrl+up',
+            lambda: QTimer.singleShot(0, self.next_page)
+        )
+
+        keyboard.add_hotkey(
+            'ctrl+down',
+            lambda: QTimer.singleShot(0, self.prev_page)
+        )
 
         self.api_client.load_stats_from_file()
         if self.api_client.is_auth:
@@ -130,7 +155,7 @@ class Overlay_info(QWidget):
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
         self.full_height = 200
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(250, 200)  # Начальный размер
 
@@ -173,6 +198,7 @@ class Overlay_info(QWidget):
         self.tanks_page = TanksStat(api_client=self.api_client)
         self.graphics_page = Graphics(api_client=self.api_client)
         self.other_page = Other(api_client=api_client, stream_page = self.stream_page)
+        self.players_page = PlayersStats(api_client=api_client)
         self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page, stream_page = self.stream_page)
 
         self.stacked_widget.addWidget(self.info_page)
@@ -181,20 +207,23 @@ class Overlay_info(QWidget):
         self.stacked_widget.addWidget(self.stream_page)
         self.stacked_widget.setCurrentIndex(1)
 
-        self.stacked_widget.addWidget(self.other_page)
+        self.stacked_widget.addWidget(self.players_page)
         self.stacked_widget.setCurrentIndex(2)
 
-        self.stacked_widget.addWidget(self.graphics_page)
+        self.stacked_widget.addWidget(self.other_page)
         self.stacked_widget.setCurrentIndex(3)
 
-        self.stacked_widget.addWidget(self.tanks_page)
+        self.stacked_widget.addWidget(self.graphics_page)
         self.stacked_widget.setCurrentIndex(4)
 
-        self.stacked_widget.addWidget(self.rating_page)
+        self.stacked_widget.addWidget(self.tanks_page)
         self.stacked_widget.setCurrentIndex(5)
 
-        self.stacked_widget.addWidget(self.stats_page)
+        self.stacked_widget.addWidget(self.rating_page)
         self.stacked_widget.setCurrentIndex(6)
+
+        self.stacked_widget.addWidget(self.stats_page)
+        self.stacked_widget.setCurrentIndex(7)
 
         main_layout = QHBoxLayout()
         main_layout.setSpacing(0)
@@ -219,7 +248,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.stats_button.clicked.connect(lambda: self.switch_page(6))
+        self.stats_button.clicked.connect(lambda: self.switch_page(7))
 
         self.rating_button = QPushButton(self)
         self.rating_button.setIcon(QIcon(QPixmap(resource_path('src/rating_icon.webp'))))
@@ -240,7 +269,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.rating_button.clicked.connect(lambda: self.switch_page(5))
+        self.rating_button.clicked.connect(lambda: self.switch_page(6))
 
         self.tank_button = QPushButton(self)
         self.tank_button.setIcon(QIcon(QPixmap(resource_path('src/tanks_icon.webp'))))
@@ -261,7 +290,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.tank_button.clicked.connect(lambda: self.switch_page(4))
+        self.tank_button.clicked.connect(lambda: self.switch_page(5))
 
         self.graphics_button = QPushButton(self)
         self.graphics_button.setIcon(QIcon(QPixmap(resource_path('src/graphics_icon.png'))))
@@ -282,7 +311,7 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.graphics_button.clicked.connect(lambda: self.switch_page(3))
+        self.graphics_button.clicked.connect(lambda: self.switch_page(4))
 
         self.other_button = QPushButton(self)
         self.other_button.setIcon(QIcon(QPixmap(resource_path('src/other_icon.png'))))
@@ -303,7 +332,28 @@ class Overlay_info(QWidget):
                 background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
             }
         """)
-        self.other_button.clicked.connect(lambda: self.switch_page(2))
+        self.other_button.clicked.connect(lambda: self.switch_page(3))
+        
+        self.players_button = QPushButton(self)
+        self.players_button.setIcon(QIcon(QPixmap(resource_path('src/player_icon.png'))))
+        self.players_button.setIconSize(QSize(24, 24))
+        self.players_button.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(30, 30, 30, 0);
+                color: #e2ded3;
+                font-size: 12px;
+                font-family: Consolas;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            QPushButton:hover {
+                background-color: rgba(50, 50, 50, 100); /* Цвет при наведении */
+            }
+            QPushButton:pressed {
+                background-color: rgba(70, 70, 70, 150); /* Цвет при нажатии */
+            }
+        """)
+        self.players_button.clicked.connect(lambda: self.switch_page(2))
 
         self.stream_button = QPushButton(self)
         self.stream_button.setIcon(QIcon(QPixmap(resource_path('src/stream_icon.png'))))
@@ -373,6 +423,7 @@ class Overlay_info(QWidget):
         v_config_layout.addWidget(self.tank_button)
         v_config_layout.addWidget(self.graphics_button)
         v_config_layout.addWidget(self.other_button)
+        v_config_layout.addWidget(self.players_button)
         v_config_layout.addWidget(self.stream_button)
         v_config_layout.addWidget(self.info_button)
         v_config_layout.addWidget(self.exit_button)
@@ -386,6 +437,7 @@ class Overlay_info(QWidget):
         self.graphics_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.exit_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.info_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.players_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.other_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         self.stream_button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
 
@@ -393,34 +445,42 @@ class Overlay_info(QWidget):
 
         main_layout.addWidget(self.stacked_widget)
         self.setLayout(main_layout)
-        self.switch_page(6)
+        self.switch_page(7)
 
     def switch_page(self, index):
         self.stacked_widget.setCurrentIndex(index)
         self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
-        # # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
-        # if index == 1:  # Если текущая вкладка — Stream
-        #     self.stacked_widget.setStyleSheet("""
-        #         QStackedWidget, QStackedWidget > QWidget {
-        #             background-color: rgba(30, 30, 30, 0);  /* Полупрозрачный фон */
-        #             border: none;
-        #             border-top-right-radius: 10px;
-        #             border-bottom-right-radius: 10px;
-        #         }
-        #     """)
-        # else:
-        #     self.stacked_widget.setStyleSheet("""
-        #         QStackedWidget, QStackedWidget > QWidget {
-        #             background-color: rgba(30, 30, 30, 220);  /* Стандартный фон */
-        #             border: none;
-        #             border-top-right-radius: 10px;
-        #             border-bottom-right-radius: 10px;
-        #         }
-        #     """)
+        # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
+        if index == 2:  # Если текущая вкладка — Stream
+            self.setFixedWidth(500)
+        else:
+            self.setFixedWidth(375)
 
         # Изменяем размер окна только по ширине
+        self.current_index_page = index
         if self.isVisible():
             self.resize(self.width(), self.full_height)
+
+    def switch_page_hot(self, index):
+        if index >= 0 and index <= 7:
+            self.current_index_page = index
+            self.stacked_widget.setCurrentIndex(index)
+            self.full_height = self.stacked_widget.currentWidget().sizeHint().height()
+            # Устанавливаем прозрачность фона QStackedWidget в зависимости от индекса
+            if index == 2:  # Если текущая вкладка — Stream
+                self.setFixedWidth(500)
+            else:
+                self.setFixedWidth(375)
+
+            # Изменяем размер окна только по ширине
+            if self.isVisible():
+                self.resize(self.width(), self.full_height)
+
+    def next_page(self):
+        self.switch_page_hot(self.current_index_page + 1)
+
+    def prev_page(self):
+        self.switch_page_hot(self.current_index_page - 1)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -1443,6 +1503,624 @@ class Graphics(QWidget):
             widget.draw()
         else:
             print(f"График для ключа '{key}' не найден.")
+
+class PlayersStats(QWidget):   
+    def __init__(self, api_client):
+        super().__init__()
+        self.api_client = api_client
+        self.isOn = False
+        self.isPlayers = False
+        self.buttons = []
+        self.stacked_cells = []
+        self.COLUMN_KEYS = ["player", "tank", "battles", "wins", "damage"]
+        self.COLUMN_WIDTHS = {
+            'player': 110,
+            'tank': 110,
+            'battles': 60,
+            'wins': 60,
+            'damage': 60
+        }
+        self.COLUMN_WIDTHS_GRID = {
+            'player': 110,
+            'tank': 110,
+            'battles': 60,
+            'wins': 60,
+            'damage': 60
+        }
+        self.BASE_STYLE = """
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            background-color: rgba(30, 30, 30, 255);
+        """
+        self.current_page = 0
+        self.setStyleSheet("background-color: rgba(30, 30, 30, 255)")
+        self.setup_ui()
+
+        self.updating_thread = threading.Thread(target=self.update_players_periodically)
+        self.updating_thread.daemon = True
+        self.updating_thread.start()
+
+        keyboard.add_hotkey(
+            'ctrl+right',
+            lambda: QTimer.singleShot(0, self.next_page)
+        )
+
+        keyboard.add_hotkey(
+            'ctrl+left',
+            lambda: QTimer.singleShot(0, self.prev_page)
+        )
+
+    
+    def setup_ui(self):
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(5)
+        main_layout.setContentsMargins(10, 2, 10, 2)
+        main_layout.setAlignment(Qt.AlignTop)
+
+        title_layout = QHBoxLayout()
+        title_layout.setSpacing(10)
+        title_layout.setContentsMargins(10, 5, 10, 2)
+        
+        arrow_icon = QLabel()
+        arrow_icon.setPixmap(QPixmap(resource_path('src/arrow_icon.webp')))
+        arrow_icon.setStyleSheet("background-color: transparent;")
+        title_layout.addWidget(arrow_icon)
+        
+        title = QLabel("Статистика игроков")
+        title.setStyleSheet("""
+            font-family: Segoe UI;
+            font-weight: bold;
+            font-size: 14px;
+            color: #e2ded3;
+            background-color: transparent;
+        """)
+        title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)  
+        title.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        title_layout.addWidget(title)
+
+        self.switch = QPushButton()
+        self.switch.setText("Выкл")
+        self.switch.setFixedSize(50, 25)
+
+        # Стиль для переключателя
+        self.switch.setStyleSheet("""
+            QPushButton {
+                background-color: #383838;
+                color: #e2ded3;
+                border: 1px solid #220033;
+                font-size: 13px;
+                font-family: Consolas;
+                font-weight: bold;
+                padding: 5px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: rgba(90, 90, 90, 200);
+                color: #ffffff;
+            }
+            QPushButton:pressed {
+                background-color: rgba(50, 50, 50, 200);
+                color: #cccccc;
+            }
+        """)
+        self.switch.clicked.connect(lambda: self.switch_toggled())
+        title_layout.addWidget(self.switch)
+
+        main_layout.addLayout(title_layout)
+
+        header_widget = QWidget()
+        header_widget.setStyleSheet("""
+            background-color: #383838;
+            border-radius: 3px;
+        """)
+        header_widget.setFixedHeight(25)
+        header_layout = QHBoxLayout(header_widget)
+        header_layout.setSpacing(0)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+
+        labels = ["Союзники", "Противники"]
+
+        for index, (col_type, icon_path) in enumerate([
+            ('allies', 'src/win_icon.webp'),
+            ('enemies', 'src/damage_icon.webp'),
+        ]):
+            button = QPushButton()
+            button.setText(labels[index])
+            button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #383838;
+                    font-family: Segoe UI;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #e2ded3;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+            button.setCursor(Qt.PointingHandCursor)
+            button.clicked.connect(lambda checked, i=index: self.switch_type(i))
+            self.buttons.append(button)
+            header_layout.addWidget(button)
+
+        main_layout.addWidget(header_widget)
+
+        header_widget = QWidget()
+        header_widget.setStyleSheet("""
+            background-color: #282828;
+            border-radius: 3px;
+        """)
+        header_widget.setFixedHeight(25)
+        header_layout = QHBoxLayout(header_widget)
+        header_layout.setSpacing(0)
+        header_layout.setContentsMargins(0, 0, 0, 0)
+
+        for col_type, icon_path in [('player', 'src/player_icon.png'),
+                                ('tank', 'src/tanks_icon.webp'),
+                                ('battles', 'src/battles_icon.webp'),
+                                ('wins', 'src/win_icon.webp'),
+                                ('damage', 'src/damage_icon.webp')]:
+            icon = QLabel()
+            icon.setPixmap(QPixmap(resource_path(icon_path)))
+            icon.setStyleSheet("""
+                background-color: transparent;
+            """)
+            icon.setFixedWidth(self.COLUMN_WIDTHS[col_type])
+            icon.setAlignment(Qt.AlignCenter)
+            header_layout.addWidget(icon)
+
+        main_layout.addWidget(header_widget)
+
+        self.stacked_type = QStackedWidget()
+        self.stacked_type.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        main_layout.addWidget(self.stacked_type)
+
+        for type_index in range(2):
+            type_cells = []
+            widget = QWidget()
+            widget.setStyleSheet("background-color: rgba(30, 30, 30, 255);")
+            grid = QGridLayout(widget)
+            grid.setHorizontalSpacing(0)
+            grid.setVerticalSpacing(1)
+            grid.setContentsMargins(0, 0, 0, 0)
+
+            for row in range(8):
+                row_cells = []
+                for col in range(5):
+                    key = self.COLUMN_KEYS[col]
+                    label = QLabel()
+                    label.setFixedWidth(self.COLUMN_WIDTHS_GRID[key])
+
+                    label.setStyleSheet(self.BASE_STYLE)
+                    label.setAlignment(Qt.AlignCenter)
+                    label.setContentsMargins(3, 3, 3, 3)
+                    grid.addWidget(label, row, col)
+                    row_cells.append(label)
+
+                type_cells.append(row_cells)
+
+            self.stacked_cells.append(type_cells)
+
+            self.stacked_type.addWidget(widget)
+
+        self.stacked_type.setCurrentIndex(0)
+
+    def switch_toggled(self):
+        if self.isOn:
+            self.api_client.players_stats = {}
+            self.switch.setText("Выкл")
+            self.switch.setStyleSheet("""
+                QPushButton {
+                    background-color: #383838;
+                    color: #e2ded3;
+                    border: 1px solid #220033;
+                    font-size: 13px;
+                    font-family: Consolas;
+                    font-weight: bold;
+                    padding: 5px;
+                    border-radius: 5px;
+                }
+                QPushButton:hover {
+                    background-color: rgba(90, 90, 90, 200);
+                    color: #ffffff;
+                }
+                QPushButton:pressed {
+                    background-color: rgba(50, 50, 50, 200);
+                    color: #cccccc;
+                }
+            """)
+            self.isOn = False
+        else:
+            self.switch.setText("Вкл")
+            self.switch.setStyleSheet("""
+                QPushButton {
+                    background-color: #4cd964; /* основной цвет */
+                    color: #383838;
+                    border: 1px solid #220033;
+                    font-size: 13px;
+                    font-family: Consolas;
+                    font-weight: bold;
+                    padding: 5px;
+                    border-radius: 5px;
+                }
+                QPushButton:hover {
+                    background-color: #7be68f; /* светло-салатовый при наведении */
+                    color: #383838;
+                }
+
+                QPushButton:pressed {
+                    background-color: #3cbf5f; /* чуть тёмнее при нажатии */
+                    color: #383838;
+                }
+            """)
+            self.isOn = True
+
+    def switch_type(self, index):
+        if index == 0:
+            self.buttons[index].setStyleSheet("""
+                QPushButton {
+                    background-color: #484848;
+                    font-family: Segoe UI;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #e2ded3;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+            self.buttons[index + 1].setStyleSheet("""
+                QPushButton {
+                    background-color: #383838;
+                    font-family: Segoe UI;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #e2ded3;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+        else:
+            self.buttons[index].setStyleSheet("""
+                QPushButton {
+                    background-color: #484848;
+                    font-family: Segoe UI;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #e2ded3;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+            self.buttons[index - 1].setStyleSheet("""
+                QPushButton {
+                    background-color: #383838;
+                    font-family: Segoe UI;
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #e2ded3;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                QPushButton:pressed {
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            """)
+        self.stacked_type.setCurrentIndex(index)
+
+
+    def switch_type_hot(self, index):
+        self.current_page = index
+        if index >= 0 and index <= 1:
+            if index == 0:
+                self.buttons[index].setStyleSheet("""
+                    QPushButton {
+                        background-color: #484848;
+                        font-family: Segoe UI;
+                        font-weight: bold;
+                        font-size: 14px;
+                        color: #e2ded3;
+                        border: none;
+                    }
+                    QPushButton:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                    QPushButton:pressed {
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
+                """)
+                self.buttons[index + 1].setStyleSheet("""
+                    QPushButton {
+                        background-color: #383838;
+                        font-family: Segoe UI;
+                        font-weight: bold;
+                        font-size: 14px;
+                        color: #e2ded3;
+                        border: none;
+                    }
+                    QPushButton:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                    QPushButton:pressed {
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
+                """)
+            else:
+                self.buttons[index].setStyleSheet("""
+                    QPushButton {
+                        background-color: #484848;
+                        font-family: Segoe UI;
+                        font-weight: bold;
+                        font-size: 14px;
+                        color: #e2ded3;
+                        border: none;
+                    }
+                    QPushButton:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                    QPushButton:pressed {
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
+                """)
+                self.buttons[index - 1].setStyleSheet("""
+                    QPushButton {
+                        background-color: #383838;
+                        font-family: Segoe UI;
+                        font-weight: bold;
+                        font-size: 14px;
+                        color: #e2ded3;
+                        border: none;
+                    }
+                    QPushButton:hover {
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                    QPushButton:pressed {
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
+                """)
+            self.stacked_type.setCurrentIndex(index)
+
+    #функия переодического добавления точек в график и в api_client.graphics_value
+    def update_players_periodically(self):
+        import re
+        while True:
+            if self.isOn:
+                documents = os.path.join(os.path.expanduser("~"), "Documents")
+                blits_path = os.path.join(documents, "TanksBlitz")
+                replay_path = os.path.join(blits_path, "replays")
+
+                target_folder = None
+                if os.path.exists(replay_path) and os.path.isdir(replay_path):
+                    for name in os.listdir(replay_path):
+                        full_path = os.path.join(replay_path, name)
+                        if os.path.isdir(full_path) and name.startswith("recording"):
+                            target_folder = full_path
+                            break
+                
+                if target_folder is None:
+                    self.api_client.players_stats = {}
+                    self.clear_stacked_cells()
+                    self.isPlayers = False
+                        
+                if not self.isPlayers:
+
+                    if target_folder:
+                        time.sleep(10)
+                        path = os.path.join(target_folder, "data.replay")
+                        if os.path.exists(path):
+
+                            parser = ReplayParser(path)
+                            unique_players = parser.parse_replay()
+
+                            print(unique_players)
+
+                            unique_nicks = []
+                            tank_ids = []
+                            team = []
+
+                            for p in unique_players:
+                                unique_nicks.append(p['nickname'])
+                                tank_ids.append(p['tank_id'])
+                                team.append(p['team'])
+
+                            if self.api_client.get_players(unique_nicks, tank_ids, team):
+                                self.update_stacked_cells(unique_nicks)
+                                allies = list(self.api_client.players_stats.values())[:7]
+                                enemies = list(self.api_client.players_stats.values())[7:]
+                                if allies:
+                                    self.insert_avg_row('allies')
+
+                                if enemies:
+                                    self.insert_avg_row('enemies')
+                                self.isPlayers = True
+
+                    else:
+                        print("Файл data.replay не найден в", target_folder)
+                else:
+                    print("Подходящей папки не найдено, пропускаем")
+
+            time.sleep(5)
+
+    def update_stacked_cells(self, unique_nicks):
+        if not hasattr(self, "stacked_cells") or not hasattr(self.api_client, "players_stats"):
+            return
+
+        account_ids_ordered = [acc_id for acc_id, stats in self.api_client.players_stats.items()]
+
+        for type_index, widget_cells in enumerate(self.stacked_cells):
+            if type_index == 0:
+                account_ids_slice = account_ids_ordered[0:7]  # союзники
+            else:
+                account_ids_slice = account_ids_ordered[7:14]  # противники
+
+            for row, row_cells in enumerate(widget_cells):
+                if row >= len(account_ids_slice):
+                    continue
+                account_id = account_ids_slice[row]
+                stats = self.api_client.players_stats[account_id]
+
+                is_avg_row = stats.get("tank_name") == "AVG"
+
+                for col, label in enumerate(row_cells):
+                    key = self.COLUMN_KEYS[col]
+
+                    # Определяем текст
+                    if key == "player":
+                        text = str(stats["nickname"])
+                        if len(text) > 11:
+                            text = text[:11] + "..."
+                        label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+                    elif key == "tank":
+                        text = str(stats["tank_name"])
+                        if len(text) > 12:
+                            text = text[:12] + "..."
+                        label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+                    elif key == "battles":
+                        text = str(stats["battles"])
+                    elif key == "wins":
+                        try:
+                            text = f"{float(stats['winrate']):.2f}%" if stats.get("winrate") is not None else ""
+                        except ValueError:
+                            text = str(stats.get("winrate", ""))
+                    elif key == "damage":
+                        text = str(stats["avg_damage"])
+                    else:
+                        text = ""
+
+                    label.setText(text)
+
+                    # === Стилизация ===
+                    style = ""
+
+                    if is_avg_row:
+                        # Спец стиль для строки AVG
+                        style = "color: #ffd166;"
+                    elif key == "wins":
+                        try:
+                            win_percent = float(text.strip('%'))
+                            if win_percent >= 70.00:
+                                color = "#9989e6"
+                            elif 60.00 <= win_percent < 70.00:
+                                color = "#72d1ff"
+                            elif 50.00 <= win_percent < 60.00:
+                                color = "#a8e689"
+                            else:
+                                color = "#e2ded3"
+                            style += f"color: {color}; font-weight: bold;"
+                        except:
+                            pass
+                    elif key == "player" and str(stats["nickname"]) == self.api_client.nickname:
+                        style += "color: #a8e689;"
+                    else:
+                        style += "color: #e2ded3;"
+
+                    # Сохраняем фон и радиус, не трогая остальное
+
+                    label.setAutoFillBackground(True)
+                    label.setStyleSheet(self.BASE_STYLE + style)
+        self.update()
+
+    def insert_avg_row(self, team: str):
+        """
+        Вставляет строку AVG в 8-ю позицию для указанной команды,
+        просто считая среднее по колонкам из существующих 7 строк.
+        """
+        if team == 'allies':
+            type_index = 0
+        else:
+            type_index = 1
+
+        # собираем данные из первых 7 строк
+        rows = self.stacked_cells[type_index][:7]
+
+        avg_values = {}
+        for col_index, key in enumerate(self.COLUMN_KEYS):
+            values = []
+            for row_cells in rows:
+                text = row_cells[col_index].text()
+                if key in ["battles", "damage"]:
+                    try:
+                        values.append(int(text))
+                    except:
+                        pass
+                elif key == "wins":
+                    try:
+                        values.append(float(text.strip('%')))
+                    except:
+                        pass
+                # для player и tank оставим пустое или AVG
+            if values:
+                avg_values[key] = sum(values) / len(values)
+            else:
+                avg_values[key] = ""  # для текста
+
+        # вставляем в 8-ю строку
+        row_cells = self.stacked_cells[type_index][7]
+        for col_index, key in enumerate(self.COLUMN_KEYS):
+            label = row_cells[col_index]
+            if key == "player":
+                text = ""
+                label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+            elif key == "tank":
+                text = "AVG"
+                label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+            elif key == "battles":
+                text = str(int(avg_values[key])) if avg_values[key] != "" else ""
+            elif key == "wins":
+                text = f"{avg_values[key]:.2f}%" if avg_values[key] != "" else ""
+            elif key == "damage":
+                text = str(int(avg_values[key])) if avg_values[key] != "" else ""
+            label.setText(text)
+
+            # стиль для AVG
+            style = "color: #ffd166;"
+
+            label.setStyleSheet(self.BASE_STYLE + style)
+
+        self.update()
+
+    
+    def next_page(self):
+        self.switch_type_hot(self.current_page + 1)
+
+    def prev_page(self):
+        self.switch_type_hot(self.current_page - 1)
+
+    def clear_stacked_cells(self):
+        """
+        Очищает все значения в self.stacked_cells, устанавливая текст "" для каждой ячейки.
+        """
+        if not hasattr(self, "stacked_cells"):
+            return
+
+        for type_cells in self.stacked_cells:
+            for row_cells in type_cells:
+                for label in row_cells:
+                    label.setText("")
+
+        self.update()
 
 class Other(QWidget):   
     def __init__(self, api_client, stream_page):

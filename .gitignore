@@ -1,1 +1,9 @@
 vcpkg-master/
+__pycache__/
+build/
+replay_parser/
+test_replay/
+venv/
+.vscode/
+dist/
+classes/
