@@ -1,35 +1,17 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: cl.exe сборка активного файла",
-            "command": "cl.exe",
-            "args": [
-                "/EHsc",
-                "test.cpp",
-                "/I",
-                "D:\\Games\\MOD\\WoT Blitz\\Stats\\vcpkg-master\\installed\\x64-windows\\include",
-                "/link",
-                "/LIBPATH:D:\\Games\\MOD\\WoT Blitz\\Stats\\vcpkg-master\\installed\\x64-windows\\lib",
-                "libcurl.lib",
-                "Shell32.lib",
-                "ws2_32.lib",
-                "wldap32.lib",
-                "crypt32.lib",
-                "normaliz.lib"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$msCompile"
-            ],
+            "label": "CMake Build",
+            "type": "shell",
+            "command": "cmake --build build",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Задача создана отладчиком."
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
-    ],
-    "version": "2.0.0"
+    ]
 }

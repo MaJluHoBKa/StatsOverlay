@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icons/icon.ico</file>
+        <file>resources/icons/stats_icon.png</file>
+        <file>resources/icons/rating_icon.png</file>
+        <file>resources/icons/tanks_icon.png</file>
+        <file>resources/icons/other_icon.png</file>
+        <file>resources/icons/graphics_icon.png</file>
+        <file>resources/icons/stream_icon.png</file>
+        <file>resources/icons/player_icon.png</file>
+        <file>resources/icons/info_icon.png</file>
+        <file>resources/icons/exit_icon.png</file>
+    </qresource>
+</RCC>

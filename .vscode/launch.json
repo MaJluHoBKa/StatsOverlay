@@ -2,15 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C++ Launch (Windows)",
-            "type": "cppvsdbg",
+            "name": "Debug Qt Overlay",
+            "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\test.exe",
+            "program": "${workspaceFolder}/build/MyOverlayApp.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "console": "externalTerminal"
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "C:/Qt/Tools/mingw1310_64/bin;${env:PATH}"
+                }
+            ],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/Qt/Tools/mingw1310_64/bin/gdb.exe",
+            "preLaunchTask": "CMake Build"
         }
     ]
 }
