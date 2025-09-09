@@ -487,7 +487,7 @@ class APIClient:
                         allies_sorted = sorted(
                             allies_indexed,
                             key=lambda x: (
-                                int(x[2].get("tank_tier", 0)),            # тир
+                                -int(x[2].get("tank_tier", 0)),            # тир
                                 x[2].get("tank_name", "").strip().lower(), # имя танка
                                 x[0]                                      # исходный порядок
                             )
@@ -496,7 +496,7 @@ class APIClient:
                         enemies_sorted = sorted(
                             enemies_indexed,
                             key=lambda x: (
-                                int(x[2].get("tank_tier", 0)),
+                                -int(x[2].get("tank_tier", 0)),
                                 x[2].get("tank_name", "").strip().lower(),
                                 x[0]
                             )

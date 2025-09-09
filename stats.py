@@ -155,7 +155,7 @@ class Overlay_info(QWidget):
         self.is_auth = self.api_client.is_auth
         self.animation_running = False
         self.full_height = 200
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(250, 200)  # Начальный размер
 
@@ -193,12 +193,12 @@ class Overlay_info(QWidget):
         self.stacked_widget.layout().setSpacing(1)
 
         self.stream_page = Stream(api_client=self.api_client, config_container=config_container, stacked_widget=self.stacked_widget)
+        self.players_page = PlayersStats(api_client=api_client, config_container=config_container, stacked_widget=self.stacked_widget)
         self.stats_page = Stats(api_client=self.api_client, stream_page = self.stream_page)
         self.rating_page = Rating(api_client=self.api_client, stream_page = self.stream_page)
         self.tanks_page = TanksStat(api_client=self.api_client)
         self.graphics_page = Graphics(api_client=self.api_client)
         self.other_page = Other(api_client=api_client, stream_page = self.stream_page)
-        self.players_page = PlayersStats(api_client=api_client)
         self.info_page = Info(api_client=self.api_client, main_stat=self.stats_page, rating_stat = self.rating_page ,tank_stat=self.tanks_page, other_stat=self.other_page, stream_page = self.stream_page)
 
         self.stacked_widget.addWidget(self.info_page)
@@ -1505,9 +1505,12 @@ class Graphics(QWidget):
             print(f"График для ключа '{key}' не найден.")
 
 class PlayersStats(QWidget):   
-    def __init__(self, api_client):
+    def __init__(self, api_client, config_container, stacked_widget):
         super().__init__()
         self.api_client = api_client
+        self.config_container = config_container
+        self.stacked_widget = stacked_widget
+        self.config_visible = True
         self.isOn = False
         self.isPlayers = False
         self.buttons = []
@@ -1531,10 +1534,13 @@ class PlayersStats(QWidget):
             font-size: 12px;
             font-weight: bold;
             border: none;
-            background-color: rgba(30, 30, 30, 255);
+        """
+        self.AVG_STYLE = """
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
         """
         self.current_page = 0
-        self.setStyleSheet("background-color: rgba(30, 30, 30, 255)")
         self.setup_ui()
 
         self.updating_thread = threading.Thread(target=self.update_players_periodically)
@@ -1668,9 +1674,6 @@ class PlayersStats(QWidget):
                                 ('damage', 'src/damage_icon.webp')]:
             icon = QLabel()
             icon.setPixmap(QPixmap(resource_path(icon_path)))
-            icon.setStyleSheet("""
-                background-color: transparent;
-            """)
             icon.setFixedWidth(self.COLUMN_WIDTHS[col_type])
             icon.setAlignment(Qt.AlignCenter)
             header_layout.addWidget(icon)
@@ -1684,7 +1687,6 @@ class PlayersStats(QWidget):
         for type_index in range(2):
             type_cells = []
             widget = QWidget()
-            widget.setStyleSheet("background-color: rgba(30, 30, 30, 255);")
             grid = QGridLayout(widget)
             grid.setHorizontalSpacing(0)
             grid.setVerticalSpacing(1)
@@ -1696,7 +1698,7 @@ class PlayersStats(QWidget):
                     key = self.COLUMN_KEYS[col]
                     label = QLabel()
                     label.setFixedWidth(self.COLUMN_WIDTHS_GRID[key])
-
+                    
                     label.setStyleSheet(self.BASE_STYLE)
                     label.setAlignment(Qt.AlignCenter)
                     label.setContentsMargins(3, 3, 3, 3)
@@ -1945,16 +1947,17 @@ class PlayersStats(QWidget):
                                 tank_ids.append(p['tank_id'])
                                 team.append(p['team'])
 
-                            if self.api_client.get_players(unique_nicks, tank_ids, team):
-                                self.update_stacked_cells(unique_nicks)
-                                allies = list(self.api_client.players_stats.values())[:7]
-                                enemies = list(self.api_client.players_stats.values())[7:]
-                                if allies:
-                                    self.insert_avg_row('allies')
+                            if len(unique_nicks) == 14:
+                                if self.api_client.get_players(unique_nicks, tank_ids, team):
+                                    self.update_stacked_cells(unique_nicks)
+                                    allies = list(self.api_client.players_stats.values())[:7]
+                                    enemies = list(self.api_client.players_stats.values())[7:]
+                                    if allies:
+                                        self.insert_avg_row('allies')
 
-                                if enemies:
-                                    self.insert_avg_row('enemies')
-                                self.isPlayers = True
+                                    if enemies:
+                                        self.insert_avg_row('enemies')
+                                    self.isPlayers = True
 
                     else:
                         print("Файл data.replay не найден в", target_folder)
@@ -2021,13 +2024,43 @@ class PlayersStats(QWidget):
                         try:
                             win_percent = float(text.strip('%'))
                             if win_percent >= 70.00:
-                                color = "#9989e6"
+                                color = "#a08bea"
                             elif 60.00 <= win_percent < 70.00:
-                                color = "#72d1ff"
+                                color = "#5cded6"
                             elif 50.00 <= win_percent < 60.00:
-                                color = "#a8e689"
+                                color = "#80d41d"
                             else:
-                                color = "#e2ded3"
+                                color = "#b03842"
+                            style += f"color: {color}; font-weight: bold;"
+                        except:
+                            pass
+
+                    elif key == "battles":
+                        try:
+                            battles = int(text)
+                            if battles < 5000:
+                                color = "#b03842"
+                            elif 5000 <= battles < 15000:
+                                color = "#80d41d"
+                            elif 15000 <= battles < 30000:
+                                color = "#5cded6"
+                            else:
+                                color = "#a08bea"
+                            style += f"color: {color}; font-weight: bold;"
+                        except:
+                            pass
+
+                    elif key == "damage":
+                        try:
+                            damage = int(text)
+                            if damage < 1000:
+                                color = "#b03842"
+                            elif 1000 <= damage < 1500:
+                                color = "#80d41d"
+                            elif 1500 <= damage < 2500:
+                                color = "#5cded6"
+                            else:
+                                color = "#a08bea"
                             style += f"color: {color}; font-weight: bold;"
                         except:
                             pass
@@ -2036,9 +2069,9 @@ class PlayersStats(QWidget):
                     else:
                         style += "color: #e2ded3;"
 
+                    if not self.config_visible:
+                        style += "background-color: transparent;"
                     # Сохраняем фон и радиус, не трогая остальное
-
-                    label.setAutoFillBackground(True)
                     label.setStyleSheet(self.BASE_STYLE + style)
         self.update()
 
@@ -2097,7 +2130,10 @@ class PlayersStats(QWidget):
             # стиль для AVG
             style = "color: #ffd166;"
 
-            label.setStyleSheet(self.BASE_STYLE + style)
+            if not self.config_visible:
+                style += "background-color: transparent;"
+
+            label.setStyleSheet(self.AVG_STYLE + style)
 
         self.update()
 
@@ -2121,6 +2157,71 @@ class PlayersStats(QWidget):
                     label.setText("")
 
         self.update()
+
+    def show_context_menu(self, pos):
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: rgb(57, 57, 57);
+                color: #e2ded3;
+                border: 1px solid #444;
+            }
+            QMenu::item:selected {      /* выделенный пункт */
+                background-color: rgb(90, 90, 110);
+                color: #ffffff;
+            }
+        """)
+        action = QAction("Скрыть окно", self)
+        action.setCheckable(True)
+        action.setChecked(not self.config_visible)
+        action.toggled.connect(lambda checked, k="Скрыть окно": self.toggle_visible(k, self.config_visible))
+        menu.addAction(action)
+        menu.exec_(self.mapToGlobal(pos))
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:  # Логика для правой кнопки мыши
+            self.show_context_menu(event.pos())
+        # Передаём событие родительскому виджету
+        super().mousePressEvent(event)
+
+    def toggle_visible(self, key, visible):
+        if visible:
+            if not hasattr(self, "stacked_cells"):
+                return
+
+            for type_cells in self.stacked_cells:
+                for row_cells in type_cells:
+                    for label in row_cells:
+                        label.setStyleSheet(self.BASE_STYLE + "background-color: rgba(30, 30, 30, 0)")
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 100);  /* Полупрозрачный фон */
+                    border: none;
+                    border-radius: 10px;
+                }
+            """)
+            self.config_container.hide()
+            self.config_visible = False
+        else:
+            if not hasattr(self, "stacked_cells"):
+                return
+
+            for type_cells in self.stacked_cells:
+                for row_cells in type_cells:
+                    for label in row_cells:
+                        label.setStyleSheet(self.BASE_STYLE)
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget, QStackedWidget > QWidget {
+                    background-color: rgba(30, 30, 30, 255);  /* Стандартный фон */
+                    border: none;
+                    border-top-left-radius: 0px;
+                    border-bottom-left-radius: 0px;
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                }
+            """)
+            self.config_container.show()
+            self.config_visible = True
 
 class Other(QWidget):   
     def __init__(self, api_client, stream_page):

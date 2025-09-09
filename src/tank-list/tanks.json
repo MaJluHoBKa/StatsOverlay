@@ -324,6 +324,36 @@
             "name": "TNH T Vz. 51",
             "id": 12929,
             "tier": 9
+        },
+        {
+            "name": "AltProto AMX 30",
+            "id": 19777,
+            "tier": 8
+        },
+        {
+            "name": "SMV CC-67",
+            "id": 16769,
+            "tier": 8
+        },
+        {
+            "name": "Т-44-122",
+            "id": 29185,
+            "tier": 8
+        },
+        {
+            "name": "WZ-1G-P",
+            "id": 12849,
+            "tier": 8
+        },
+        {
+            "name": "Erich Konzept 1",
+            "id": 27665,
+            "tier": 10
+        },
+        {
+            "name": "Cobra",
+            "id": 23121,
+            "tier": 9
         }
     ]
 }
