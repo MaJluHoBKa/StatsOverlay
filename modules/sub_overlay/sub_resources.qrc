@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/sub">
+        <file>../../resources/icons/mini_stats_icon.png</file>
+    </qresource>
+</RCC>

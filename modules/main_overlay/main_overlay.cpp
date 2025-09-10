@@ -1,4 +1,5 @@
 #include <main_overlay/main_overlay.h>
+#include <main_overlay/widgets/main_stats/main_stats.h>
 
 MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 {
@@ -6,17 +7,18 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
     QApplication::setStyle("Fusion");
     QApplication::setWindowIcon(QPixmap(":resources/icons/icon.png"));
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    resize(300, 200);
     setAttribute(Qt::WA_TranslucentBackground);
-    resize(400, 200);
     move(100, (QApplication::primaryScreen()->availableGeometry().height() - height()) / 2);
 
     // Главный слой для окна
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
     // Панель управления
     QWidget *config_panel = new QWidget;
     config_panel->setStyleSheet(
-        "background-color: rgba(30, 30, 30, 255);"
         "border: 0px solid #404040;"
         "border-top-left-radius: 10px;"
         "border-bottom-left-radius: 10px;");
@@ -28,7 +30,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка основной статистики
     QPushButton *buttonMain = new QPushButton;
-    buttonMain->setIcon(QIcon(QPixmap(":resources/icons/stats_icon.png")));
+    buttonMain->setIcon(QIcon(QPixmap(":main/resources/icons/stats_icon.png")));
     buttonMain->setIconSize(QSize(24, 24));
     buttonMain->setStyleSheet(
         "QPushButton {"
@@ -49,7 +51,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка рейтинговой статистики
     QPushButton *buttonRating = new QPushButton;
-    buttonRating->setIcon(QIcon(QPixmap(":resources/icons/rating_icon.png")));
+    buttonRating->setIcon(QIcon(QPixmap(":main/resources/icons/rating_icon.png")));
     buttonRating->setIconSize(QSize(24, 24));
     buttonRating->setStyleSheet(
         "QPushButton {"
@@ -70,7 +72,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка танковой статистики
     QPushButton *buttonTanks = new QPushButton;
-    buttonTanks->setIcon(QIcon(QPixmap(":resources/icons/tanks_icon.png")));
+    buttonTanks->setIcon(QIcon(QPixmap(":main/resources/icons/tanks_icon.png")));
     buttonTanks->setIconSize(QSize(24, 24));
     buttonTanks->setStyleSheet(
         "QPushButton {"
@@ -91,7 +93,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка коэффициентной статистики
     QPushButton *buttonOther = new QPushButton;
-    buttonOther->setIcon(QIcon(QPixmap(":resources/icons/other_icon.png")));
+    buttonOther->setIcon(QIcon(QPixmap(":main/resources/icons/other_icon.png")));
     buttonOther->setIconSize(QSize(24, 24));
     buttonOther->setStyleSheet(
         "QPushButton {"
@@ -112,7 +114,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка графиковой статистики
     QPushButton *buttonGraphics = new QPushButton;
-    buttonGraphics->setIcon(QIcon(QPixmap(":resources/icons/graphics_icon.png")));
+    buttonGraphics->setIcon(QIcon(QPixmap(":main/resources/icons/graphics_icon.png")));
     buttonGraphics->setIconSize(QSize(24, 24));
     buttonGraphics->setStyleSheet(
         "QPushButton {"
@@ -133,7 +135,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка плиточной статистики
     QPushButton *buttonStream = new QPushButton;
-    buttonStream->setIcon(QIcon(QPixmap(":resources/icons/stream_icon.png")));
+    buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/stream_icon.png")));
     buttonStream->setIconSize(QSize(24, 24));
     buttonStream->setStyleSheet(
         "QPushButton {"
@@ -154,7 +156,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка оленемера
     QPushButton *buttonPlayers = new QPushButton;
-    buttonPlayers->setIcon(QIcon(QPixmap(":resources/icons/player_icon.png")));
+    buttonPlayers->setIcon(QIcon(QPixmap(":main/resources/icons/player_icon.png")));
     buttonPlayers->setIconSize(QSize(24, 24));
     buttonPlayers->setStyleSheet(
         "QPushButton {"
@@ -175,7 +177,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка информационной панели
     QPushButton *buttonInfo = new QPushButton;
-    buttonInfo->setIcon(QIcon(QPixmap(":resources/icons/info_icon.png")));
+    buttonInfo->setIcon(QIcon(QPixmap(":main/resources/icons/info_icon.png")));
     buttonInfo->setIconSize(QSize(24, 24));
     buttonInfo->setStyleSheet(
         "QPushButton {"
@@ -196,7 +198,7 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     // Кнопка выхода
     QPushButton *buttonExit = new QPushButton;
-    buttonExit->setIcon(QIcon(QPixmap(":resources/icons/exit_icon.png")));
+    buttonExit->setIcon(QIcon(QPixmap(":main/resources/icons/exit_icon.png")));
     buttonExit->setIconSize(QSize(24, 24));
     buttonExit->setStyleSheet(
         "QPushButton {"
@@ -217,5 +219,20 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
 
     config_panel->setLayout(buttonsLayout);
     mainLayout->addWidget(config_panel);
+
+    MainStats *mainStats = new MainStats;
+    mainLayout->addWidget(mainStats);
+
     setLayout(mainLayout);
+}
+
+void MainOverlay::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+
+    p.setBrush(QColor(30, 30, 30, 255));
+    p.setPen(Qt::NoPen);
+
+    p.drawRoundedRect(rect(), 10, 10);
 }

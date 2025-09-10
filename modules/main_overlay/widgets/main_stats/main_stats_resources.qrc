@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/main_stats">
+        <file>../../../../resources/icons/gold_icon.png</file>
+        <file>../../../../resources/icons/silver_icon.png</file>
+        <file>../../../../resources/icons/xp_battle_icon.png</file>
+        <file>../../../../resources/icons/free_xp_icon.png</file>
+        <file>../../../../resources/icons/arrow_icon.png</file>
+        <file>../../../../resources/icons/battles_icon.png</file>
+        <file>../../../../resources/icons/win_icon.png</file>
+        <file>../../../../resources/icons/damage_icon.png</file>
+        <file>../../../../resources/icons/xp_icon.png</file>
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>

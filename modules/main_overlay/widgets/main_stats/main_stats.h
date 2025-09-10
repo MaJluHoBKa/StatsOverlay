@@ -8,17 +8,14 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSizePolicy>
-#include <QPainter>
-#include <../modules/sub_overlay/sub_overlay.h>
+#include <QFontDatabase>
 
-class MainOverlay : public QWidget
+class MainStats : public QWidget
 {
     Q_OBJECT
 
-protected:
-    void paintEvent(QPaintEvent *) override;
-
 private:
 public:
-    explicit MainOverlay(QWidget *parent = nullptr);
+    explicit MainStats(QWidget *parent = nullptr);
+    void addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString title, bool is_top, bool is_bottom);
 };
