@@ -127,5 +127,6 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     arrow->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     listsStats->addWidget(arrow);
 
+    appendValueLabel(title.toStdString(), value);
     mainLayout->addLayout(listsStats);
 }
