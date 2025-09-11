@@ -1,15 +1,17 @@
 #pragma once
 
 #include <string>
-#include "json.hpp"
-#include "httplib.h"
+#include <../external/httplib.h>
+#include <../external/json.hpp>
 #include <curl/curl.h>
 #include <Windows.h>
-#include "MainStats.h"
-#include "RatingStats.h"
-#include "MasteryStats.h"
-#include "OtherStats.h"
-#include "VehicleStats.h"
+#include <QFile>
+#include <QStandardPaths>
+#include <main_overlay/controller/data/MainStatsData.h>
+// #include "RatingStats.h"
+// #include "MasteryStats.h"
+// #include "OtherStats.h"
+// #include "VehicleStats.h"
 
 using json = nlohmann::json;
 
@@ -29,12 +31,12 @@ private:
     bool isFirstMasteryStats = true;
     bool isFirstVehiclesStats = true;
 
-    MainStats mainStats;
-    RatingStats ratingStats;
-    MasteryStats masteryStats;
-    OtherStats otherStats;
-    VehicleStats vehicleStats{
-        "D:\\Games\\MOD\\WoT Blitz\\Stats\\src\\tank-list\\tanks.json"};
+    MainStatsData mainStats;
+    // RatingStats ratingStats;
+    // MasteryStats masteryStats;
+    // OtherStats otherStats;
+    // VehicleStats vehicleStats{
+    //     "D:\\Games\\MOD\\WoT Blitz\\Stats\\src\\tank-list\\tanks.json"};
 
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     {
@@ -67,9 +69,33 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
             res = curl_easy_perform(curl);
             if (res != CURLE_OK)
             {
+                std::cerr << "CURL failed: " << curl_easy_strerror(res) << " (code " << res << ")" << std::endl;
                 curl_easy_cleanup(curl);
                 curl_global_cleanup();
                 return false;
@@ -137,6 +163,30 @@ public:
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
             res = curl_easy_perform(curl);
 
             if (res == CURLE_OK)
@@ -184,6 +234,30 @@ public:
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
             res = curl_easy_perform(curl);
 
             if (res == CURLE_OK)
@@ -223,6 +297,30 @@ public:
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QFile certFile(":/certs/external/curl/cacert.pem"); // путь в .qrc
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
             res = curl_easy_perform(curl);
 
             if (res == CURLE_OK)
@@ -270,323 +368,323 @@ public:
         return success;
     }
 
-    bool update_rating_stats()
-    {
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
+    // bool update_rating_stats()
+    // {
+    //     CURL *curl;
+    //     CURLcode res;
+    //     std::string readBuffer;
+    //     bool success = false;
 
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
+    //     curl_global_init(CURL_GLOBAL_DEFAULT);
+    //     curl = curl_easy_init();
 
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&access_token=" + this->token +
-                              "&account_id=" + this->account_id +
-                              "&extra=statistics.rating";
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-            res = curl_easy_perform(curl);
+    //     if (curl)
+    //     {
+    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
+    //         std::string url = base +
+    //                           "?application_id=" + this->application_id +
+    //                           "&access_token=" + this->token +
+    //                           "&account_id=" + this->account_id +
+    //                           "&extra=statistics.rating";
+    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //         res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"][this->account_id];
-                    RatingData ratingData;
-                    ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<double>();
-                    ratingData.calib_battles = data["statistics"]["rating"]["calibration_battles_left"].get<int64_t>();
-                    ratingData.battles = data["statistics"]["rating"]["battles"].get<int64_t>();
-                    ratingData.exp_battle = data["statistics"]["rating"]["xp"].get<int64_t>();
-                    ratingData.wins = data["statistics"]["rating"]["wins"].get<int64_t>();
-                    ratingData.totalDamage = data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
+    //         if (res == CURLE_OK)
+    //         {
+    //             json j = json::parse(readBuffer, nullptr, false);
+    //             if (j["status"] == "ok")
+    //             {
+    //                 auto &data = j["data"][this->account_id];
+    //                 RatingData ratingData;
+    //                 ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<double>();
+    //                 ratingData.calib_battles = data["statistics"]["rating"]["calibration_battles_left"].get<int64_t>();
+    //                 ratingData.battles = data["statistics"]["rating"]["battles"].get<int64_t>();
+    //                 ratingData.exp_battle = data["statistics"]["rating"]["xp"].get<int64_t>();
+    //                 ratingData.wins = data["statistics"]["rating"]["wins"].get<int64_t>();
+    //                 ratingData.totalDamage = data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
 
-                    if (this->isFirstRatingStats)
-                    {
-                        this->ratingStats.initialStats(ratingData);
-                        this->isFirstRatingStats = false;
-                    }
-                    else
-                    {
-                        this->ratingStats.updateStats(ratingData);
-                    }
-                    // std::cout << "ratingData:" << std::endl;
-                    // std::cout << "  mm_rating: " << ratingStats.getRating() << std::endl;
-                    // std::cout << "  progress: " << ratingStats.getDiffRating() << std::endl;
-                    // std::cout << "  Calib battles: " << ratingStats.getCalibBattles() << std::endl;
-                    // std::cout << "  Battles: " << ratingStats.getBattles() << std::endl;
-                    // std::cout << "  Exp battle: " << ratingStats.getAvgExp() << std::endl;
-                    // std::cout << "  Wins: " << ratingStats.getPercentWins() << std::endl;
-                    // std::cout << "  Total damage: " << ratingStats.getAvgDamage() << std::endl;
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
+    //                 if (this->isFirstRatingStats)
+    //                 {
+    //                     this->ratingStats.initialStats(ratingData);
+    //                     this->isFirstRatingStats = false;
+    //                 }
+    //                 else
+    //                 {
+    //                     this->ratingStats.updateStats(ratingData);
+    //                 }
+    //                 // std::cout << "ratingData:" << std::endl;
+    //                 // std::cout << "  mm_rating: " << ratingStats.getRating() << std::endl;
+    //                 // std::cout << "  progress: " << ratingStats.getDiffRating() << std::endl;
+    //                 // std::cout << "  Calib battles: " << ratingStats.getCalibBattles() << std::endl;
+    //                 // std::cout << "  Battles: " << ratingStats.getBattles() << std::endl;
+    //                 // std::cout << "  Exp battle: " << ratingStats.getAvgExp() << std::endl;
+    //                 // std::cout << "  Wins: " << ratingStats.getPercentWins() << std::endl;
+    //                 // std::cout << "  Total damage: " << ratingStats.getAvgDamage() << std::endl;
+    //                 success = true;
+    //             }
+    //         }
+    //     }
+    //     if (curl)
+    //         curl_easy_cleanup(curl);
+    //     curl_global_cleanup();
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    bool update_mastery_stats()
-    {
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
+    // bool update_mastery_stats()
+    // {
+    //     CURL *curl;
+    //     CURLcode res;
+    //     std::string readBuffer;
+    //     bool success = false;
 
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
+    //     curl_global_init(CURL_GLOBAL_DEFAULT);
+    //     curl = curl_easy_init();
 
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/account/achievements/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&account_id=" + this->account_id +
-                              "&fields=achievements";
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-            res = curl_easy_perform(curl);
+    //     if (curl)
+    //     {
+    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/achievements/";
+    //         std::string url = base +
+    //                           "?application_id=" + this->application_id +
+    //                           "&account_id=" + this->account_id +
+    //                           "&fields=achievements";
+    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //         res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"][this->account_id];
-                    MasteryData masteryData;
-                    masteryData.mastery = data["achievements"]["markOfMastery"].get<int64_t>();
-                    masteryData.mastery_1 = data["achievements"]["markOfMasteryI"].get<int64_t>();
-                    masteryData.mastery_2 = data["achievements"]["markOfMasteryII"].get<int64_t>();
-                    masteryData.mastery_3 = data["achievements"]["markOfMasteryIII"].get<int64_t>();
+    //         if (res == CURLE_OK)
+    //         {
+    //             json j = json::parse(readBuffer, nullptr, false);
+    //             if (j["status"] == "ok")
+    //             {
+    //                 auto &data = j["data"][this->account_id];
+    //                 MasteryData masteryData;
+    //                 masteryData.mastery = data["achievements"]["markOfMastery"].get<int64_t>();
+    //                 masteryData.mastery_1 = data["achievements"]["markOfMasteryI"].get<int64_t>();
+    //                 masteryData.mastery_2 = data["achievements"]["markOfMasteryII"].get<int64_t>();
+    //                 masteryData.mastery_3 = data["achievements"]["markOfMasteryIII"].get<int64_t>();
 
-                    if (this->isFirstMasteryStats)
-                    {
-                        this->masteryStats.initialStats(masteryData);
-                        this->isFirstMasteryStats = false;
-                    }
-                    else
-                    {
-                        this->masteryStats.updateStats(masteryData);
-                    }
-                    masteryData = masteryStats.getCurrentData();
-                    // std::cout << "masteryData:" << std::endl;
-                    // std::cout << "  markOfMastery: " << masteryData.mastery << std::endl;
-                    // std::cout << "  markOfMasteryI: " << masteryData.mastery_1 << std::endl;
-                    // std::cout << "  markOfMasteryII: " << masteryData.mastery_2 << std::endl;
-                    // std::cout << "  markOfMasteryIII: " << masteryData.mastery_3 << std::endl;
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
+    //                 if (this->isFirstMasteryStats)
+    //                 {
+    //                     this->masteryStats.initialStats(masteryData);
+    //                     this->isFirstMasteryStats = false;
+    //                 }
+    //                 else
+    //                 {
+    //                     this->masteryStats.updateStats(masteryData);
+    //                 }
+    //                 masteryData = masteryStats.getCurrentData();
+    //                 // std::cout << "masteryData:" << std::endl;
+    //                 // std::cout << "  markOfMastery: " << masteryData.mastery << std::endl;
+    //                 // std::cout << "  markOfMasteryI: " << masteryData.mastery_1 << std::endl;
+    //                 // std::cout << "  markOfMasteryII: " << masteryData.mastery_2 << std::endl;
+    //                 // std::cout << "  markOfMasteryIII: " << masteryData.mastery_3 << std::endl;
+    //                 success = true;
+    //             }
+    //         }
+    //     }
+    //     if (curl)
+    //         curl_easy_cleanup(curl);
+    //     curl_global_cleanup();
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    bool update_other_stats()
-    {
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
+    // bool update_other_stats()
+    // {
+    //     CURL *curl;
+    //     CURLcode res;
+    //     std::string readBuffer;
+    //     bool success = false;
 
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
+    //     curl_global_init(CURL_GLOBAL_DEFAULT);
+    //     curl = curl_easy_init();
 
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&access_token=" + this->token +
-                              "&account_id=" + this->account_id +
-                              "&extra=statistics.rating";
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-            res = curl_easy_perform(curl);
+    //     if (curl)
+    //     {
+    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
+    //         std::string url = base +
+    //                           "?application_id=" + this->application_id +
+    //                           "&access_token=" + this->token +
+    //                           "&account_id=" + this->account_id +
+    //                           "&extra=statistics.rating";
+    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //         res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"][this->account_id];
-                    OtherData otherData;
-                    otherData.battles = data["statistics"]["all"]["battles"].get<int64_t>() + data["statistics"]["rating"]["battles"].get<int64_t>();
-                    otherData.hits = data["statistics"]["all"]["hits"].get<int64_t>() + data["statistics"]["rating"]["hits"].get<int64_t>();
-                    otherData.shots = data["statistics"]["all"]["shots"].get<int64_t>() + data["statistics"]["rating"]["shots"].get<int64_t>();
-                    otherData.survived = data["statistics"]["all"]["survived_battles"].get<int64_t>() + data["statistics"]["rating"]["survived_battles"].get<int64_t>();
-                    otherData.frags = data["statistics"]["all"]["frags"].get<int64_t>() + data["statistics"]["rating"]["frags"].get<int64_t>();
-                    otherData.receiverDamage = data["statistics"]["all"]["damage_received"].get<int64_t>() + data["statistics"]["rating"]["damage_received"].get<int64_t>();
-                    otherData.totalDamage = data["statistics"]["all"]["damage_dealt"].get<int64_t>() + data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
-                    otherData.lifeTime = data["private"]["battle_life_time"].get<int64_t>();
+    //         if (res == CURLE_OK)
+    //         {
+    //             json j = json::parse(readBuffer, nullptr, false);
+    //             if (j["status"] == "ok")
+    //             {
+    //                 auto &data = j["data"][this->account_id];
+    //                 OtherData otherData;
+    //                 otherData.battles = data["statistics"]["all"]["battles"].get<int64_t>() + data["statistics"]["rating"]["battles"].get<int64_t>();
+    //                 otherData.hits = data["statistics"]["all"]["hits"].get<int64_t>() + data["statistics"]["rating"]["hits"].get<int64_t>();
+    //                 otherData.shots = data["statistics"]["all"]["shots"].get<int64_t>() + data["statistics"]["rating"]["shots"].get<int64_t>();
+    //                 otherData.survived = data["statistics"]["all"]["survived_battles"].get<int64_t>() + data["statistics"]["rating"]["survived_battles"].get<int64_t>();
+    //                 otherData.frags = data["statistics"]["all"]["frags"].get<int64_t>() + data["statistics"]["rating"]["frags"].get<int64_t>();
+    //                 otherData.receiverDamage = data["statistics"]["all"]["damage_received"].get<int64_t>() + data["statistics"]["rating"]["damage_received"].get<int64_t>();
+    //                 otherData.totalDamage = data["statistics"]["all"]["damage_dealt"].get<int64_t>() + data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
+    //                 otherData.lifeTime = data["private"]["battle_life_time"].get<int64_t>();
 
-                    if (this->isFirstOtherStats)
-                    {
-                        this->otherStats.initialStats(otherData);
-                        this->isFirstOtherStats = false;
-                    }
-                    else
-                    {
-                        this->otherStats.updateStats(otherData);
-                    }
-                    // std::cout << "otherData:" << std::endl;
-                    // std::cout << "  Percent Hits: " << otherStats.getPercentHits() << std::endl;
-                    // std::cout << "  Percent Survived: " << otherStats.getPercentSurvived() << std::endl;
-                    // std::cout << "  Life Time: " << otherStats.getLifeTime() << std::endl;
-                    // std::cout << "  K Damage: " << otherStats.getDamageK() << std::endl;
-                    // std::cout << "  K Frags: " << otherStats.getFragsK() << std::endl;
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
-        return success;
-    }
+    //                 if (this->isFirstOtherStats)
+    //                 {
+    //                     this->otherStats.initialStats(otherData);
+    //                     this->isFirstOtherStats = false;
+    //                 }
+    //                 else
+    //                 {
+    //                     this->otherStats.updateStats(otherData);
+    //                 }
+    //                 // std::cout << "otherData:" << std::endl;
+    //                 // std::cout << "  Percent Hits: " << otherStats.getPercentHits() << std::endl;
+    //                 // std::cout << "  Percent Survived: " << otherStats.getPercentSurvived() << std::endl;
+    //                 // std::cout << "  Life Time: " << otherStats.getLifeTime() << std::endl;
+    //                 // std::cout << "  K Damage: " << otherStats.getDamageK() << std::endl;
+    //                 // std::cout << "  K Frags: " << otherStats.getFragsK() << std::endl;
+    //                 success = true;
+    //             }
+    //         }
+    //     }
+    //     if (curl)
+    //         curl_easy_cleanup(curl);
+    //     curl_global_cleanup();
+    //     return success;
+    // }
 
-    bool update_vehicles_stats()
-    {
-        if (this->isFirstVehiclesStats)
-        {
-            if (!get_vehicles_names())
-            {
-                return false;
-            }
-        }
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
+    // bool update_vehicles_stats()
+    // {
+    //     if (this->isFirstVehiclesStats)
+    //     {
+    //         if (!get_vehicles_names())
+    //         {
+    //             return false;
+    //         }
+    //     }
+    //     CURL *curl;
+    //     CURLcode res;
+    //     std::string readBuffer;
+    //     bool success = false;
 
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
+    //     curl_global_init(CURL_GLOBAL_DEFAULT);
+    //     curl = curl_easy_init();
 
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/tanks/stats/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&access_token=" + this->token +
-                              "&account_id=" + this->account_id;
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-            res = curl_easy_perform(curl);
+    //     if (curl)
+    //     {
+    //         std::string base = "https://papi.tanksblitz.ru/wotb/tanks/stats/";
+    //         std::string url = base +
+    //                           "?application_id=" + this->application_id +
+    //                           "&access_token=" + this->token +
+    //                           "&account_id=" + this->account_id;
+    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //         res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"][this->account_id];
-                    if (this->isFirstVehiclesStats)
-                    {
-                        this->vehicleStats.initialStats(data);
-                        this->isFirstVehiclesStats = false;
-                    }
-                    else
-                    {
-                        this->vehicleStats.updateStats(data);
-                    }
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
+    //         if (res == CURLE_OK)
+    //         {
+    //             json j = json::parse(readBuffer, nullptr, false);
+    //             if (j["status"] == "ok")
+    //             {
+    //                 auto &data = j["data"][this->account_id];
+    //                 if (this->isFirstVehiclesStats)
+    //                 {
+    //                     this->vehicleStats.initialStats(data);
+    //                     this->isFirstVehiclesStats = false;
+    //                 }
+    //                 else
+    //                 {
+    //                     this->vehicleStats.updateStats(data);
+    //                 }
+    //                 success = true;
+    //             }
+    //         }
+    //     }
+    //     if (curl)
+    //         curl_easy_cleanup(curl);
+    //     curl_global_cleanup();
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    bool get_vehicles_names()
-    {
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
+    // bool get_vehicles_names()
+    // {
+    //     CURL *curl;
+    //     CURLcode res;
+    //     std::string readBuffer;
+    //     bool success = false;
 
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
+    //     curl_global_init(CURL_GLOBAL_DEFAULT);
+    //     curl = curl_easy_init();
 
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&fields=name,tank_id";
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-            res = curl_easy_perform(curl);
+    //     if (curl)
+    //     {
+    //         std::string base = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/";
+    //         std::string url = base +
+    //                           "?application_id=" + this->application_id +
+    //                           "&fields=name,tank_id";
+    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    //         res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"];
-                    vehicleStats.setNames(data);
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
+    //         if (res == CURLE_OK)
+    //         {
+    //             json j = json::parse(readBuffer, nullptr, false);
+    //             if (j["status"] == "ok")
+    //             {
+    //                 auto &data = j["data"];
+    //                 vehicleStats.setNames(data);
+    //                 success = true;
+    //             }
+    //         }
+    //     }
+    //     if (curl)
+    //         curl_easy_cleanup(curl);
+    //     curl_global_cleanup();
 
-        return success;
-    }
+    //     return success;
+    // }
 
-    const VehicleData *get_updated_vehicles() const
-    {
-        return vehicleStats.getUpdatedVehicle();
-    }
+    // const VehicleData *get_updated_vehicles() const
+    // {
+    //     return vehicleStats.getUpdatedVehicle();
+    // }
 
-    std::string getVehicleName(int64_t id)
-    {
-        return vehicleStats.getName(id);
-    }
+    // std::string getVehicleName(int64_t id)
+    // {
+    //     return vehicleStats.getName(id);
+    // }
 
-    MainStats getMainStats() const
+    MainStatsData getMainStats() const
     {
         return this->mainStats;
     }
 
-    RatingStats getRatingStats() const
-    {
-        return this->ratingStats;
-    }
+    // RatingStats getRatingStats() const
+    // {
+    //     return this->ratingStats;
+    // }
 
-    MasteryStats getMasteryStats() const
-    {
-        return this->masteryStats;
-    }
+    // MasteryStats getMasteryStats() const
+    // {
+    //     return this->masteryStats;
+    // }
 
-    OtherStats getOtherStats() const
-    {
-        return this->otherStats;
-    }
+    // OtherStats getOtherStats() const
+    // {
+    //     return this->otherStats;
+    // }
 
-    VehicleStats getVehicleStats() const
-    {
-        return this->vehicleStats;
-    }
+    // VehicleStats getVehicleStats() const
+    // {
+    //     return this->vehicleStats;
+    // }
 
     std::string getNickname() const
     {

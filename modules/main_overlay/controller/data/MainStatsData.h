@@ -28,7 +28,7 @@ struct StatsData
     }
 };
 
-class MainStats
+class MainStatsData
 {
 private:
     StatsData firstData;

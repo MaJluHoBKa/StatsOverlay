@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/rating_stats">
+        <file>../../../../resources/icons/rating_icon.png</file>
+        <file>../../../../resources/icons/progress_icon.png</file>
+        <file>../../../../resources/icons/calib_battle.png</file>
+        <file>../../../../resources/icons/arrow_icon.png</file>
+        <file>../../../../resources/icons/battles_icon.png</file>
+        <file>../../../../resources/icons/win_icon.png</file>
+        <file>../../../../resources/icons/damage_icon.png</file>
+        <file>../../../../resources/icons/xp_icon.png</file>
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>

@@ -1,8 +1,9 @@
 #include <main_overlay/widgets/main_stats/main_stats.h>
 
-MainStats::MainStats(QWidget *parent) : QWidget(parent)
+MainStats::MainStats(ApiController *apiController, QWidget *parent)
+    : m_apiController(apiController), QWidget(parent)
 {
-    setMaximumWidth(325);
+    setFixedWidth(280);
     setContentsMargins(0, 2, 0, 2);
     setStyleSheet(
         "border-top-right-radius: 10px;"
@@ -15,7 +16,7 @@ MainStats::MainStats(QWidget *parent) : QWidget(parent)
 
     // Выставление экономики
     addContent(mainLayout, QPixmap(":main_stats/resources/icons/gold_icon.png"), "Золото", true, false);
-    addContent(mainLayout, QPixmap(":main_stats/resources/icons/silver_icon.png"), "Серебро", false, false);
+    addContent(mainLayout, QPixmap(":main_stats/resources/icons/silver_icon.png"), "Кредиты", false, false);
     addContent(mainLayout, QPixmap(":main_stats/resources/icons/xp_battle_icon.png"), "Боевой опыт", false, false);
     addContent(mainLayout, QPixmap(":main_stats/resources/icons/free_xp_icon.png"), "Свободный опыт", false, false);
 
@@ -50,6 +51,10 @@ MainStats::MainStats(QWidget *parent) : QWidget(parent)
     addContent(mainLayout, QPixmap(":main_stats/resources/icons/xp_icon.png"), "Опыт", false, true);
 
     setLayout(mainLayout);
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainStats::updatingMainStats);
+    timer->start(30000);
 }
 
 void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString title, bool is_top, bool is_bottom)
@@ -87,7 +92,7 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
 
     // Установка линий
     QFrame *line = new QFrame;
-    line->setMinimumWidth(120);
+    line->setMinimumWidth(0);
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Plain); // вместо Sunken/Styled
     line->setStyleSheet("background-color: #e2ded3;");
@@ -118,7 +123,7 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     arrow->setTextFormat(Qt::RichText);
     arrow->setStyleSheet(QString(
                              "font-family: \"%1\";"
-                             "font-size: 11px;"
+                             "font-size: 9px;"
                              "font-weight: bold;"
                              "color: #e2ded3;"
                              "white-space: nowrap;")
@@ -127,6 +132,6 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     arrow->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     listsStats->addWidget(arrow);
 
-    appendValueLabel(title.toStdString(), value);
+    appendInfoLabel(title.toStdString(), value, arrow, line);
     mainLayout->addLayout(listsStats);
 }

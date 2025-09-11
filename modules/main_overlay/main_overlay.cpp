@@ -1,7 +1,7 @@
 #include <main_overlay/main_overlay.h>
-#include <main_overlay/widgets/main_stats/main_stats.h>
 
-MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
+MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
+    : QWidget(parent), m_apiController(apiController)
 {
     // Настройка основного окна
     QApplication::setStyle("Fusion");
@@ -47,6 +47,8 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
         "    background-color: rgb(70, 70, 70);"
         "}");
     buttonMain->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonMain, &QPushButton::clicked, this, [this]()
+            { switchPage(1); resize(300, 200); });
     buttonsLayout->addWidget(buttonMain);
 
     // Кнопка рейтинговой статистики
@@ -194,6 +196,8 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
         "    background-color: rgb(70, 70, 70);"
         "}");
     buttonInfo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonInfo, &QPushButton::clicked, this, [this]()
+            { switchPage(0); resize(300, 400); });
     buttonsLayout->addWidget(buttonInfo);
 
     // Кнопка выхода
@@ -220,8 +224,20 @@ MainOverlay::MainOverlay(QWidget *parent) : QWidget(parent)
     config_panel->setLayout(buttonsLayout);
     mainLayout->addWidget(config_panel);
 
-    MainStats *mainStats = new MainStats;
-    mainLayout->addWidget(mainStats);
+    // Контейнер с разными вкладками
+    QStackedWidget *stacked_widget = new QStackedWidget;
+    stacked_widget->setContentsMargins(0, 0, 0, 0);
+
+    InfoPage *infoPage = new InfoPage(m_apiController);
+    stacked_widget->addWidget(infoPage);
+    stacked_widget->setCurrentIndex(0);
+
+    MainStats *mainStats = new MainStats(m_apiController);
+    stacked_widget->addWidget(mainStats);
+    stacked_widget->setCurrentIndex(1);
+
+    setStackedWidget(stacked_widget);
+    mainLayout->addWidget(stacked_widget);
 
     setLayout(mainLayout);
 }
