@@ -49,7 +49,7 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
 
     QHBoxLayout *header = new QHBoxLayout(header_widget);
     header->setAlignment(Qt::AlignTop);
-    header->setSpacing(0);
+    header->setSpacing(1);
     header->setContentsMargins(0, 0, 0, 0);
 
     std::vector<int> sizes = {105, 50, 50, 50};
@@ -110,8 +110,13 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
 
     setLayout(mainLayout);
 
-    updateTankRow("ИС-7", 50, 45.1, 2000);
-    updateTankRow("ИС-7", 51, 35.1, 3500);
+    updateTankRow("ИС-7", 1, 45.1, 2000);
+    updateTankRow("ИС-1", 51, 55.1, 0);
+    updateTankRow("ИС-2", 511, 65.1, 20);
+    updateTankRow("ИС-3", 5111, 75.1, 500);
+    updateTankRow("ИС-4", 51, 70.1, 3500);
+    updateTankRow("ИС-5", 51, 12.1, 3500);
+    updateTankRow("ИС-6", 51, 1.1, 3500);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &VehicleStats::updatingVehicleStats);

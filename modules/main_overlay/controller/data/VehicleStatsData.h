@@ -89,6 +89,7 @@ public:
 
     void updateStats(const json &newStats)
     {
+        std::cout << "=== updateStats called ===" << std::endl;
         prev_vehicles = vehicles;
         for (auto i : newStats)
         {
@@ -97,6 +98,7 @@ public:
             vehicleData.battles = i["all"]["battles"].get<int64_t>();
             vehicleData.wins = i["all"]["wins"].get<int64_t>();
             vehicleData.totalDamage = i["all"]["damage_dealt"].get<int64_t>();
+
             if (vehicles.count(vehicleData.id))
             {
                 vehicles[vehicleData.id] = vehicleData - first_vehicles[vehicleData.id];
@@ -120,10 +122,10 @@ public:
                 auto nameIt = names_vehicles.find(v.first);
                 std::string tankName = (nameIt != names_vehicles.end()) ? nameIt->second : "Unknown";
                 double winrate = (static_cast<double>(v.second.wins) / v.second.battles) * 100.0;
-                // std::cout << "Tank: " << tankName
-                //           << " Battle: " << v.second.battles
-                //           << " Damage: " << (v.second.totalDamage / v.second.battles)
-                //           << " Wins: " << std::round(winrate * 100.0) / 100.0 << "%" << std::endl;
+                std::cout << "Tank: " << tankName
+                          << " Battle: " << v.second.battles
+                          << " Damage: " << (v.second.totalDamage / v.second.battles)
+                          << " Wins: " << std::round(winrate * 100.0) / 100.0 << "%" << std::endl;
                 return &v.second;
             }
         }

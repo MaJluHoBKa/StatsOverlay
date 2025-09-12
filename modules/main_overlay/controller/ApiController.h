@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
+#include <cctype>
+#include <unordered_map>
 #include <../external/httplib.h>
 #include <../external/json.hpp>
 #include <curl/curl.h>
@@ -14,6 +17,18 @@
 #include <main_overlay/controller/data/VehicleStatsData.h>
 
 using json = nlohmann::json;
+
+struct Player
+{
+    std::string nickname;
+    int64_t id;
+    int64_t battles;
+    int64_t damage;
+    int64_t wins;
+    int64_t tier;
+    std::string tank_name;
+    int64_t team;
+};
 
 class ApiController
 {
@@ -36,6 +51,10 @@ private:
     // MasteryStats masteryStats;
     // OtherStats otherStats;
     VehicleStatsData vehicleStats;
+
+    std::vector<Player> allies;
+    std::vector<Player> enemies;
+    std::unordered_map<std::string, Player &> db_players;
 
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     {
@@ -581,6 +600,84 @@ public:
     //     return success;
     // }
 
+    bool get_players_stats()
+    {
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
+
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
+
+        if (curl)
+        {
+
+            std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&account_id=" + join() +
+                              "&fields=statistics.all.battles,statistics.all.wins,statistics.all.damage_dealt";
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
+            res = curl_easy_perform(curl);
+
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"];
+                    for (auto it = data.begin(); it != data.end(); ++it)
+                    {
+                        std::string player_id = it.key();
+                        auto stats = it.value()["statistics"]["all"];
+
+                        auto db_it = db_players.find(player_id);
+                        if (db_it != db_players.end())
+                        {
+                            Player &p = db_it->second;
+                            p.battles = stats.value("battles", 0);
+                            p.damage = stats.value("damage_dealt", 0);
+                            p.wins = stats.value("wins", 0);
+                        }
+                    }
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
+
+        return success;
+    }
+
     bool update_vehicles_stats()
     {
         if (this->isFirstVehiclesStats)
@@ -679,6 +776,30 @@ public:
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
+
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
+
             res = curl_easy_perform(curl);
 
             if (res == CURLE_OK)
@@ -733,6 +854,77 @@ public:
     // {
     //     return this->vehicleStats;
     // }
+
+    std::string join()
+    {
+        std::string str = "";
+        if (this->allies.size() + this->enemies.size() == 14)
+        {
+            str += std::to_string(this->allies[0].id);
+            for (int i = 1; i < this->allies.size(); i++)
+            {
+                str += ",";
+                str += std::to_string(this->allies[i].id);
+            }
+            for (int i = 0; i < this->enemies.size(); i++)
+            {
+                str += ",";
+                str += std::to_string(this->enemies[i].id);
+            }
+        }
+        return str;
+    }
+
+    void setPlayers(const std::vector<Player> allies, const std::vector<Player> enemies)
+    {
+        this->allies = allies;
+        this->enemies = enemies;
+
+        this->db_players.clear();
+
+        for (auto &p : this->allies)
+        {
+            db_players.emplace(std::to_string(p.id), p);
+        }
+
+        for (auto &p : this->enemies)
+        {
+            db_players.emplace(std::to_string(p.id), p);
+        }
+    }
+
+    static void toLowerInplace(std::string &s)
+    {
+        std::transform(s.begin(), s.end(), s.begin(),
+                       [](unsigned char c)
+                       { return std::tolower(c); });
+    }
+
+    void sortPlayers(std::vector<Player> &players)
+    {
+        std::sort(players.begin(), players.end(), [](const Player &a, const Player &b)
+                  {
+                      if (a.tier != b.tier)
+                          return a.tier > b.tier;
+
+                      std::string an = a.tank_name, bn = b.tank_name;
+                      toLowerInplace(an);
+                      toLowerInplace(bn);
+                      if (an != bn)
+                          return an < bn;
+
+                      return false; });
+    }
+
+    std::vector<Player> getSortedAllies() const
+    {
+        return this->allies;
+    }
+
+    std::vector<Player> getSortedEnemies() const
+    {
+        return this->enemies;
+    }
 
     std::string getNickname() const
     {

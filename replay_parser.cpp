@@ -4,9 +4,6 @@
 #include <set>
 #include <iostream>
 #include <cstdint>
-#include <json.hpp>
-
-using json = nlohmann::json;
 
 struct Player
 {
@@ -125,24 +122,50 @@ std::vector<Player> parse_update_arena_manual(const std::vector<uint8_t> &payloa
         int field_number = tag >> 3;
         int wire_type = tag & 0x7;
 
-        if (field_number == 1 && wire_type == 2) // один игрок
+        if (field_number == 1 && wire_type == 2) // UpdateArena.players block
         {
-            uint64_t len2 = decodeVarint(payload.data(), pos, payload.size());
-            if (pos + len2 <= payload.size())
+            uint64_t length = decodeVarint(payload.data(), pos, payload.size());
+            if (pos + length > payload.size())
+                break;
+
+            std::vector<uint8_t> block(payload.begin() + pos, payload.begin() + pos + length);
+            pos += length;
+
+            size_t inner_pos = 0;
+            while (inner_pos < block.size())
             {
-                std::vector<uint8_t> player_block(payload.begin() + pos, payload.begin() + pos + len2);
-                Player p = parse_player_manual(player_block);
-                all_players.push_back(p);
-                pos += len2; // <-- сдвигаем ровно один раз
-            }
-            else
-            {
-                pos = payload.size(); // защита от выхода
+                uint64_t inner_tag = decodeVarint(block.data(), inner_pos, block.size());
+                int inner_field_number = inner_tag >> 3;
+                int inner_wire_type = inner_tag & 0x7;
+
+                if (inner_field_number == 1 && inner_wire_type == 2) // repeated Player
+                {
+                    uint64_t plength = decodeVarint(block.data(), inner_pos, block.size());
+                    if (inner_pos + plength > block.size())
+                        break;
+
+                    std::vector<uint8_t> player_bytes(block.begin() + inner_pos, block.begin() + inner_pos + plength);
+                    inner_pos += plength;
+
+                    Player p = parse_player_manual(player_bytes);
+                    all_players.push_back(p);
+                }
+                else
+                {
+                    if (inner_wire_type == 0)
+                        decodeVarint(block.data(), inner_pos, block.size());
+                    else if (inner_wire_type == 2)
+                    {
+                        uint64_t l = decodeVarint(block.data(), inner_pos, block.size());
+                        inner_pos += l;
+                    }
+                    else
+                        inner_pos++;
+                }
             }
         }
         else
         {
-            // пропуск неизвестного поля
             if (wire_type == 0)
                 decodeVarint(payload.data(), pos, payload.size());
             else if (wire_type == 2)
@@ -172,7 +195,12 @@ std::vector<Player> parse_entity_method(const std::vector<uint8_t> &payload)
     if (sub_type != 50)
         return players;
 
-    uint32_t inner_length = *(uint32_t *)&payload[pos];
+    uint32_t inner_length =
+        payload[pos] |
+        (payload[pos + 1] << 8) |
+        (payload[pos + 2] << 16) |
+        (payload[pos + 3] << 24);
+    pos += 4;
     pos += 4;
 
     std::vector<uint8_t> view(payload.begin() + pos, payload.end());
@@ -184,11 +212,13 @@ std::vector<Player> parse_entity_method(const std::vector<uint8_t> &payload)
 
     // Пропускаем первый varint (обычно 1)
     size_t varint_pos = 0;
-    // decodeVarint(view.data(), varint_pos, view.size());
+    decodeVarint(view.data(), varint_pos, view.size());
     std::cout << "[DEBUG] First varint skipped, next offset=" << varint_pos << "\n";
 
     // Всё остальное — это proto_bytes
-    std::vector<uint8_t> proto_bytes(view.begin(), view.end());
+    if (varint_pos + inner_length > view.size())
+        inner_length = view.size() - varint_pos;
+    std::vector<uint8_t> proto_bytes(view.begin() + varint_pos, view.begin() + varint_pos + inner_length);
 
     std::cout << "[DEBUG] proto_bytes size=" << proto_bytes.size() << "\n";
 
@@ -256,10 +286,18 @@ int main(int argc, char **argv)
                       << ", type=" << type << ", length=" << length << "\n";
 
             auto players = parse_entity_method(payload);
-            if (!players.empty())
+            std::vector<Player> real_players;
+            for (auto &p : players)
             {
-                std::cout << "  -> Found " << players.size() << " players\n";
-                for (auto &p : players)
+                if (!p.nickname.empty() && p.team_number != 0)
+                {
+                    real_players.push_back(p);
+                }
+            }
+            if (!real_players.empty())
+            {
+                std::cout << "  -> Found " << real_players.size() << " players\n";
+                for (auto &p : real_players)
                 {
                     std::cout << "     " << p.nickname
                               << ", team=" << p.team_number

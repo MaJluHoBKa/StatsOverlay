@@ -63,10 +63,13 @@ public:
                 if (vehicleData != nullptr)
                 {
                     std::string name = this->m_apiController->getVehicleName(vehicleData->id);
+                    double winRate = (static_cast<double>(vehicleData->wins) / vehicleData->battles) * 100.0;
+                    int64_t damage = vehicleData->totalDamage / vehicleData->battles;
+
                     updateTankRow(QString::fromStdString(name),
                                   vehicleData->battles,
-                                  vehicleData->wins,
-                                  vehicleData->totalDamage);
+                                  std::round(winRate * 100.0) / 100.0,
+                                  damage);
                 }
                 else
                 {
@@ -83,7 +86,7 @@ public:
     void addTankRow(QString name, int64_t battles, float wins, int64_t damage)
     {
         QHBoxLayout *row = new QHBoxLayout;
-        row->setSpacing(0);
+        row->setSpacing(1);
         row->setContentsMargins(0, 0, 0, 0);
 
         int id = QFontDatabase::addApplicationFont(":/main_stats/resources/fonts/JetBrainsMono-Bold.ttf");
@@ -97,28 +100,20 @@ public:
                     background-color: #383838;
                     padding: 5px 0px;
                     margin: 0px;
-                    border: none;
+                    border-radius: 3px;
                 )";
         QString styled = baseStyle.arg(family);
 
         QLabel *tankName = new QLabel;
         tankName->setText(name);
         tankName->setStyleSheet(styled +
-                                "text-align: left;" +
-                                "border-top-left-radius: 3px;" +
-                                "border-bottom-left-radius: 3px;" +
-                                "border-top-right-radius: 0px;" +
-                                "border-bottom-right-radius: 0px;");
+                                "text-align: left;");
         tankName->setFixedWidth(this->sizesRow[0]);
         tankName->setFixedHeight(25);
 
         QLabel *tankBattles = new QLabel;
         tankBattles->setText(QString::fromStdString(formatInt(battles)));
-        tankBattles->setStyleSheet(styled +
-                                   "border-top-left-radius: 0px;" +
-                                   "border-bottom-left-radius: 0px;" +
-                                   "border-top-right-radius: 0px;" +
-                                   "border-bottom-right-radius: 0px;");
+        tankBattles->setStyleSheet(styled);
         tankBattles->setFixedWidth(this->sizesRow[1]);
         tankBattles->setFixedHeight(25);
         tankBattles->setAlignment(Qt::AlignCenter);
@@ -142,22 +137,14 @@ public:
         {
             color = "#ffffff";
         }
-        tankWins->setStyleSheet(styled + QString("color: %1;").arg(color) +
-                                "border-top-left-radius: 0px;" +
-                                "border-bottom-left-radius: 0px;" +
-                                "border-top-right-radius: 0px;" +
-                                "border-bottom-right-radius: 0px;");
+        tankWins->setStyleSheet(styled + QString("color: %1;").arg(color));
         tankWins->setFixedWidth(this->sizesRow[2]);
         tankWins->setFixedHeight(25);
         tankWins->setAlignment(Qt::AlignCenter);
 
         QLabel *tankDamage = new QLabel;
         tankDamage->setText(QString::fromStdString(std::to_string(damage)));
-        tankDamage->setStyleSheet(styled +
-                                  "border-top-left-radius: 0px;" +
-                                  "border-bottom-left-radius: 0px;" +
-                                  "border-top-right-radius: 3px;" +
-                                  "border-bottom-right-radius: 3px;");
+        tankDamage->setStyleSheet(styled);
         tankDamage->setFixedWidth(this->sizesRow[3]);
         tankDamage->setFixedHeight(25);
         tankDamage->setAlignment(Qt::AlignCenter);
@@ -188,15 +175,15 @@ public:
                 QString family = QFontDatabase::applicationFontFamilies(id).at(0);
 
                 const QString baseStyle = R"(
-            font-family: "%1";
-            font-size: 11px;
-            font-weight: bold;
-            color: #e2ded3;
-            background-color: #383838;
-            padding: 5px 0px;
-            margin: 0px;
-            border: none;
-        )";
+                    font-family: "%1";
+                    font-size: 11px;
+                    font-weight: bold;
+                    color: #e2ded3;
+                    background-color: #383838;
+                    padding: 5px 0px;
+                    margin: 0px;
+                    border-radius: 3px;
+                )";
                 QString styled = baseStyle.arg(family);
 
                 if (this->info_rows.find(name) != this->info_rows.end())
@@ -222,11 +209,7 @@ public:
                     {
                         color = "#ffffff";
                     }
-                    this->info_rows[name]->wins->setStyleSheet(styled + QString("color: %1;").arg(color) +
-                                                               "border-top-left-radius: 0px;" +
-                                                               "border-bottom-left-radius: 0px;" +
-                                                               "border-top-right-radius: 0px;" +
-                                                               "border-bottom-right-radius: 0px;");
+                    this->info_rows[name]->wins->setStyleSheet(styled + QString("color: %1;").arg(color));
                 }
                 else
                 {
