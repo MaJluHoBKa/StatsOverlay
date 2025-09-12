@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/vehicles_data_stats">
+        <file>../../../../resources/vehicles/tanks.json</file>
+    </qresource>
+</RCC>

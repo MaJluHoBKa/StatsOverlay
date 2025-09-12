@@ -125,103 +125,103 @@ public:
                 if (mainStatsData.getGold() > prevCopy.getGold())
                 {
                     this->info["Золото"]->arrow->setText("▲");
-                    this->info["Золото"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Золото"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Золото"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getGold() < prevCopy.getGold())
                 {
                     this->info["Золото"]->arrow->setText("▼");
-                    this->info["Золото"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Золото"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Золото"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getCredits() > prevCopy.getCredits())
                 {
                     this->info["Кредиты"]->arrow->setText("▲");
-                    this->info["Кредиты"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Кредиты"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Кредиты"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getCredits() < prevCopy.getCredits())
                 {
                     this->info["Кредиты"]->arrow->setText("▼");
-                    this->info["Кредиты"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Кредиты"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Кредиты"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getExpBattle() > prevCopy.getExpBattle())
                 {
                     this->info["Боевой опыт"]->arrow->setText("▲");
-                    this->info["Боевой опыт"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Боевой опыт"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Боевой опыт"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getExpBattle() < prevCopy.getExpBattle())
                 {
                     this->info["Боевой опыт"]->arrow->setText("▼");
-                    this->info["Боевой опыт"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Боевой опыт"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Боевой опыт"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getExpFree() > prevCopy.getExpFree())
                 {
                     this->info["Свободный опыт"]->arrow->setText("▲");
-                    this->info["Свободный опыт"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Свободный опыт"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Свободный опыт"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getExpFree() < prevCopy.getExpFree())
                 {
                     this->info["Свободный опыт"]->arrow->setText("▼");
-                    this->info["Свободный опыт"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Свободный опыт"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Свободный опыт"]->line->setStyleSheet("background-color: #ff6666;");
                 }
                 if (mainStatsData.getBattles() > prevCopy.getBattles())
                 {
                     this->info["Проведено боев"]->arrow->setText("▲");
-                    this->info["Проведено боев"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Проведено боев"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Проведено боев"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getBattles() < prevCopy.getBattles())
                 {
                     this->info["Проведено боев"]->arrow->setText("▼");
-                    this->info["Проведено боев"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Проведено боев"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Проведено боев"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getPercentWins() > prevCopy.getPercentWins())
                 {
                     this->info["Победы"]->arrow->setText("▲");
-                    this->info["Победы"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Победы"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Победы"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getPercentWins() < prevCopy.getPercentWins())
                 {
                     this->info["Победы"]->arrow->setText("▼");
-                    this->info["Победы"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Победы"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Победы"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getAvgDamage() > prevCopy.getAvgDamage())
                 {
                     this->info["Урон"]->arrow->setText("▲");
-                    this->info["Урон"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Урон"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Урон"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getAvgDamage() < prevCopy.getAvgDamage())
                 {
                     this->info["Урон"]->arrow->setText("▼");
-                    this->info["Урон"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Урон"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Урон"]->line->setStyleSheet("background-color: #ff6666;");
                 }
 
                 if (mainStatsData.getAvgExp() > prevCopy.getAvgExp())
                 {
                     this->info["Опыт"]->arrow->setText("▲");
-                    this->info["Опыт"]->arrow->setStyleSheet("color: #00ff00;");
+                    this->info["Опыт"]->arrow->setStyleSheet("color: #66ff66;");
                     this->info["Опыт"]->line->setStyleSheet("background-color: #66ff66;");
                 }
                 else if (mainStatsData.getAvgExp() < prevCopy.getAvgExp())
                 {
                     this->info["Опыт"]->arrow->setText("▼");
-                    this->info["Опыт"]->arrow->setStyleSheet("color: #ff0000;");
+                    this->info["Опыт"]->arrow->setStyleSheet("color: #ff6666;");
                     this->info["Опыт"]->line->setStyleSheet("background-color: #ff6666;");
                 }
             },

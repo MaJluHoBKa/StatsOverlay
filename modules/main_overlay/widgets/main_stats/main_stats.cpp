@@ -27,6 +27,7 @@ MainStats::MainStats(ApiController *apiController, QWidget *parent)
     QLabel *icon = new QLabel;
     icon->setPixmap(QPixmap(":main_stats/resources/icons/arrow_icon.png"));
     icon->setMaximumWidth(30);
+    icon->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     listsStats->addWidget(icon);
 
     QLabel *label = new QLabel;
@@ -103,16 +104,19 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     // Установка показателей
     QLabel *value = new QLabel;
     value->setText("-");
-    value->setMinimumWidth(0);
+    value->setMinimumWidth(15);
     value->setTextFormat(Qt::RichText);
+    value->setContentsMargins(5, 3, 5, 3);
     value->setStyleSheet(QString(
                              "font-family: \"%1\";"
                              "font-size: 11px;"
                              "font-weight: bold;"
                              "color: #e2ded3;"
-                             "white-space: nowrap;")
+                             "white-space: nowrap;"
+                             "background-color: #383838;"
+                             "border-radius: 5px;")
                              .arg(family));
-    value->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    value->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
     value->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     listsStats->addWidget(value);
 

@@ -48,7 +48,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonMain->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonMain, &QPushButton::clicked, this, [this]()
-            { switchPage(1); resize(300, 200); });
+            { switchPage(3); resize(300, 200); });
     buttonsLayout->addWidget(buttonMain);
 
     // Кнопка рейтинговой статистики
@@ -70,6 +70,8 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "    background-color: rgb(70, 70, 70);"
         "}");
     buttonRating->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonRating, &QPushButton::clicked, this, [this]()
+            { switchPage(2); resize(300, 200); });
     buttonsLayout->addWidget(buttonRating);
 
     // Кнопка танковой статистики
@@ -91,6 +93,8 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "    background-color: rgb(70, 70, 70);"
         "}");
     buttonTanks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonTanks, &QPushButton::clicked, this, [this]()
+            { switchPage(1); resize(300, 200); });
     buttonsLayout->addWidget(buttonTanks);
 
     // Кнопка коэффициентной статистики
@@ -232,9 +236,17 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     stacked_widget->addWidget(infoPage);
     stacked_widget->setCurrentIndex(0);
 
+    VehicleStats *vehicleStats = new VehicleStats(m_apiController);
+    stacked_widget->addWidget(vehicleStats);
+    stacked_widget->setCurrentIndex(1);
+
+    RatingStats *ratingStats = new RatingStats(m_apiController);
+    stacked_widget->addWidget(ratingStats);
+    stacked_widget->setCurrentIndex(2);
+
     MainStats *mainStats = new MainStats(m_apiController);
     stacked_widget->addWidget(mainStats);
-    stacked_widget->setCurrentIndex(1);
+    stacked_widget->setCurrentIndex(3);
 
     setStackedWidget(stacked_widget);
     mainLayout->addWidget(stacked_widget);

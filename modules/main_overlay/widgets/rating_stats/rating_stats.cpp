@@ -1,6 +1,6 @@
-#include <main_overlay/widgets/main_stats/main_stats.h>
+#include <main_overlay/widgets/rating_stats/rating_stats.h>
 
-MainStats::MainStats(ApiController *apiController, QWidget *parent)
+RatingStats::RatingStats(ApiController *apiController, QWidget *parent)
     : m_apiController(apiController), QWidget(parent)
 {
     setFixedWidth(280);
@@ -15,10 +15,9 @@ MainStats::MainStats(ApiController *apiController, QWidget *parent)
     mainLayout->setSpacing(5);
 
     // Выставление экономики
-    addContent(mainLayout, QPixmap(":main_stats/resources/icons/gold_icon.png"), "Золото", true, false);
-    addContent(mainLayout, QPixmap(":main_stats/resources/icons/silver_icon.png"), "Кредиты", false, false);
-    addContent(mainLayout, QPixmap(":main_stats/resources/icons/xp_battle_icon.png"), "Боевой опыт", false, false);
-    addContent(mainLayout, QPixmap(":main_stats/resources/icons/free_xp_icon.png"), "Свободный опыт", false, false);
+    addContent(mainLayout, QPixmap(":rating_stats/resources/icons/rating_icon.png"), "Текущий рейтинг", true, false);
+    addContent(mainLayout, QPixmap(":rating_stats/resources/icons/progress_icon.png"), "Прогресс рейтинга", false, false);
+    addContent(mainLayout, QPixmap(":rating_stats/resources/icons/calib_icon.png"), "Калибровочные бои", false, false);
 
     // Слой заголовка боевой статистики
     QHBoxLayout *listsStats = new QHBoxLayout();
@@ -27,6 +26,7 @@ MainStats::MainStats(ApiController *apiController, QWidget *parent)
     QLabel *icon = new QLabel;
     icon->setPixmap(QPixmap(":main_stats/resources/icons/arrow_icon.png"));
     icon->setMaximumWidth(30);
+    icon->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     listsStats->addWidget(icon);
 
     QLabel *label = new QLabel;
@@ -53,11 +53,11 @@ MainStats::MainStats(ApiController *apiController, QWidget *parent)
     setLayout(mainLayout);
 
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainStats::updatingMainStats);
+    connect(timer, &QTimer::timeout, this, &RatingStats::updatingRatingStats);
     timer->start(30000);
 }
 
-void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString title, bool is_top, bool is_bottom)
+void RatingStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString title, bool is_top, bool is_bottom)
 {
     // Контейнер для установки содержимого
     QHBoxLayout *listsStats = new QHBoxLayout();
@@ -103,16 +103,19 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     // Установка показателей
     QLabel *value = new QLabel;
     value->setText("-");
-    value->setMinimumWidth(0);
+    value->setMinimumWidth(15);
     value->setTextFormat(Qt::RichText);
+    value->setContentsMargins(5, 3, 5, 3);
     value->setStyleSheet(QString(
                              "font-family: \"%1\";"
                              "font-size: 11px;"
                              "font-weight: bold;"
                              "color: #e2ded3;"
-                             "white-space: nowrap;")
+                             "white-space: nowrap;"
+                             "background-color: #383838;"
+                             "border-radius: 5px;")
                              .arg(family));
-    value->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    value->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
     value->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     listsStats->addWidget(value);
 
@@ -123,7 +126,7 @@ void MainStats::addContent(QVBoxLayout *mainLayout, QPixmap icon_source, QString
     arrow->setTextFormat(Qt::RichText);
     arrow->setStyleSheet(QString(
                              "font-family: \"%1\";"
-                             "font-size: 9px;"
+                             "font-size: 5px;"
                              "font-weight: bold;"
                              "color: #e2ded3;"
                              "white-space: nowrap;")

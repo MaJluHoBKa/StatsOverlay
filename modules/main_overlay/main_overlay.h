@@ -11,6 +11,8 @@
 #include <QPainter>
 #include <QStackedWidget>
 #include <main_overlay/widgets/main_stats/main_stats.h>
+#include <main_overlay/widgets/rating_stats/rating_stats.h>
+#include <main_overlay/widgets/vehicles_stats/vehicles_stats.h>
 #include <main_overlay/widgets/info_page/info_page.h>
 #include <main_overlay/controller/ApiController.h>
 #include <../modules/sub_overlay/sub_overlay.h>

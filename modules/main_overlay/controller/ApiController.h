@@ -8,10 +8,10 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <main_overlay/controller/data/MainStatsData.h>
-// #include "RatingStats.h"
+#include <main_overlay/controller/data/RatingStatsData.h>
 // #include "MasteryStats.h"
 // #include "OtherStats.h"
-// #include "VehicleStats.h"
+#include <main_overlay/controller/data/VehicleStatsData.h>
 
 using json = nlohmann::json;
 
@@ -32,11 +32,10 @@ private:
     bool isFirstVehiclesStats = true;
 
     MainStatsData mainStats;
-    // RatingStats ratingStats;
+    RatingStatsData ratingStats;
     // MasteryStats masteryStats;
     // OtherStats otherStats;
-    // VehicleStats vehicleStats{
-    //     "D:\\Games\\MOD\\WoT Blitz\\Stats\\src\\tank-list\\tanks.json"};
+    VehicleStatsData vehicleStats;
 
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
     {
@@ -298,7 +297,7 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem"); // путь в .qrc
+            QFile certFile(":/certs/external/curl/cacert.pem");
             if (certFile.open(QIODevice::ReadOnly))
             {
                 QByteArray certData = certFile.readAll();
@@ -368,70 +367,95 @@ public:
         return success;
     }
 
-    // bool update_rating_stats()
-    // {
-    //     CURL *curl;
-    //     CURLcode res;
-    //     std::string readBuffer;
-    //     bool success = false;
+    bool update_rating_stats()
+    {
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
 
-    //     curl_global_init(CURL_GLOBAL_DEFAULT);
-    //     curl = curl_easy_init();
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
 
-    //     if (curl)
-    //     {
-    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
-    //         std::string url = base +
-    //                           "?application_id=" + this->application_id +
-    //                           "&access_token=" + this->token +
-    //                           "&account_id=" + this->account_id +
-    //                           "&extra=statistics.rating";
-    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    //         res = curl_easy_perform(curl);
+        if (curl)
+        {
+            std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&access_token=" + this->token +
+                              "&account_id=" + this->account_id +
+                              "&extra=statistics.rating";
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-    //         if (res == CURLE_OK)
-    //         {
-    //             json j = json::parse(readBuffer, nullptr, false);
-    //             if (j["status"] == "ok")
-    //             {
-    //                 auto &data = j["data"][this->account_id];
-    //                 RatingData ratingData;
-    //                 ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<double>();
-    //                 ratingData.calib_battles = data["statistics"]["rating"]["calibration_battles_left"].get<int64_t>();
-    //                 ratingData.battles = data["statistics"]["rating"]["battles"].get<int64_t>();
-    //                 ratingData.exp_battle = data["statistics"]["rating"]["xp"].get<int64_t>();
-    //                 ratingData.wins = data["statistics"]["rating"]["wins"].get<int64_t>();
-    //                 ratingData.totalDamage = data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
 
-    //                 if (this->isFirstRatingStats)
-    //                 {
-    //                     this->ratingStats.initialStats(ratingData);
-    //                     this->isFirstRatingStats = false;
-    //                 }
-    //                 else
-    //                 {
-    //                     this->ratingStats.updateStats(ratingData);
-    //                 }
-    //                 // std::cout << "ratingData:" << std::endl;
-    //                 // std::cout << "  mm_rating: " << ratingStats.getRating() << std::endl;
-    //                 // std::cout << "  progress: " << ratingStats.getDiffRating() << std::endl;
-    //                 // std::cout << "  Calib battles: " << ratingStats.getCalibBattles() << std::endl;
-    //                 // std::cout << "  Battles: " << ratingStats.getBattles() << std::endl;
-    //                 // std::cout << "  Exp battle: " << ratingStats.getAvgExp() << std::endl;
-    //                 // std::cout << "  Wins: " << ratingStats.getPercentWins() << std::endl;
-    //                 // std::cout << "  Total damage: " << ratingStats.getAvgDamage() << std::endl;
-    //                 success = true;
-    //             }
-    //         }
-    //     }
-    //     if (curl)
-    //         curl_easy_cleanup(curl);
-    //     curl_global_cleanup();
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
 
-    //     return success;
-    // }
+            res = curl_easy_perform(curl);
+
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"][this->account_id];
+                    RatingData ratingData;
+                    ratingData.mm_rating = data["statistics"]["rating"]["mm_rating"].get<double>();
+                    ratingData.calib_battles = data["statistics"]["rating"]["calibration_battles_left"].get<int64_t>();
+                    ratingData.battles = data["statistics"]["rating"]["battles"].get<int64_t>();
+                    ratingData.exp_battle = data["statistics"]["rating"]["xp"].get<int64_t>();
+                    ratingData.wins = data["statistics"]["rating"]["wins"].get<int64_t>();
+                    ratingData.losses = data["statistics"]["rating"]["losses"].get<int64_t>();
+                    ratingData.totalDamage = data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
+
+                    if (this->isFirstRatingStats)
+                    {
+                        this->ratingStats.initialStats(ratingData);
+                        this->isFirstRatingStats = false;
+                    }
+                    else
+                    {
+                        this->ratingStats.updateStats(ratingData);
+                    }
+                    // std::cout << "ratingData:" << std::endl;
+                    // std::cout << "  mm_rating: " << ratingStats.getRating() << std::endl;
+                    // std::cout << "  progress: " << ratingStats.getDiffRating() << std::endl;
+                    // std::cout << "  Calib battles: " << ratingStats.getCalibBattles() << std::endl;
+                    // std::cout << "  Battles: " << ratingStats.getBattles() << std::endl;
+                    // std::cout << "  Exp battle: " << ratingStats.getAvgExp() << std::endl;
+                    // std::cout << "  Wins: " << ratingStats.getPercentWins() << std::endl;
+                    // std::cout << "  Total damage: " << ratingStats.getAvgDamage() << std::endl;
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
+
+        return success;
+    }
 
     // bool update_mastery_stats()
     // {
@@ -557,119 +581,143 @@ public:
     //     return success;
     // }
 
-    // bool update_vehicles_stats()
-    // {
-    //     if (this->isFirstVehiclesStats)
-    //     {
-    //         if (!get_vehicles_names())
-    //         {
-    //             return false;
-    //         }
-    //     }
-    //     CURL *curl;
-    //     CURLcode res;
-    //     std::string readBuffer;
-    //     bool success = false;
+    bool update_vehicles_stats()
+    {
+        if (this->isFirstVehiclesStats)
+        {
+            if (!get_vehicles_names())
+            {
+                return false;
+            }
+        }
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
 
-    //     curl_global_init(CURL_GLOBAL_DEFAULT);
-    //     curl = curl_easy_init();
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
 
-    //     if (curl)
-    //     {
-    //         std::string base = "https://papi.tanksblitz.ru/wotb/tanks/stats/";
-    //         std::string url = base +
-    //                           "?application_id=" + this->application_id +
-    //                           "&access_token=" + this->token +
-    //                           "&account_id=" + this->account_id;
-    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    //         res = curl_easy_perform(curl);
+        if (curl)
+        {
+            std::string base = "https://papi.tanksblitz.ru/wotb/tanks/stats/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&access_token=" + this->token +
+                              "&account_id=" + this->account_id;
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-    //         if (res == CURLE_OK)
-    //         {
-    //             json j = json::parse(readBuffer, nullptr, false);
-    //             if (j["status"] == "ok")
-    //             {
-    //                 auto &data = j["data"][this->account_id];
-    //                 if (this->isFirstVehiclesStats)
-    //                 {
-    //                     this->vehicleStats.initialStats(data);
-    //                     this->isFirstVehiclesStats = false;
-    //                 }
-    //                 else
-    //                 {
-    //                     this->vehicleStats.updateStats(data);
-    //                 }
-    //                 success = true;
-    //             }
-    //         }
-    //     }
-    //     if (curl)
-    //         curl_easy_cleanup(curl);
-    //     curl_global_cleanup();
+            QFile certFile(":/certs/external/curl/cacert.pem");
+            if (certFile.open(QIODevice::ReadOnly))
+            {
+                QByteArray certData = certFile.readAll();
 
-    //     return success;
-    // }
+                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
+                QFile tempFile(tempPath);
+                if (tempFile.open(QIODevice::WriteOnly))
+                {
+                    tempFile.write(certData);
+                    tempFile.close();
+                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
+                }
+                else
+                {
+                    std::cerr << "Cannot create temp cert file" << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Cannot open cert from resources" << std::endl;
+            }
 
-    // bool get_vehicles_names()
-    // {
-    //     CURL *curl;
-    //     CURLcode res;
-    //     std::string readBuffer;
-    //     bool success = false;
+            res = curl_easy_perform(curl);
 
-    //     curl_global_init(CURL_GLOBAL_DEFAULT);
-    //     curl = curl_easy_init();
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"][this->account_id];
+                    if (this->isFirstVehiclesStats)
+                    {
+                        this->vehicleStats.initialStats(data);
+                        this->isFirstVehiclesStats = false;
+                    }
+                    else
+                    {
+                        this->vehicleStats.updateStats(data);
+                    }
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
 
-    //     if (curl)
-    //     {
-    //         std::string base = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/";
-    //         std::string url = base +
-    //                           "?application_id=" + this->application_id +
-    //                           "&fields=name,tank_id";
-    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    //         res = curl_easy_perform(curl);
+        return success;
+    }
 
-    //         if (res == CURLE_OK)
-    //         {
-    //             json j = json::parse(readBuffer, nullptr, false);
-    //             if (j["status"] == "ok")
-    //             {
-    //                 auto &data = j["data"];
-    //                 vehicleStats.setNames(data);
-    //                 success = true;
-    //             }
-    //         }
-    //     }
-    //     if (curl)
-    //         curl_easy_cleanup(curl);
-    //     curl_global_cleanup();
+    bool get_vehicles_names()
+    {
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
 
-    //     return success;
-    // }
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
 
-    // const VehicleData *get_updated_vehicles() const
-    // {
-    //     return vehicleStats.getUpdatedVehicle();
-    // }
+        if (curl)
+        {
+            std::string base = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&fields=name,tank_id,tier";
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+            res = curl_easy_perform(curl);
 
-    // std::string getVehicleName(int64_t id)
-    // {
-    //     return vehicleStats.getName(id);
-    // }
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"];
+                    vehicleStats.setNames(data);
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
+
+        return success;
+    }
+
+    const VehicleData *get_updated_vehicles() const
+    {
+        return vehicleStats.getUpdatedVehicle();
+    }
+
+    std::string getVehicleName(int64_t id)
+    {
+        return vehicleStats.getName(id);
+    }
 
     MainStatsData getMainStats() const
     {
         return this->mainStats;
     }
 
-    // RatingStats getRatingStats() const
-    // {
-    //     return this->ratingStats;
-    // }
+    RatingStatsData getRatingStats() const
+    {
+        return this->ratingStats;
+    }
 
     // MasteryStats getMasteryStats() const
     // {
