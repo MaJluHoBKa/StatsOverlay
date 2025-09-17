@@ -1,7 +1,7 @@
 #include <main_overlay/widgets/info_page/info_page.h>
 
-InfoPage::InfoPage(ApiController *apiController, QWidget *parent)
-    : QWidget(parent), m_apiController(apiController)
+InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, QWidget *parent)
+    : QWidget(parent), m_apiController(apiController), m_mainStats(mainStats), m_ratingStats(ratingStats), m_vehicleStats(vehicleStats)
 {
     setMaximumWidth(325);
     setContentsMargins(10, 2, 10, 2);
@@ -209,7 +209,7 @@ InfoPage::InfoPage(ApiController *apiController, QWidget *parent)
                                     "}")
                                     .arg(family));
     reset_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    // connect(reset_button, &QPushButton::clicked, this, &InfoPage::onSupportClicked);
+    connect(reset_button, &QPushButton::clicked, this, &InfoPage::onResetClicked);
     mainLayout->addWidget(reset_button);
 
     QPushButton *auth_button = new QPushButton;

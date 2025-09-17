@@ -2,6 +2,7 @@
 
 #include <string>
 #include <algorithm>
+#include <filesystem>
 #include <cctype>
 #include <unordered_map>
 #include <../external/httplib.h>
@@ -9,12 +10,18 @@
 #include <curl/curl.h>
 #include <Windows.h>
 #include <QFile>
+#include <QDir>
 #include <QStandardPaths>
+#include <QDate>
+#include <QDateTime>
+#include <QTextStream>
+#include <QSysInfo>
 #include <main_overlay/controller/data/MainStatsData.h>
 #include <main_overlay/controller/data/RatingStatsData.h>
 // #include "MasteryStats.h"
 // #include "OtherStats.h"
 #include <main_overlay/controller/data/VehicleStatsData.h>
+#include <main_overlay/controller/ParseReplay.h>
 
 using json = nlohmann::json;
 
@@ -22,6 +29,7 @@ struct Player
 {
     std::string nickname;
     int64_t id;
+    int64_t tank_id;
     int64_t battles;
     int64_t damage;
     int64_t wins;
@@ -38,6 +46,8 @@ private:
     std::string token;
     std::string account_id;
     std::string nickname;
+
+    QFile m_logFile;
 
     bool isAuth = false;
     bool isFirstMainStats = true;
@@ -69,6 +79,7 @@ public:
     }
     bool login()
     {
+        log("Запуск процедуры авторизации", 4, QDateTime::currentDateTime());
         std::string redirect_url = "http://localhost:5000/";
         std::string url = this->base_url + "/auth/login/";
 
@@ -87,33 +98,24 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
             if (res != CURLE_OK)
             {
-                std::cerr << "CURL failed: " << curl_easy_strerror(res) << " (code " << res << ")" << std::endl;
+                QString err = "Ошибка CURL: " + QString::fromStdString(curl_easy_strerror(res)) +
+                              " (код " + QString::number(res) + ")";
+                log(err, 4, QDateTime::currentDateTime());
                 curl_easy_cleanup(curl);
                 curl_global_cleanup();
                 return false;
@@ -129,12 +131,14 @@ public:
         }
         catch (...)
         {
+            log("Ошибка парсинга JSON ответа при авторизации", 4, QDateTime::currentDateTime());
             return false;
         }
 
         std::string location = j["data"]["location"];
         if (location.empty())
         {
+            log("Не получен URL для авторизации", 4, QDateTime::currentDateTime());
             return false;
         }
         ShellExecuteA(NULL, "open", location.c_str(), NULL, NULL, SW_SHOWNORMAL);
@@ -149,15 +153,24 @@ public:
         auto status = req.get_param_value("status");
 
         if (status == "ok" && !token.empty()) {
+            log("Авторизация успешна: " + QString::fromStdString(this->nickname), 4, QDateTime::currentDateTime());
             res.set_redirect("https://lesta.ru/ru/");
             this->isAuth = true;
             svr.stop();
         } else {
+            log("Ошибка авторизации", 4, QDateTime::currentDateTime());
             res.set_redirect("https://lesta.ru/ru/");
             svr.stop();
         } });
 
         svr.listen("0.0.0.0", 5000);
+
+        if (!get_vehicles_names())
+        {
+            log("Ошибка загрузки списка техники после авторизации", 4, QDateTime::currentDateTime());
+            return false;
+        }
+        log("Авторизация завершена успешно", 4, QDateTime::currentDateTime());
         return true;
     }
 
@@ -182,27 +195,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -253,27 +255,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -316,27 +307,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -408,27 +388,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -602,17 +571,19 @@ public:
 
     bool get_players_stats()
     {
+        setPlayers(this->allies, this->enemies);
         CURL *curl;
         CURLcode res;
         std::string readBuffer;
         bool success = false;
+
+        log("Запрос статистики игроков запущен", 3, QDateTime::currentDateTime());
 
         curl_global_init(CURL_GLOBAL_DEFAULT);
         curl = curl_easy_init();
 
         if (curl)
         {
-
             std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
             std::string url = base +
                               "?application_id=" + this->application_id +
@@ -622,27 +593,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                log("CACERT file not found: " + certPath, 3, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -652,6 +612,8 @@ public:
                 json j = json::parse(readBuffer, nullptr, false);
                 if (j["status"] == "ok")
                 {
+                    log("Статистика игроков успешно получена", 3, QDateTime::currentDateTime());
+
                     auto &data = j["data"];
                     for (auto it = data.begin(); it != data.end(); ++it)
                     {
@@ -665,10 +627,30 @@ public:
                             p.battles = stats.value("battles", 0);
                             p.damage = stats.value("damage_dealt", 0);
                             p.wins = stats.value("wins", 0);
+                            if (is_auth())
+                            {
+                                p.tank_name = vehicleStats.getName(p.tank_id);
+                            }
+                            else
+                            {
+                                p.tank_name = std::to_string(p.tank_id);
+                            }
                         }
                     }
+                    sortPlayers(this->allies);
+                    sortPlayers(this->enemies);
                     success = true;
                 }
+                else
+                {
+                    log("API вернуло ошибку: " + QString::fromStdString(readBuffer),
+                        3, QDateTime::currentDateTime());
+                }
+            }
+            else
+            {
+                log("Ошибка CURL: " + QString::fromStdString(curl_easy_strerror(res)),
+                    3, QDateTime::currentDateTime());
             }
         }
         if (curl)
@@ -678,15 +660,103 @@ public:
         return success;
     }
 
-    bool update_vehicles_stats()
+    bool loadReplayPlayers()
     {
-        if (this->isFirstVehiclesStats)
+        this->allies.clear();
+        this->enemies.clear();
+        this->db_players.clear();
+
+        log("Поиск реплея начат", 3, QDateTime::currentDateTime());
+
+        // Базовый путь к Documents/TanksBlitz/replays
+        QString documents = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        QDir replaysDir(documents + "/TanksBlitz/replays/");
+
+        if (!replaysDir.exists())
         {
-            if (!get_vehicles_names())
+            log("Папка с реплеями не найдена", 3, QDateTime::currentDateTime());
+            return false;
+        }
+
+        // Ищем папку, начинающуюся с recording
+        QStringList recordings = replaysDir.entryList(QStringList() << "recording*", QDir::Dirs | QDir::NoDotAndDotDot);
+
+        if (recordings.isEmpty())
+        {
+            log("Нет подходящих папок recording*", 3, QDateTime::currentDateTime());
+            return false;
+        }
+
+        // Берём первую подходящую
+        QString recordingPath = replaysDir.absoluteFilePath(recordings.first());
+        QString replayFile = recordingPath + "/data.replay";
+
+        QFile file(replayFile);
+        if (!file.exists())
+        {
+            log("Файл data.replay не найден: " + replayFile, 3, QDateTime::currentDateTime());
+            return false;
+        }
+
+        log("Найден реплей: " + replayFile, 3, QDateTime::currentDateTime());
+
+        // Вызываем наш парсер
+        Sleep(10000);
+        ReplayParser parser(&this->m_logFile);
+        std::vector<PlayerRaw> raw = parser.parseReplayFile(std::filesystem::path(replayFile.toStdWString()));
+
+        if (raw.size() == 14)
+        {
+            // std::cout << "here 0";
+            int allies = 0;
+            for (int i = 0; i < raw.size(); i++)
             {
+                // std::cout << "here 1";
+                if (raw[i].nickname == this->nickname)
+                {
+                    allies = raw[i].team_number;
+                }
+            }
+            if (allies != 0)
+            {
+                // std::cout << "here 2";
+                for (int i = 0; i < raw.size(); i++)
+                {
+                    // std::cout << "here 3";
+                    Player player;
+                    player.nickname = raw[i].nickname;
+                    player.id = raw[i].account_id;
+                    player.tank_id = raw[i].tank_id;
+                    player.team = raw[i].team_number;
+                    player.tier = vehicleStats.getTier(raw[i].tank_id);
+                    if (raw[i].team_number == allies)
+                    {
+                        this->allies.push_back(player);
+                    }
+                    else
+                    {
+                        this->enemies.push_back(player);
+                    }
+                }
+                log("Игроки успешно загружены из реплея", 3, QDateTime::currentDateTime());
+                return true;
+            }
+            else
+            {
+                log("Не удалось определить команду игрока", 3, QDateTime::currentDateTime());
                 return false;
             }
         }
+        else
+        {
+            log("Некорректное количество игроков в реплее: " + QString::number(raw.size()),
+                3, QDateTime::currentDateTime());
+            return false;
+        }
+    }
+
+    bool update_vehicles_stats()
+    {
         CURL *curl;
         CURLcode res;
         std::string readBuffer;
@@ -706,27 +776,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -777,27 +836,16 @@ public:
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-            QFile certFile(":/certs/external/curl/cacert.pem");
-            if (certFile.open(QIODevice::ReadOnly))
-            {
-                QByteArray certData = certFile.readAll();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
 
-                QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/cacert.pem";
-                QFile tempFile(tempPath);
-                if (tempFile.open(QIODevice::WriteOnly))
-                {
-                    tempFile.write(certData);
-                    tempFile.close();
-                    curl_easy_setopt(curl, CURLOPT_CAINFO, tempPath.toStdString().c_str());
-                }
-                else
-                {
-                    std::cerr << "Cannot create temp cert file" << std::endl;
-                }
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
             }
             else
             {
-                std::cerr << "Cannot open cert from resources" << std::endl;
+                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
             }
 
             res = curl_easy_perform(curl);
@@ -855,6 +903,15 @@ public:
     //     return this->vehicleStats;
     // }
 
+    void reset()
+    {
+        this->isFirstMainStats = true;
+        this->isFirstRatingStats = true;
+        this->isFirstMasteryStats = true;
+        this->isFirstOtherStats = true;
+        this->isFirstVehiclesStats = true;
+    }
+
     std::string join()
     {
         std::string str = "";
@@ -900,20 +957,49 @@ public:
                        { return std::tolower(c); });
     }
 
+    static bool tankNameCompare(const std::string &a, const std::string &b)
+    {
+        size_t n = std::min(a.size(), b.size());
+        for (size_t i = 0; i < n; ++i)
+        {
+            unsigned char ca = static_cast<unsigned char>(a[i]);
+            unsigned char cb = static_cast<unsigned char>(b[i]);
+
+            bool aDigit = (ca >= '0' && ca <= '9');
+            bool bDigit = (cb >= '0' && cb <= '9');
+
+            if (aDigit != bDigit)
+                return aDigit; // цифра "меньше" всех
+
+            bool aLatin = (ca >= 'a' && ca <= 'z') || (ca >= 'A' && ca <= 'Z');
+            bool bLatin = (cb >= 'a' && cb <= 'z') || (cb >= 'A' && cb <= 'Z');
+
+            if (aLatin != bLatin)
+                return aLatin; // латиница меньше остальных
+
+            if (ca != cb)
+                return ca < cb;
+        }
+        return a.size() < b.size();
+    }
+
     void sortPlayers(std::vector<Player> &players)
     {
-        std::sort(players.begin(), players.end(), [](const Player &a, const Player &b)
-                  {
-                      if (a.tier != b.tier)
-                          return a.tier > b.tier;
+        for (auto &p : players)
+        {
+            std::cout << p.tier << " : " << p.tank_name << "\n";
+        }
+        // сначала сортируем по имени танка
+        std::stable_sort(players.begin(), players.end(), [](const Player &a, const Player &b)
+                         {
+        std::string an = a.tank_name, bn = b.tank_name;
+        ApiController::toLowerInplace(an);
+        ApiController::toLowerInplace(bn);
+        return ApiController::tankNameCompare(an, bn); });
 
-                      std::string an = a.tank_name, bn = b.tank_name;
-                      toLowerInplace(an);
-                      toLowerInplace(bn);
-                      if (an != bn)
-                          return an < bn;
-
-                      return false; });
+        // потом по tier сверху вниз, стабильная сортировка сохранит имя внутри одного tier
+        std::stable_sort(players.begin(), players.end(), [](const Player &a, const Player &b)
+                         { return a.tier > b.tier; });
     }
 
     std::vector<Player> getSortedAllies() const
@@ -929,5 +1015,49 @@ public:
     std::string getNickname() const
     {
         return this->nickname;
+    }
+
+    void initLog()
+    {
+        QString documents = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+        QDir dir(documents + "/StatsOverlay/logs");
+
+        if (!dir.exists())
+            dir.mkpath(".");
+
+        QString fileName = QDate::currentDate().toString("yyyy-MM-dd") + ".log";
+        m_logFile.setFileName(dir.filePath(fileName));
+
+        if (m_logFile.open(QIODevice::Append | QIODevice::Text))
+        {
+            QTextStream out(&m_logFile);
+            out << "\n==== Log started ====\n";
+            out << "OS: " << QSysInfo::prettyProductName()
+                << " (kernel: " << QSysInfo::kernelVersion() << ")\n";
+            out << "=====================\n\n";
+        }
+    }
+
+    void log(const QString &message, int page, const QDateTime &timestamp)
+    {
+        if (!m_logFile.isOpen())
+            return;
+
+        static const QString prefixes[] = {
+            "[MAIN PAGE]",
+            "[RATING PAGE]",
+            "[VEHICLE PAGE]",
+            "[PLAYER PAGE]",
+            "[AUTH]"};
+
+        QString prefix;
+        if (page >= 0 && page < 5)
+            prefix = prefixes[page];
+        else
+            prefix = "[UNKNOWN]";
+
+        QTextStream out(&m_logFile);
+        out << timestamp.toString("yyyy-MM-dd hh:mm:ss") << " "
+            << prefix << " " << message << "\n";
     }
 };

@@ -42,9 +42,6 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
 
     // Выставление обозначающих иконок
     QWidget *header_widget = new QWidget;
-    header_widget->setStyleSheet(
-        "background-color: #282828;"
-        "border-radius: 3px;");
     header_widget->setFixedHeight(25);
 
     QHBoxLayout *header = new QHBoxLayout(header_widget);
@@ -65,6 +62,9 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
         QPixmap pixmap(iconPaths[i]);
         icon->setPixmap(pixmap);
         icon->setFixedWidth(sizes[i]);
+        icon->setStyleSheet(
+            "background-color: #282828;"
+            "border-radius: 3px;");
         icon->setAlignment(Qt::AlignCenter);
         header->addWidget(icon);
     }
@@ -109,14 +109,6 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
     mainLayout->addWidget(scroll);
 
     setLayout(mainLayout);
-
-    updateTankRow("ИС-7", 1, 45.1, 2000);
-    updateTankRow("ИС-1", 51, 55.1, 0);
-    updateTankRow("ИС-2", 511, 65.1, 20);
-    updateTankRow("ИС-3", 5111, 75.1, 500);
-    updateTankRow("ИС-4", 51, 70.1, 3500);
-    updateTankRow("ИС-5", 51, 12.1, 3500);
-    updateTankRow("ИС-6", 51, 1.1, 3500);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &VehicleStats::updatingVehicleStats);

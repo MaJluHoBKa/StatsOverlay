@@ -141,6 +141,15 @@ public:
         return std::to_string(id);
     }
 
+    int64_t getTier(int64_t id)
+    {
+        if (tier_vehicles.count(id))
+        {
+            return tier_vehicles[id];
+        }
+        return 0;
+    }
+
     void setNames(const json &names)
     {
         for (auto &[key, value] : names.items())

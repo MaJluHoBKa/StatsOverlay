@@ -41,6 +41,11 @@ public:
         firstData = stats;
         firstData.mm_rating = 3000.0 + stats.mm_rating * 10.0;
         firstData.diff = 3000.0 + stats.mm_rating * 10.0;
+
+        currentData = stats - firstData;
+        currentData.calib_battles = 10 - stats.calib_battles;
+        currentData.mm_rating = 3000.0 + stats.mm_rating * 10.0;
+        currentData.diff = 3000.0 + stats.mm_rating * 10.0 - firstData.diff;
     }
 
     void updateStats(const RatingData &newStats)

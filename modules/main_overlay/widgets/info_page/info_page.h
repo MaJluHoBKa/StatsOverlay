@@ -13,6 +13,9 @@
 #include <QAbstractScrollArea>
 #include <QDesktopServices>
 #include <main_overlay/controller/ApiController.h>
+#include <main_overlay/widgets/main_stats/main_stats.h>
+#include <main_overlay/widgets/rating_stats/rating_stats.h>
+#include <main_overlay/widgets/vehicles_stats/vehicles_stats.h>
 
 #include <thread>
 #include <chrono>
@@ -23,11 +26,14 @@ class InfoPage : public QWidget
 
 private:
     ApiController *m_apiController = nullptr;
+    MainStats *m_mainStats;
+    RatingStats *m_ratingStats;
+    VehicleStats *m_vehicleStats;
     QLabel *message = nullptr;
     QPushButton *auth_button = nullptr;
 
 public:
-    explicit InfoPage(ApiController *apiController, QWidget *parent = nullptr);
+    explicit InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, QWidget *parent = nullptr);
 
     void setMessageWidget(QLabel *message)
     {
@@ -64,6 +70,14 @@ private slots:
     void onSupportClicked()
     {
         QDesktopServices::openUrl(QUrl("https://lesta.ru/support/ru/"));
+    }
+
+    void onResetClicked()
+    {
+        this->m_apiController->reset();
+        this->m_mainStats->resetValue();
+        this->m_ratingStats->resetValue();
+        this->m_vehicleStats->resetValue();
     }
 
     void onAuthClicked()

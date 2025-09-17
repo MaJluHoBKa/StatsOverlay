@@ -3,12 +3,12 @@
 #include <QAbstractNativeEventFilter>
 #include <windows.h>
 
-class GlobalHotkeyFilter : public QAbstractNativeEventFilter
+class GlobalHotkeyFilterSub : public QAbstractNativeEventFilter
 {
 public:
     QWidget *overlay;
 
-    GlobalHotkeyFilter(QWidget *overlay) : overlay(overlay) {}
+    GlobalHotkeyFilterSub(QWidget *overlay) : overlay(overlay) {}
 
     bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override
     {
@@ -50,7 +50,7 @@ SubOverlay::SubOverlay(QWidget *parent) : QWidget(parent)
     setMouseTracking(true);
 
     RegisterHotKey(NULL, 1, MOD_CONTROL, 0xBB);
-    auto *hotkeyFilter = new GlobalHotkeyFilter(this);
+    auto *hotkeyFilter = new GlobalHotkeyFilterSub(this);
     qApp->installNativeEventFilter(hotkeyFilter);
 }
 

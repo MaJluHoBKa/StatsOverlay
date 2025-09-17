@@ -11,6 +11,7 @@
 #include <QFontDatabase>
 #include <QScrollArea>
 #include <QTimer>
+#include <QtConcurrent/QtConcurrent>
 #include <main_overlay/controller/ApiController.h>
 
 #include <unordered_map>
@@ -55,8 +56,11 @@ public:
 
     void updatingVehicleStats()
     {
-        if (isAuth())
-        {
+        if (!isAuth())
+            return;
+
+        QtConcurrent::run([this]()
+                          {
             if (this->m_apiController->update_vehicles_stats())
             {
                 const VehicleData *vehicleData = this->m_apiController->get_updated_vehicles();
@@ -66,21 +70,22 @@ public:
                     double winRate = (static_cast<double>(vehicleData->wins) / vehicleData->battles) * 100.0;
                     int64_t damage = vehicleData->totalDamage / vehicleData->battles;
 
-                    updateTankRow(QString::fromStdString(name),
-                                  vehicleData->battles,
-                                  std::round(winRate * 100.0) / 100.0,
-                                  damage);
+                    QMetaObject::invokeMethod(this, [this, name, vehicleData, winRate, damage]() {
+                        updateTankRow(QString::fromStdString(name),
+                                      vehicleData->battles,
+                                      std::round(winRate * 100.0) / 100.0,
+                                      damage);
+                    }, Qt::QueuedConnection);
                 }
                 else
                 {
-                    std::cout << "No updated tanks" << std::endl;
+                    qDebug() << "No updated tanks";
                 }
             }
             else
             {
-                std::cout << "Not updated stats VEH" << std::endl;
-            }
-        }
+                qDebug() << "Not updated stats VEH";
+            } });
     }
 
     void addTankRow(QString name, int64_t battles, float wins, int64_t damage)
@@ -105,7 +110,13 @@ public:
         QString styled = baseStyle.arg(family);
 
         QLabel *tankName = new QLabel;
-        tankName->setText(name);
+        QString copy_name = name;
+        if (copy_name.length() > 11)
+        {
+            copy_name.resize(11);
+            copy_name += "...";
+        }
+        tankName->setText(copy_name);
         tankName->setStyleSheet(styled +
                                 "text-align: left;");
         tankName->setFixedWidth(this->sizesRow[0]);
@@ -167,14 +178,10 @@ public:
 
     void updateTankRow(QString name, int64_t battles, float wins, int64_t damage)
     {
-        QMetaObject::invokeMethod(
-            this,
-            [this, name, battles, wins, damage]()
-            {
-                int id = QFontDatabase::addApplicationFont(":/main_stats/resources/fonts/JetBrainsMono-Bold.ttf");
-                QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+        int id = QFontDatabase::addApplicationFont(":/main_stats/resources/fonts/JetBrainsMono-Bold.ttf");
+        QString family = QFontDatabase::applicationFontFamilies(id).at(0);
 
-                const QString baseStyle = R"(
+        const QString baseStyle = R"(
                     font-family: "%1";
                     font-size: 11px;
                     font-weight: bold;
@@ -184,39 +191,68 @@ public:
                     margin: 0px;
                     border-radius: 3px;
                 )";
-                QString styled = baseStyle.arg(family);
+        QString styled = baseStyle.arg(family);
 
-                if (this->info_rows.find(name) != this->info_rows.end())
-                {
-                    this->info_rows[name]->battles->setText(QString::fromStdString(std::to_string(battles)));
-                    this->info_rows[name]->wins->setText(QString::fromStdString(formatFloat(wins) + "%"));
-                    this->info_rows[name]->damage->setText(QString::fromStdString(std::to_string(damage)));
+        if (this->info_rows.find(name) != this->info_rows.end())
+        {
+            this->info_rows[name]->battles->setText(QString::fromStdString(std::to_string(battles)));
+            this->info_rows[name]->wins->setText(QString::fromStdString(formatFloat(wins) + "%"));
+            this->info_rows[name]->damage->setText(QString::fromStdString(std::to_string(damage)));
 
-                    QString color;
-                    if (wins >= 70.0)
-                    {
-                        color = "#9989e6";
-                    }
-                    else if (wins >= 60.0)
-                    {
-                        color = "#72d1ff";
-                    }
-                    else if (wins >= 50.0)
-                    {
-                        color = "#a8e689";
-                    }
-                    else
-                    {
-                        color = "#ffffff";
-                    }
-                    this->info_rows[name]->wins->setStyleSheet(styled + QString("color: %1;").arg(color));
-                }
-                else
+            QString color;
+            if (wins >= 70.0)
+            {
+                color = "#9989e6";
+            }
+            else if (wins >= 60.0)
+            {
+                color = "#72d1ff";
+            }
+            else if (wins >= 50.0)
+            {
+                color = "#a8e689";
+            }
+            else
+            {
+                color = "#ffffff";
+            }
+            this->info_rows[name]->wins->setStyleSheet(styled + QString("color: %1;").arg(color));
+        }
+        else
+        {
+            addTankRow(name, battles, wins, damage);
+        }
+    }
+
+    void resetValue()
+    {
+        if (data)
+        {
+            QLayoutItem *item;
+            while ((item = data->takeAt(0)) != nullptr)
+            {
+                if (QWidget *w = item->widget())
+                    w->deleteLater();
+                else if (QLayout *layout = item->layout())
                 {
-                    addTankRow(name, battles, wins, damage);
+                    QLayoutItem *subItem;
+                    while ((subItem = layout->takeAt(0)) != nullptr)
+                    {
+                        if (QWidget *sw = subItem->widget())
+                            sw->deleteLater();
+                        delete subItem;
+                    }
+                    delete layout;
                 }
-            },
-            Qt::QueuedConnection);
+                delete item;
+            }
+        }
+
+        for (auto row : info_rows)
+        {
+            delete row;
+        }
+        info_rows.clear();
     }
 
     bool isAuth() const

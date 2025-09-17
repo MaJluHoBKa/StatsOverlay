@@ -103,6 +103,8 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "qtimer": "cpp",
+        "source_location": "cpp"
     }
 }

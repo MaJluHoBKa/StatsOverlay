@@ -39,6 +39,7 @@ public:
     void initialStats(const StatsData &stats)
     {
         firstData = stats;
+        currentData = stats - firstData;
     }
 
     void updateStats(const StatsData &newStats)
