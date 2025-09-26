@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
     // Проверка даты
     QDate currentDate = QDate::currentDate();
-    QDate expiryDate(2025, 9, 21); // например, версия истекает 30 сентября 2025
+    QDate expiryDate(2025, 9, 30); // например, версия истекает 30 сентября 2025
 
     if (currentDate > expiryDate)
     {

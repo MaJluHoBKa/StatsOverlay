@@ -53,6 +53,9 @@ private:
     std::vector<PlayerRows *> allies_rows;
     std::vector<PlayerRows *> enemies_rows;
 
+    PlayerRows *avg_allies;
+    PlayerRows *avg_enemies;
+
     std::vector<Player> allies;
     std::vector<Player> enemies;
     bool isPlayers = false;
@@ -70,9 +73,8 @@ public:
     {
         const QString baseStyle = R"(
                 QPushButton {
-                    background-color: rgb(50, 50, 50);
+                    border: 2px solid rgb(57, 57, 57);;
                     color: #e2ded3;
-                    border: none;
                     font-size: 13px;
                     font-family: Consolas;
                     font-weight: bold;
@@ -90,9 +92,8 @@ public:
                 )";
         const QString activeStyle = R"(
                 QPushButton {
-                    background-color: #4cd964;
-                    color: #383838;
-                    border: none;
+                    border: 2px solid #4cd964;
+                    color: #4cd964;
                     font-size: 13px;
                     font-family: Consolas;
                     font-weight: bold;
@@ -159,13 +160,12 @@ public:
     {
         const QString baseStyle = R"(
                 QPushButton {
-                    background-color: rgb(40, 40, 40);
+                    border: 2px solid rgb(57, 57, 57);
                     font-family: Segoe UI;
                     font-weight: bold;
                     font-size: 14px;
                     color: #e2ded3;
                     border-radius: 3px;
-                    border: none;
                 }
                 QPushButton:hover {
                     background-color: rgb(60, 60, 60);
@@ -176,13 +176,12 @@ public:
                 )";
         const QString activeStyle = R"(
                 QPushButton {
-                    background-color: rgb(50, 50, 50);
+                    border: 2px solid #4cd964;
                     font-family: Segoe UI;
                     font-weight: bold;
                     font-size: 14px;
                     color: #e2ded3;
                     border-radius: 3px;
-                    border: none;
                 }
                 QPushButton:hover {
                     background-color: rgb(60, 60, 60);
@@ -280,32 +279,32 @@ public:
 
     void addAlliesRows()
     {
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 8; i++)
         {
             QHBoxLayout *row = new QHBoxLayout;
             row->setSpacing(1);
             row->setContentsMargins(0, 0, 0, 0);
 
             const QString baseStyle = R"(
-                    font-family: Segoe UI;
+                    font-family: Roboto;
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
 
             QLabel *playerName = new QLabel;
-            playerName->setStyleSheet(baseStyle +
-                                      "text-align: left;");
+            playerName->setStyleSheet(baseStyle);
             playerName->setFixedWidth(this->sizesRow[0]);
+            playerName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             playerName->setFixedHeight(20);
 
             QLabel *tankName = new QLabel;
-            tankName->setStyleSheet(baseStyle +
-                                    "text-align: left;");
+            tankName->setStyleSheet(baseStyle);
             tankName->setFixedWidth(this->sizesRow[1]);
+            tankName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             tankName->setFixedHeight(20);
 
             QLabel *battles = new QLabel;
@@ -331,7 +330,6 @@ public:
             row->addWidget(battles);
             row->addWidget(wins);
             row->addWidget(damage);
-            this->data_allies->addLayout(row);
 
             PlayerRows *info = new PlayerRows();
             info->row = row;
@@ -341,38 +339,54 @@ public:
             info->wins = wins;
             info->damage = damage;
 
+            if (i == 7)
+            {
+                QFrame *line = new QFrame;
+                line->setMinimumWidth(0);
+                line->setFrameShape(QFrame::HLine);
+                line->setFrameShadow(QFrame::Plain); // вместо Sunken/Styled
+                line->setStyleSheet("background-color: #e2ded3;");
+                line->setFixedHeight(1);
+                line->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+                this->data_allies->addWidget(line);
+                this->data_allies->addLayout(row);
+                avg_allies = info;
+                return;
+            }
+
+            this->data_allies->addLayout(row);
             allies_rows.push_back(info);
         }
     }
 
     void addEnemiesRows()
     {
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 8; i++)
         {
             QHBoxLayout *row = new QHBoxLayout;
             row->setSpacing(1);
             row->setContentsMargins(0, 0, 0, 0);
 
             const QString baseStyle = R"(
-                    font-family: Segoe UI;
+                    font-family: Roboto;
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
 
             QLabel *playerName = new QLabel;
-            playerName->setStyleSheet(baseStyle +
-                                      "text-align: left;");
+            playerName->setStyleSheet(baseStyle);
             playerName->setFixedWidth(this->sizesRow[0]);
+            playerName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             playerName->setFixedHeight(20);
 
             QLabel *tankName = new QLabel;
-            tankName->setStyleSheet(baseStyle +
-                                    "text-align: left;");
+            tankName->setStyleSheet(baseStyle);
             tankName->setFixedWidth(this->sizesRow[1]);
+            tankName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             tankName->setFixedHeight(20);
 
             QLabel *battles = new QLabel;
@@ -398,7 +412,6 @@ public:
             row->addWidget(battles);
             row->addWidget(wins);
             row->addWidget(damage);
-            this->data_enemies->addLayout(row);
 
             PlayerRows *info = new PlayerRows();
             info->row = row;
@@ -408,6 +421,21 @@ public:
             info->wins = wins;
             info->damage = damage;
 
+            if (i == 7)
+            {
+                QFrame *line = new QFrame;
+                line->setMinimumWidth(0);
+                line->setFrameShape(QFrame::HLine);
+                line->setFrameShadow(QFrame::Plain); // вместо Sunken/Styled
+                line->setStyleSheet("background-color: #e2ded3;");
+                line->setFixedHeight(1);
+                line->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+                this->data_enemies->addWidget(line);
+                this->data_enemies->addLayout(row);
+                avg_enemies = info;
+                return;
+            }
+            this->data_enemies->addLayout(row);
             enemies_rows.push_back(info);
         }
     }
@@ -415,29 +443,43 @@ public:
     void setDataAllies()
     {
         const QString baseStyle = R"(
-                    font-family: Segoe UI;
+                    font-family: Roboto;
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
 
+        const QString baseStyleAVG = R"(
+                    font-family: Roboto;
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #ffd166;
+                    padding: 2px 0px;
+                    margin: 0px;
+                    border-radius: 3px;
+                )";
+
+        int64_t all_damage = 0;
+        int64_t all_wins = 0;
+        int64_t all_battles = 0;
+
         for (int i = 0; i < this->allies_rows.size(); i++)
         {
             QString name = QString::fromStdString(this->allies[i].nickname);
-            if (name.length() > 10)
+            if (name.length() > 12)
             {
-                name.resize(10);
+                name.resize(12);
                 name += "...";
             }
             this->allies_rows[i]->name->setText(name);
             this->allies_rows[i]->name->setStyleSheet(baseStyle);
             QString tank_name = QString::fromStdString(this->allies[i].tank_name);
-            if (tank_name.length() > 10)
+            if (tank_name.length() > 12)
             {
-                tank_name.resize(10);
+                tank_name.resize(12);
                 tank_name += "...";
             }
             this->allies_rows[i]->tank_name->setText(tank_name);
@@ -446,6 +488,7 @@ public:
             QString color;
 
             int64_t battles = this->allies[i].battles;
+            all_battles += battles;
             if (battles < 5000)
             {
                 color = "#d13b49";
@@ -466,6 +509,7 @@ public:
             this->allies_rows[i]->battles->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
             double wins = (static_cast<double>(this->allies[i].wins) / this->allies[i].battles) * 100.0;
+            all_wins += this->allies[i].wins;
             if (wins >= 70.00)
             {
                 color = "#a08bea";
@@ -486,6 +530,7 @@ public:
             this->allies_rows[i]->wins->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
             int64_t damage = this->allies[i].damage / this->allies[i].battles;
+            all_damage += this->allies[i].damage;
             if (damage < 1000)
             {
                 color = "#d13b49";
@@ -505,34 +550,64 @@ public:
             this->allies_rows[i]->damage->setText(QString::fromStdString(std::to_string(damage)));
             this->allies_rows[i]->damage->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
         }
+
+        this->avg_allies->name->setText("AVG");
+        this->avg_allies->name->setStyleSheet(baseStyleAVG);
+        this->avg_allies->tank_name->setText("");
+        this->avg_allies->tank_name->setStyleSheet(baseStyleAVG);
+
+        this->avg_allies->battles->setText(QString::fromStdString(std::to_string(all_battles / 7)));
+        this->avg_allies->battles->setStyleSheet(baseStyleAVG);
+
+        double wins = (static_cast<double>(all_wins) / all_battles) * 100.0;
+        this->avg_allies->wins->setText(QString::fromStdString(formatFloat(wins) + "%"));
+        this->avg_allies->wins->setStyleSheet(baseStyleAVG);
+
+        int64_t damage = all_damage / all_battles;
+        this->avg_allies->damage->setText(QString::fromStdString(std::to_string(damage)));
+        this->avg_allies->damage->setStyleSheet(baseStyleAVG);
     }
 
     void setDataEnemies()
     {
         const QString baseStyle = R"(
-                    font-family: Segoe UI;
+                    font-family: Roboto;
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
 
+        const QString baseStyleAVG = R"(
+                    font-family: Roboto;
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #ffd166;
+                    padding: 2px 0px;
+                    margin: 0px;
+                    border-radius: 3px;
+                )";
+
+        int64_t all_damage = 0;
+        int64_t all_wins = 0;
+        int64_t all_battles = 0;
+
         for (int i = 0; i < this->enemies.size(); i++)
         {
             QString name = QString::fromStdString(this->enemies[i].nickname);
-            if (name.length() > 10)
+            if (name.length() > 12)
             {
-                name.resize(10);
+                name.resize(12);
                 name += "...";
             }
             this->enemies_rows[i]->name->setText(name);
             this->enemies_rows[i]->name->setStyleSheet(baseStyle);
             QString tank_name = QString::fromStdString(this->enemies[i].tank_name);
-            if (tank_name.length() > 10)
+            if (tank_name.length() > 12)
             {
-                tank_name.resize(10);
+                tank_name.resize(12);
                 tank_name += "...";
             }
             this->enemies_rows[i]->tank_name->setText(tank_name);
@@ -541,6 +616,7 @@ public:
             QString color;
 
             int64_t battles = this->enemies[i].battles;
+            all_battles += battles;
             if (battles < 5000)
             {
                 color = "#d13b49";
@@ -561,6 +637,7 @@ public:
             this->enemies_rows[i]->battles->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
             double wins = (static_cast<double>(this->enemies[i].wins) / this->enemies[i].battles) * 100.0;
+            all_wins += this->enemies[i].wins;
             if (wins >= 70.00)
             {
                 color = "#a08bea";
@@ -581,6 +658,7 @@ public:
             this->enemies_rows[i]->wins->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
             int64_t damage = this->enemies[i].damage / this->enemies[i].battles;
+            all_damage += this->enemies[i].damage;
             if (damage < 1000)
             {
                 color = "#d13b49";
@@ -600,6 +678,22 @@ public:
             this->enemies_rows[i]->damage->setText(QString::fromStdString(std::to_string(damage)));
             this->enemies_rows[i]->damage->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
         }
+
+        this->avg_enemies->name->setText("AVG");
+        this->avg_enemies->name->setStyleSheet(baseStyleAVG);
+        this->avg_enemies->tank_name->setText("");
+        this->avg_enemies->tank_name->setStyleSheet(baseStyleAVG);
+
+        this->avg_enemies->battles->setText(QString::fromStdString(std::to_string(all_battles / 7)));
+        this->avg_enemies->battles->setStyleSheet(baseStyleAVG);
+
+        double wins = (static_cast<double>(all_wins) / all_battles) * 100.0;
+        this->avg_enemies->wins->setText(QString::fromStdString(formatFloat(wins) + "%"));
+        this->avg_enemies->wins->setStyleSheet(baseStyleAVG);
+
+        int64_t damage = all_damage / all_battles;
+        this->avg_enemies->damage->setText(QString::fromStdString(std::to_string(damage)));
+        this->avg_enemies->damage->setStyleSheet(baseStyleAVG);
     }
 
     void clearData()
@@ -627,6 +721,10 @@ public:
             allies_rows[i]->damage->setText("");
             allies_rows[i]->damage->setStyleSheet(baseStyle);
         }
+        avg_allies->name->setText("");
+        avg_allies->battles->setText("");
+        avg_allies->wins->setText("");
+        avg_allies->damage->setText("");
         for (int i = 0; i < this->enemies_rows.size(); i++)
         {
             enemies_rows[i]->name->setText("");
@@ -640,6 +738,10 @@ public:
             enemies_rows[i]->damage->setText("");
             enemies_rows[i]->damage->setStyleSheet(baseStyle);
         }
+        avg_enemies->name->setText("");
+        avg_enemies->battles->setText("");
+        avg_enemies->wins->setText("");
+        avg_enemies->damage->setText("");
     }
 
     bool isAuth() const
@@ -695,13 +797,12 @@ public:
 
         const QString baseStyle = R"(
                 QPushButton {
-                    background-color: rgb(40, 40, 40);
+                    border: 2px solid rgb(57, 57, 57);
                     font-family: Segoe UI;
                     font-weight: bold;
                     font-size: 14px;
                     color: #e2ded3;
                     border-radius: 3px;
-                    border: none;
                 }
                 QPushButton:hover {
                     background-color: rgb(60, 60, 60);
@@ -712,13 +813,12 @@ public:
                 )";
         const QString activeStyle = R"(
                 QPushButton {
-                    background-color: rgb(50, 50, 50);
+                    border: 2px solid #4cd964;
                     font-family: Segoe UI;
                     font-weight: bold;
                     font-size: 14px;
                     color: #e2ded3;
                     border-radius: 3px;
-                    border: none;
                 }
                 QPushButton:hover {
                     background-color: rgb(60, 60, 60);

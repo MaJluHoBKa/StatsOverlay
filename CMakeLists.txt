@@ -22,6 +22,7 @@ qt_add_resources(RESOURCES
     modules/main_overlay/widgets/main_stats/main_stats_resources.qrc
     modules/main_overlay/widgets/rating_stats/rating_stats_resources.qrc
     modules/main_overlay/widgets/vehicles_stats/vehicles_resources.qrc
+    modules/main_overlay/widgets/other_stats/other_stats_resources.qrc
     modules/main_overlay/widgets/player_stats/player_stats.qrc
     modules/main_overlay/controller/data/vehicles_data_resources.qrc
     modules/main_overlay/widgets/info_page/info_resources.qrc
@@ -33,6 +34,7 @@ qt_add_executable(MyOverlayApp WIN32
     modules/main_overlay/main_overlay.cpp
     modules/main_overlay/widgets/main_stats/main_stats.cpp
     modules/main_overlay/widgets/rating_stats/rating_stats.cpp
+    modules/main_overlay/widgets/other_stats/other_stats.cpp
     modules/main_overlay/widgets/vehicles_stats/vehicles_stats.cpp
     modules/main_overlay/widgets/player_stats/player_stats.cpp
     modules/main_overlay/widgets/info_page/info_page.cpp

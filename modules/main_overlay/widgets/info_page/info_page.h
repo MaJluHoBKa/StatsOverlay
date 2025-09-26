@@ -16,6 +16,7 @@
 #include <main_overlay/widgets/main_stats/main_stats.h>
 #include <main_overlay/widgets/rating_stats/rating_stats.h>
 #include <main_overlay/widgets/vehicles_stats/vehicles_stats.h>
+#include <main_overlay/widgets/other_stats/other_stats.h>
 
 #include <thread>
 #include <chrono>
@@ -29,11 +30,12 @@ private:
     MainStats *m_mainStats;
     RatingStats *m_ratingStats;
     VehicleStats *m_vehicleStats;
+    OtherStats *m_otherStats;
     QLabel *message = nullptr;
     QPushButton *auth_button = nullptr;
 
 public:
-    explicit InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, QWidget *parent = nullptr);
+    explicit InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, OtherStats *otherStats, QWidget *parent = nullptr);
 
     void setMessageWidget(QLabel *message)
     {
@@ -77,7 +79,8 @@ private slots:
         this->m_apiController->reset();
         this->m_mainStats->resetValue();
         this->m_ratingStats->resetValue();
-        this->m_vehicleStats->resetValue();
+        // this->m_vehicleStats->resetValue();
+        this->m_otherStats->resetValue();
     }
 
     void onAuthClicked()

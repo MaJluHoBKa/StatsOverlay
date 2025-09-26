@@ -1,9 +1,9 @@
 #include <main_overlay/widgets/info_page/info_page.h>
 
-InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, QWidget *parent)
-    : QWidget(parent), m_apiController(apiController), m_mainStats(mainStats), m_ratingStats(ratingStats), m_vehicleStats(vehicleStats)
+InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingStats *ratingStats, VehicleStats *vehicleStats, OtherStats *otherStats, QWidget *parent)
+    : QWidget(parent), m_apiController(apiController), m_mainStats(mainStats), m_ratingStats(ratingStats), m_vehicleStats(vehicleStats), m_otherStats(otherStats)
 {
-    setMaximumWidth(325);
+    setMaximumWidth(280);
     setContentsMargins(10, 2, 10, 2);
     setStyleSheet(
         "border-top-right-radius: 10px;"

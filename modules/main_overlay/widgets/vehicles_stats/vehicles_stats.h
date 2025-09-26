@@ -39,7 +39,7 @@ private:
     ApiController *m_apiController = nullptr;
 
     QVBoxLayout *data = nullptr;
-    std::vector<int> sizesRow = {105, 50, 50, 50};
+    std::vector<int> sizesRow = {105, 60, 60, 60};
 
     QHash<QString, InfoRows *> info_rows;
 
@@ -224,36 +224,36 @@ public:
         }
     }
 
-    void resetValue()
-    {
-        if (data)
-        {
-            QLayoutItem *item;
-            while ((item = data->takeAt(0)) != nullptr)
-            {
-                if (QWidget *w = item->widget())
-                    w->deleteLater();
-                else if (QLayout *layout = item->layout())
-                {
-                    QLayoutItem *subItem;
-                    while ((subItem = layout->takeAt(0)) != nullptr)
-                    {
-                        if (QWidget *sw = subItem->widget())
-                            sw->deleteLater();
-                        delete subItem;
-                    }
-                    delete layout;
-                }
-                delete item;
-            }
-        }
+    // void resetValue()
+    // {
+    //     if (data)
+    //     {
+    //         QLayoutItem *item;
+    //         while ((item = data->takeAt(0)) != nullptr)
+    //         {
+    //             if (QWidget *w = item->widget())
+    //                 w->deleteLater();
+    //             else if (QLayout *layout = item->layout())
+    //             {
+    //                 QLayoutItem *subItem;
+    //                 while ((subItem = layout->takeAt(0)) != nullptr)
+    //                 {
+    //                     if (QWidget *sw = subItem->widget())
+    //                         sw->deleteLater();
+    //                     delete subItem;
+    //                 }
+    //                 delete layout;
+    //             }
+    //             delete item;
+    //         }
+    //     }
 
-        for (auto row : info_rows)
-        {
-            delete row;
-        }
-        info_rows.clear();
-    }
+    //     for (auto row : info_rows)
+    //     {
+    //         delete row;
+    //     }
+    //     info_rows.clear();
+    // }
 
     bool isAuth() const
     {

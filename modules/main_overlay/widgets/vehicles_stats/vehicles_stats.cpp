@@ -3,7 +3,7 @@
 VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
     : m_apiController(apiController), QWidget(parent)
 {
-    setFixedWidth(280);
+    setMaximumWidth(260);
     setContentsMargins(0, 2, 0, 2);
     setStyleSheet(
         "border-top-right-radius: 10px;"
@@ -49,7 +49,7 @@ VehicleStats::VehicleStats(ApiController *apiController, QWidget *parent)
     header->setSpacing(1);
     header->setContentsMargins(0, 0, 0, 0);
 
-    std::vector<int> sizes = {105, 50, 50, 50};
+    std::vector<int> sizes = {105, 60, 60, 60};
     QStringList iconPaths = {
         ":vehicle_stats/resources/icons/tanks_icon.png",
         ":vehicle_stats/resources/icons/battles_icon.png",

@@ -18,8 +18,8 @@
 #include <QSysInfo>
 #include <main_overlay/controller/data/MainStatsData.h>
 #include <main_overlay/controller/data/RatingStatsData.h>
-// #include "MasteryStats.h"
-// #include "OtherStats.h"
+#include <main_overlay/controller/data/MasteryStatsData.h>
+#include <main_overlay/controller/data/OtherStatsData.h>
 #include <main_overlay/controller/data/VehicleStatsData.h>
 #include <main_overlay/controller/ParseReplay.h>
 
@@ -58,8 +58,8 @@ private:
 
     MainStatsData mainStats;
     RatingStatsData ratingStats;
-    // MasteryStats masteryStats;
-    // OtherStats otherStats;
+    MasteryStatsData masteryStats;
+    OtherStatsData otherStats;
     VehicleStatsData vehicleStats;
 
     std::vector<Player> allies;
@@ -100,10 +100,11 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
@@ -197,14 +198,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -257,14 +259,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -309,14 +312,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -390,14 +394,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -445,129 +450,157 @@ public:
         return success;
     }
 
-    // bool update_mastery_stats()
-    // {
-    //     CURL *curl;
-    //     CURLcode res;
-    //     std::string readBuffer;
-    //     bool success = false;
+    bool update_mastery_stats()
+    {
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
 
-    //     curl_global_init(CURL_GLOBAL_DEFAULT);
-    //     curl = curl_easy_init();
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
 
-    //     if (curl)
-    //     {
-    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/achievements/";
-    //         std::string url = base +
-    //                           "?application_id=" + this->application_id +
-    //                           "&account_id=" + this->account_id +
-    //                           "&fields=achievements";
-    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    //         res = curl_easy_perform(curl);
+        if (curl)
+        {
+            std::string base = "https://papi.tanksblitz.ru/wotb/account/achievements/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&account_id=" + this->account_id +
+                              "&fields=achievements";
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-    //         if (res == CURLE_OK)
-    //         {
-    //             json j = json::parse(readBuffer, nullptr, false);
-    //             if (j["status"] == "ok")
-    //             {
-    //                 auto &data = j["data"][this->account_id];
-    //                 MasteryData masteryData;
-    //                 masteryData.mastery = data["achievements"]["markOfMastery"].get<int64_t>();
-    //                 masteryData.mastery_1 = data["achievements"]["markOfMasteryI"].get<int64_t>();
-    //                 masteryData.mastery_2 = data["achievements"]["markOfMasteryII"].get<int64_t>();
-    //                 masteryData.mastery_3 = data["achievements"]["markOfMasteryIII"].get<int64_t>();
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
-    //                 if (this->isFirstMasteryStats)
-    //                 {
-    //                     this->masteryStats.initialStats(masteryData);
-    //                     this->isFirstMasteryStats = false;
-    //                 }
-    //                 else
-    //                 {
-    //                     this->masteryStats.updateStats(masteryData);
-    //                 }
-    //                 masteryData = masteryStats.getCurrentData();
-    //                 // std::cout << "masteryData:" << std::endl;
-    //                 // std::cout << "  markOfMastery: " << masteryData.mastery << std::endl;
-    //                 // std::cout << "  markOfMasteryI: " << masteryData.mastery_1 << std::endl;
-    //                 // std::cout << "  markOfMasteryII: " << masteryData.mastery_2 << std::endl;
-    //                 // std::cout << "  markOfMasteryIII: " << masteryData.mastery_3 << std::endl;
-    //                 success = true;
-    //             }
-    //         }
-    //     }
-    //     if (curl)
-    //         curl_easy_cleanup(curl);
-    //     curl_global_cleanup();
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
+            }
+            else
+            {
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
+            }
 
-    //     return success;
-    // }
+            res = curl_easy_perform(curl);
 
-    // bool update_other_stats()
-    // {
-    //     CURL *curl;
-    //     CURLcode res;
-    //     std::string readBuffer;
-    //     bool success = false;
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"][this->account_id];
+                    MasteryData masteryData;
+                    masteryData.mastery = data["achievements"]["markOfMastery"].get<int64_t>();
+                    masteryData.mastery_1 = data["achievements"]["markOfMasteryI"].get<int64_t>();
+                    masteryData.mastery_2 = data["achievements"]["markOfMasteryII"].get<int64_t>();
+                    masteryData.mastery_3 = data["achievements"]["markOfMasteryIII"].get<int64_t>();
 
-    //     curl_global_init(CURL_GLOBAL_DEFAULT);
-    //     curl = curl_easy_init();
+                    if (this->isFirstMasteryStats)
+                    {
+                        this->masteryStats.initialStats(masteryData);
+                        this->isFirstMasteryStats = false;
+                    }
+                    else
+                    {
+                        this->masteryStats.updateStats(masteryData);
+                    }
+                    masteryData = masteryStats.getCurrentData();
+                    // std::cout << "masteryData:" << std::endl;
+                    // std::cout << "  markOfMastery: " << masteryData.mastery << std::endl;
+                    // std::cout << "  markOfMasteryI: " << masteryData.mastery_1 << std::endl;
+                    // std::cout << "  markOfMasteryII: " << masteryData.mastery_2 << std::endl;
+                    // std::cout << "  markOfMasteryIII: " << masteryData.mastery_3 << std::endl;
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
 
-    //     if (curl)
-    //     {
-    //         std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
-    //         std::string url = base +
-    //                           "?application_id=" + this->application_id +
-    //                           "&access_token=" + this->token +
-    //                           "&account_id=" + this->account_id +
-    //                           "&extra=statistics.rating";
-    //         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    //         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    //         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    //         res = curl_easy_perform(curl);
+        return success;
+    }
 
-    //         if (res == CURLE_OK)
-    //         {
-    //             json j = json::parse(readBuffer, nullptr, false);
-    //             if (j["status"] == "ok")
-    //             {
-    //                 auto &data = j["data"][this->account_id];
-    //                 OtherData otherData;
-    //                 otherData.battles = data["statistics"]["all"]["battles"].get<int64_t>() + data["statistics"]["rating"]["battles"].get<int64_t>();
-    //                 otherData.hits = data["statistics"]["all"]["hits"].get<int64_t>() + data["statistics"]["rating"]["hits"].get<int64_t>();
-    //                 otherData.shots = data["statistics"]["all"]["shots"].get<int64_t>() + data["statistics"]["rating"]["shots"].get<int64_t>();
-    //                 otherData.survived = data["statistics"]["all"]["survived_battles"].get<int64_t>() + data["statistics"]["rating"]["survived_battles"].get<int64_t>();
-    //                 otherData.frags = data["statistics"]["all"]["frags"].get<int64_t>() + data["statistics"]["rating"]["frags"].get<int64_t>();
-    //                 otherData.receiverDamage = data["statistics"]["all"]["damage_received"].get<int64_t>() + data["statistics"]["rating"]["damage_received"].get<int64_t>();
-    //                 otherData.totalDamage = data["statistics"]["all"]["damage_dealt"].get<int64_t>() + data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
-    //                 otherData.lifeTime = data["private"]["battle_life_time"].get<int64_t>();
+    bool update_other_stats()
+    {
+        CURL *curl;
+        CURLcode res;
+        std::string readBuffer;
+        bool success = false;
 
-    //                 if (this->isFirstOtherStats)
-    //                 {
-    //                     this->otherStats.initialStats(otherData);
-    //                     this->isFirstOtherStats = false;
-    //                 }
-    //                 else
-    //                 {
-    //                     this->otherStats.updateStats(otherData);
-    //                 }
-    //                 // std::cout << "otherData:" << std::endl;
-    //                 // std::cout << "  Percent Hits: " << otherStats.getPercentHits() << std::endl;
-    //                 // std::cout << "  Percent Survived: " << otherStats.getPercentSurvived() << std::endl;
-    //                 // std::cout << "  Life Time: " << otherStats.getLifeTime() << std::endl;
-    //                 // std::cout << "  K Damage: " << otherStats.getDamageK() << std::endl;
-    //                 // std::cout << "  K Frags: " << otherStats.getFragsK() << std::endl;
-    //                 success = true;
-    //             }
-    //         }
-    //     }
-    //     if (curl)
-    //         curl_easy_cleanup(curl);
-    //     curl_global_cleanup();
-    //     return success;
-    // }
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+        curl = curl_easy_init();
+
+        if (curl)
+        {
+            std::string base = "https://papi.tanksblitz.ru/wotb/account/info/";
+            std::string url = base +
+                              "?application_id=" + this->application_id +
+                              "&access_token=" + this->token +
+                              "&account_id=" + this->account_id +
+                              "&extra=statistics.rating";
+            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+            QString exeDir = QCoreApplication::applicationDirPath();
+            QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
+
+            if (QFile::exists(certPath))
+            {
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
+            }
+            else
+            {
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
+            }
+
+            res = curl_easy_perform(curl);
+
+            if (res == CURLE_OK)
+            {
+                json j = json::parse(readBuffer, nullptr, false);
+                if (j["status"] == "ok")
+                {
+                    auto &data = j["data"][this->account_id];
+                    OtherData otherData;
+                    otherData.battles = data["statistics"]["all"]["battles"].get<int64_t>() + data["statistics"]["rating"]["battles"].get<int64_t>();
+                    otherData.hits = data["statistics"]["all"]["hits"].get<int64_t>() + data["statistics"]["rating"]["hits"].get<int64_t>();
+                    otherData.shots = data["statistics"]["all"]["shots"].get<int64_t>() + data["statistics"]["rating"]["shots"].get<int64_t>();
+                    otherData.survived = data["statistics"]["all"]["survived_battles"].get<int64_t>() + data["statistics"]["rating"]["survived_battles"].get<int64_t>();
+                    otherData.frags = data["statistics"]["all"]["frags"].get<int64_t>() + data["statistics"]["rating"]["frags"].get<int64_t>();
+                    otherData.receiverDamage = data["statistics"]["all"]["damage_received"].get<int64_t>() + data["statistics"]["rating"]["damage_received"].get<int64_t>();
+                    otherData.totalDamage = data["statistics"]["all"]["damage_dealt"].get<int64_t>() + data["statistics"]["rating"]["damage_dealt"].get<int64_t>();
+                    otherData.lifeTime = data["private"]["battle_life_time"].get<int64_t>();
+
+                    if (this->isFirstOtherStats)
+                    {
+                        this->otherStats.initialStats(otherData);
+                        this->isFirstOtherStats = false;
+                    }
+                    else
+                    {
+                        this->otherStats.updateStats(otherData);
+                    }
+                    // std::cout << "otherData:" << std::endl;
+                    // std::cout << "  Percent Hits: " << otherStats.getPercentHits() << std::endl;
+                    // std::cout << "  Percent Survived: " << otherStats.getPercentSurvived() << std::endl;
+                    // std::cout << "  Life Time: " << otherStats.getLifeTime() << std::endl;
+                    // std::cout << "  K Damage: " << otherStats.getDamageK() << std::endl;
+                    // std::cout << "  K Frags: " << otherStats.getFragsK() << std::endl;
+                    success = true;
+                }
+            }
+        }
+        if (curl)
+            curl_easy_cleanup(curl);
+        curl_global_cleanup();
+        return success;
+    }
 
     bool get_players_stats()
     {
@@ -595,14 +628,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                log("CACERT file not found: " + certPath, 3, QDateTime::currentDateTime());
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -778,14 +812,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -838,14 +873,15 @@ public:
 
             QString exeDir = QCoreApplication::applicationDirPath();
             QString certPath = exeDir + "/certificate/cacert.pem";
+            std::string certPathUtf8 = certPath.toUtf8().constData();
 
             if (QFile::exists(certPath))
             {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPath.toStdString().c_str());
+                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
             }
             else
             {
-                std::cerr << "CACERT file not found: " << certPath.toStdString() << std::endl;
+                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
             }
 
             res = curl_easy_perform(curl);
@@ -888,15 +924,15 @@ public:
         return this->ratingStats;
     }
 
-    // MasteryStats getMasteryStats() const
-    // {
-    //     return this->masteryStats;
-    // }
+    MasteryStatsData getMasteryStats() const
+    {
+        return this->masteryStats;
+    }
 
-    // OtherStats getOtherStats() const
-    // {
-    //     return this->otherStats;
-    // }
+    OtherStatsData getOtherStats() const
+    {
+        return this->otherStats;
+    }
 
     // VehicleStats getVehicleStats() const
     // {
@@ -909,7 +945,7 @@ public:
         this->isFirstRatingStats = true;
         this->isFirstMasteryStats = true;
         this->isFirstOtherStats = true;
-        this->isFirstVehiclesStats = true;
+        // this->isFirstVehiclesStats = true;
     }
 
     std::string join()

@@ -1,39 +1,12 @@
-#include <main_overlay/widgets/player_stats/player_stats.h>
+#include <main_overlay/widgets/player_stats/split_players/players_window.h>
 
-class GlobalHotkeyFilterPlayer : public QAbstractNativeEventFilter
-{
-public:
-    QWidget *overlay;
-
-    GlobalHotkeyFilterPlayer(QWidget *overlay) : overlay(overlay) {}
-
-    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override
-    {
-        MSG *msg = static_cast<MSG *>(message);
-        if (msg->message == WM_HOTKEY)
-        {
-            PlayerStats *sub = qobject_cast<PlayerStats *>(overlay);
-            if (!sub)
-                return false;
-
-            if (msg->wParam == 4) // Ctrl + Left
-            {
-                sub->prevHotPage();
-            }
-            else if (msg->wParam == 5) // Ctrl + Right
-            {
-                sub->nextHotPage();
-            }
-        }
-        return false;
-    }
-};
-
-PlayerStats::PlayerStats(ApiController *apiController, QWidget *parent)
-    : m_apiController(apiController), QWidget(parent)
+PlayerStatsWindow::PlayerStatsWindow(const QString &title, QWidget *parent = nullptr)
+    : QWidget(parent)
 {
     setMaximumWidth(260);
     setContentsMargins(0, 2, 0, 2);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet(
         "border-top-right-radius: 10px;"
         "border-bottom-right-radius: 10px;");
@@ -201,11 +174,6 @@ PlayerStats::PlayerStats(ApiController *apiController, QWidget *parent)
     addEnemiesRows();
 
     setLayout(mainLayout);
-
-    RegisterHotKey(NULL, 4, MOD_CONTROL, VK_LEFT);
-    RegisterHotKey(NULL, 5, MOD_CONTROL, VK_RIGHT);
-    auto *hotkeyFilter = new GlobalHotkeyFilterPlayer(this);
-    qApp->installNativeEventFilter(hotkeyFilter);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &PlayerStats::updatingPlayerStats);

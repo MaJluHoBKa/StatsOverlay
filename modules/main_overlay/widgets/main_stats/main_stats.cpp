@@ -3,7 +3,7 @@
 MainStats::MainStats(ApiController *apiController, QWidget *parent)
     : m_apiController(apiController), QWidget(parent)
 {
-    setFixedWidth(280);
+    setFixedWidth(260);
     setContentsMargins(0, 2, 0, 2);
     setStyleSheet(
         "border-top-right-radius: 10px;"

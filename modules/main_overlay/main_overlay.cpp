@@ -36,7 +36,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     QApplication::setStyle("Fusion");
     QApplication::setWindowIcon(QPixmap(":main/resources/icons/icon.ico"));
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
-    resize(300, 200);
+    resize(280, 200);
     setAttribute(Qt::WA_TranslucentBackground);
     move(100, (QApplication::primaryScreen()->availableGeometry().height() - height()) / 2);
 
@@ -46,12 +46,15 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     mainLayout->setSpacing(0);
 
     PlayerStats *playerStats = new PlayerStats(m_apiController);
+    OtherStats *otherStats = new OtherStats(m_apiController);
     VehicleStats *vehicleStats = new VehicleStats(m_apiController);
     RatingStats *ratingStats = new RatingStats(m_apiController);
     MainStats *mainStats = new MainStats(m_apiController);
-    InfoPage *infoPage = new InfoPage(m_apiController, mainStats, ratingStats, vehicleStats);
+    InfoPage *infoPage = new InfoPage(m_apiController, mainStats, ratingStats, vehicleStats, otherStats);
 
     setPlayerPage(playerStats);
+    setVehiclePage(vehicleStats);
+    setInfoPage(infoPage);
 
     // Панель управления
     configPanel = new QWidget;
@@ -84,7 +87,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonMain->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonMain, &QPushButton::clicked, this, [this]()
-            { switchPage(4); resize(300, 200); });
+            { switchPage(5); });
     buttonsLayout->addWidget(buttonMain);
 
     // Кнопка рейтинговой статистики
@@ -106,7 +109,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonRating->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonRating, &QPushButton::clicked, this, [this]()
-            { switchPage(3); resize(300, 200); });
+            { switchPage(4); });
     buttonsLayout->addWidget(buttonRating);
 
     // Кнопка танковой статистики
@@ -128,7 +131,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonTanks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonTanks, &QPushButton::clicked, this, [this]()
-            { switchPage(2); resize(300, 200); });
+            { switchPage(3); });
     buttonsLayout->addWidget(buttonTanks);
 
     // Кнопка коэффициентной статистики
@@ -149,47 +152,49 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "    background-color: rgb(70, 70, 70);"
         "}");
     buttonOther->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonOther, &QPushButton::clicked, this, [this]()
+            { switchPage(2); });
     buttonsLayout->addWidget(buttonOther);
 
-    // Кнопка графиковой статистики
-    QPushButton *buttonGraphics = new QPushButton;
-    buttonGraphics->setIcon(QIcon(QPixmap(":main/resources/icons/graphics_icon.png")));
-    buttonGraphics->setIconSize(QSize(24, 24));
-    buttonGraphics->setStyleSheet(
-        "QPushButton {"
-        "    border: none;"
-        "    padding: 2px;"
-        "    border-top-left-radius: 0px;"
-        "    border-bottom-left-radius: 0px;"
-        "}"
-        "QPushButton:hover {"
-        "    background-color: rgb(50, 50, 50);"
-        "}"
-        "QPushButton:pressed {"
-        "    background-color: rgb(70, 70, 70);"
-        "}");
-    buttonGraphics->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    buttonsLayout->addWidget(buttonGraphics);
+    // // Кнопка графиковой статистики
+    // QPushButton *buttonGraphics = new QPushButton;
+    // buttonGraphics->setIcon(QIcon(QPixmap(":main/resources/icons/graphics_icon.png")));
+    // buttonGraphics->setIconSize(QSize(24, 24));
+    // buttonGraphics->setStyleSheet(
+    //     "QPushButton {"
+    //     "    border: none;"
+    //     "    padding: 2px;"
+    //     "    border-top-left-radius: 0px;"
+    //     "    border-bottom-left-radius: 0px;"
+    //     "}"
+    //     "QPushButton:hover {"
+    //     "    background-color: rgb(50, 50, 50);"
+    //     "}"
+    //     "QPushButton:pressed {"
+    //     "    background-color: rgb(70, 70, 70);"
+    //     "}");
+    // buttonGraphics->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    // buttonsLayout->addWidget(buttonGraphics);
 
-    // Кнопка плиточной статистики
-    QPushButton *buttonStream = new QPushButton;
-    buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/stream_icon.png")));
-    buttonStream->setIconSize(QSize(24, 24));
-    buttonStream->setStyleSheet(
-        "QPushButton {"
-        "    border: none;"
-        "    padding: 2px;"
-        "    border-top-left-radius: 0px;"
-        "    border-bottom-left-radius: 0px;"
-        "}"
-        "QPushButton:hover {"
-        "    background-color: rgb(50, 50, 50);"
-        "}"
-        "QPushButton:pressed {"
-        "    background-color: rgb(70, 70, 70);"
-        "}");
-    buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    buttonsLayout->addWidget(buttonStream);
+    // // Кнопка плиточной статистики
+    // QPushButton *buttonStream = new QPushButton;
+    // buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/stream_icon.png")));
+    // buttonStream->setIconSize(QSize(24, 24));
+    // buttonStream->setStyleSheet(
+    //     "QPushButton {"
+    //     "    border: none;"
+    //     "    padding: 2px;"
+    //     "    border-top-left-radius: 0px;"
+    //     "    border-bottom-left-radius: 0px;"
+    //     "}"
+    //     "QPushButton:hover {"
+    //     "    background-color: rgb(50, 50, 50);"
+    //     "}"
+    //     "QPushButton:pressed {"
+    //     "    background-color: rgb(70, 70, 70);"
+    //     "}");
+    // buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    // buttonsLayout->addWidget(buttonStream);
 
     // Кнопка оленемера
     QPushButton *buttonPlayers = new QPushButton;
@@ -210,7 +215,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonPlayers->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonPlayers, &QPushButton::clicked, this, [this]()
-            { switchPage(1); resize(400, 200); });
+            { switchPage(1); });
     buttonsLayout->addWidget(buttonPlayers);
 
     // Кнопка информационной панели
@@ -232,7 +237,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonInfo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonInfo, &QPushButton::clicked, this, [this]()
-            { switchPage(0); resize(300, 400); });
+            { switchPage(0); });
     buttonsLayout->addWidget(buttonInfo);
 
     // Кнопка выхода
@@ -258,7 +263,11 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     buttonsLayout->addWidget(buttonExit);
 
     configPanel->setLayout(buttonsLayout);
+    configPanel->setMaximumWidth(0);
+    showConfigPanel(false);
     mainLayout->addWidget(configPanel);
+    defaultWidth = 250;
+    resize(defaultWidth, height());
 
     // Контейнер с разными вкладками
     QStackedWidget *stacked_widget = new QStackedWidget;
@@ -270,14 +279,17 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     stacked_widget->addWidget(playerStats);
     stacked_widget->setCurrentIndex(1);
 
-    stacked_widget->addWidget(vehicleStats);
+    stacked_widget->addWidget(otherStats);
     stacked_widget->setCurrentIndex(2);
 
-    stacked_widget->addWidget(ratingStats);
+    stacked_widget->addWidget(vehicleStats);
     stacked_widget->setCurrentIndex(3);
 
-    stacked_widget->addWidget(mainStats);
+    stacked_widget->addWidget(ratingStats);
     stacked_widget->setCurrentIndex(4);
+
+    stacked_widget->addWidget(mainStats);
+    stacked_widget->setCurrentIndex(5);
 
     setStackedWidget(stacked_widget);
     mainLayout->addWidget(stacked_widget);
@@ -363,28 +375,28 @@ void MainOverlay::contextMenuEvent(QContextMenuEvent *event)
     slider->setValue(int(m_backgroundOpacity * 100));
     slider->setMinimumWidth(160);
     slider->setStyleSheet(R"(
-    QSlider::groove:horizontal {
-        border: 1px solid #444;
-        height: 4px;
-        background: #333;
-        border-radius: 2px;
-        margin: 0 8px;
-    }
-    QSlider::handle:horizontal {
-        background: #ddd;
-        border: 1px solid #777;
-        width: 10px;
-        height: 10px;
-        margin: -3px 0;
-        border-radius: 5px;
-    }
-)");
+        QSlider::groove:horizontal {
+            border: 1px solid #444;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin: 0 8px;
+        }
+        QSlider::handle:horizontal {
+            background: #ddd;
+            border: 1px solid #777;
+            width: 10px;
+            height: 10px;
+            margin: -3px 0;
+            border-radius: 5px;
+        }
+    )");
     connect(slider, &QSlider::valueChanged, this, [this](int value)
             {
-    m_backgroundOpacity = value / 100.0;
-    QSettings settings("MyCompany", "StatsOverlay");
-    settings.setValue("backgroundOpacity", m_backgroundOpacity);
-    update(); });
+        m_backgroundOpacity = value / 100.0;
+        QSettings settings("MyCompany", "StatsOverlay");
+        settings.setValue("backgroundOpacity", m_backgroundOpacity);
+        update(); });
     sliderAction->setDefaultWidget(slider);
     menu.addAction(sliderAction);
 

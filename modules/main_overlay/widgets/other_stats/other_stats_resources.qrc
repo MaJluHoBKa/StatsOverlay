@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/other_stats">
+        <file>../../../../resources/icons/master_icon.png</file>
+        <file>../../../../resources/icons/master1_icon.png</file>
+        <file>../../../../resources/icons/master2_icon.png</file>
+        <file>../../../../resources/icons/master3_icon.png</file>
+        <file>../../../../resources/icons/percent_damage_icon.png</file>
+        <file>../../../../resources/icons/percent_leave_icon.png</file>
+        <file>../../../../resources/icons/time_icon.png</file>
+        <file>../../../../resources/icons/k_damage_icon.png</file>
+        <file>../../../../resources/icons/k_tank_icon.png</file>
+        <file>../../../../resources/icons/k_shot_icon.png</file>
+        <file>../../../../resources/icons/arrow_icon.png</file>
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>
