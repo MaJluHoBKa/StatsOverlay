@@ -13,6 +13,7 @@ OtherStats::OtherStats(ApiController *apiController, QWidget *parent)
     // Главный слой для виджета
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(5);
+    mainLayout->setContentsMargins(8, 6, 8, 6);
 
     // Выставление медалей
     QWidget *mainMasteryContainer = new QWidget();
@@ -56,15 +57,21 @@ OtherStats::OtherStats(ApiController *apiController, QWidget *parent)
     mainMasteryContainer->setLayout(masteryLayout);
     mainLayout->addWidget(mainMasteryContainer);
 
+    QFrame *separator = new QFrame;
+    separator->setFrameShape(QFrame::HLine);
+    separator->setFrameShadow(QFrame::Plain);
+    separator->setStyleSheet("background-color: rgba(226, 222, 211, 0.15);");
+    separator->setFixedHeight(1);
+    mainLayout->addWidget(separator);
+
     // Слой заголовка боевой статистики
     QHBoxLayout *listsStats = new QHBoxLayout();
     listsStats->setSpacing(5);
 
-    QLabel *icon = new QLabel;
-    icon->setPixmap(QPixmap(":other_stats/resources/icons/arrow_icon.png"));
-    icon->setMaximumWidth(30);
-    icon->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    listsStats->addWidget(icon);
+    QFrame *accent = new QFrame;
+    accent->setFixedWidth(3);
+    accent->setStyleSheet("background-color: #c8a84b; border-radius: 1px;");
+    listsStats->addWidget(accent);
 
     QLabel *label = new QLabel;
     label->setText("Боевые показатели");

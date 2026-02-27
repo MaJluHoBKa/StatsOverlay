@@ -285,7 +285,7 @@ private:
         uint32_t sub_type = *(uint32_t *)&payload[pos];
         pos += 4;
 
-        if (sub_type != 50)
+        if (sub_type != 55)
             return players;
 
         pos += 8; // inner_length + unknown

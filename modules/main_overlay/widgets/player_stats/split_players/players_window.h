@@ -12,6 +12,8 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 #include <QTimer>
+#include <QPainter>
+#include <QMouseEvent>
 #include <QtConcurrent/QtConcurrent>
 #include <main_overlay/controller/ApiController.h>
 
@@ -37,6 +39,12 @@ class PlayerStatsWindow : public QWidget
 {
     Q_OBJECT
 
+protected:
+    void paintEvent(QPaintEvent *) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
 private:
     QVBoxLayout *data_players = nullptr;
 
@@ -44,9 +52,19 @@ private:
 
     std::vector<PlayerRows *> rows_players;
 
-    PlayerRows *avg;
+    PlayerRows *avg = nullptr;
 
-    std::vector<Player> players;
+    bool m_dragActive = false;
+    QPoint m_dragStartPos;
+
+    QLabel *playerIcon;
+    QLabel *tankIcon;
+    QLabel *battlesIcon;
+    QLabel *winsIcon;
+    QLabel *damageIcon;
+
+    int defaultWidth = 386;
+    double m_backgroundOpacity;
 
 public:
     explicit PlayerStatsWindow(const QString &title, QWidget *parent = nullptr);
@@ -64,37 +82,37 @@ public:
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
 
             QLabel *playerName = new QLabel;
             playerName->setStyleSheet(baseStyle);
-            playerName->setFixedWidth(this->sizesRow[0]);
+            playerName->setMaximumWidth(this->sizesRow[0]);
             playerName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             playerName->setFixedHeight(20);
 
             QLabel *tankName = new QLabel;
             tankName->setStyleSheet(baseStyle);
-            tankName->setFixedWidth(this->sizesRow[1]);
+            tankName->setMaximumWidth(this->sizesRow[1]);
             tankName->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
             tankName->setFixedHeight(20);
 
             QLabel *battles = new QLabel;
-            battles->setFixedWidth(this->sizesRow[2]);
+            battles->setMaximumWidth(this->sizesRow[2]);
             battles->setFixedHeight(20);
             battles->setStyleSheet(baseStyle);
             battles->setAlignment(Qt::AlignCenter);
 
             QLabel *wins = new QLabel;
-            wins->setFixedWidth(this->sizesRow[3]);
+            wins->setMaximumWidth(this->sizesRow[3]);
             wins->setFixedHeight(20);
             wins->setStyleSheet(baseStyle);
             wins->setAlignment(Qt::AlignCenter);
 
             QLabel *damage = new QLabel;
-            damage->setFixedWidth(this->sizesRow[4]);
+            damage->setMaximumWidth(this->sizesRow[4]);
             damage->setFixedHeight(20);
             damage->setStyleSheet(baseStyle);
             damage->setAlignment(Qt::AlignCenter);
@@ -121,7 +139,7 @@ public:
                 line->setFrameShadow(QFrame::Plain); // вместо Sunken/Styled
                 line->setStyleSheet("background-color: #e2ded3;");
                 line->setFixedHeight(1);
-                line->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+                line->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
                 this->data_players->addWidget(line);
                 this->data_players->addLayout(row);
                 avg = info;
@@ -133,14 +151,14 @@ public:
         }
     }
 
-    void setData()
+    void setData(std::vector<Player> players)
     {
         const QString baseStyle = R"(
                     font-family: Roboto;
                     font-size: 12px;
                     font-weight: bold;
                     color: #e2ded3;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
@@ -150,7 +168,7 @@ public:
                     font-size: 12px;
                     font-weight: bold;
                     color: #ffd166;
-                    padding: 5px 0px;
+                    padding: 2px 0px;
                     margin: 0px;
                     border-radius: 3px;
                 )";
@@ -161,7 +179,7 @@ public:
 
         for (int i = 0; i < this->rows_players.size(); i++)
         {
-            QString name = QString::fromStdString(this->players[i].nickname);
+            QString name = QString::fromStdString(players[i].nickname);
             if (name.length() > 12)
             {
                 name.resize(12);
@@ -169,7 +187,7 @@ public:
             }
             this->rows_players[i]->name->setText(name);
             this->rows_players[i]->name->setStyleSheet(baseStyle);
-            QString tank_name = QString::fromStdString(this->players[i].tank_name);
+            QString tank_name = QString::fromStdString(players[i].tank_name);
             if (tank_name.length() > 12)
             {
                 tank_name.resize(12);
@@ -180,7 +198,7 @@ public:
 
             QString color;
 
-            int64_t battles = this->players[i].battles;
+            int64_t battles = players[i].battles;
             all_battles += battles;
             if (battles < 5000)
             {
@@ -201,8 +219,8 @@ public:
             this->rows_players[i]->battles->setText(QString::fromStdString(std::to_string(battles)));
             this->rows_players[i]->battles->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
-            double wins = (static_cast<double>(this->players[i].wins) / this->players[i].battles) * 100.0;
-            all_wins += this->players[i].wins;
+            double wins = (static_cast<double>(players[i].wins) / players[i].battles) * 100.0;
+            all_wins += players[i].wins;
             if (wins >= 70.00)
             {
                 color = "#a08bea";
@@ -222,8 +240,8 @@ public:
             this->rows_players[i]->wins->setText(QString::fromStdString(formatFloat(wins) + "%"));
             this->rows_players[i]->wins->setStyleSheet(baseStyle + QString("color: %1;").arg(color));
 
-            int64_t damage = this->players[i].damage / this->players[i].battles;
-            all_damage += this->players[i].damage;
+            int64_t damage = players[i].damage / players[i].battles;
+            all_damage += players[i].damage;
             if (damage < 1000)
             {
                 color = "#d13b49";
@@ -317,5 +335,117 @@ public:
             insertPosition -= 3;
         }
         return str;
+    }
+
+    void togglePlayers(bool visible)
+    {
+        for (int i = 0; i < this->rows_players.size(); i++)
+        {
+            this->rows_players[i]->name->setVisible(visible);
+        }
+        this->avg->name->setVisible(visible);
+        this->playerIcon->setVisible(visible);
+        if (visible)
+        {
+            defaultWidth += 105;
+        }
+        else
+        {
+            defaultWidth -= 105;
+        }
+        updateWindowSize();
+    }
+
+    void toggleTanks(bool visible)
+    {
+        for (int i = 0; i < this->rows_players.size(); i++)
+        {
+            this->rows_players[i]->tank_name->setVisible(visible);
+        }
+        this->avg->tank_name->setVisible(visible);
+        this->tankIcon->setVisible(visible);
+        if (visible)
+        {
+            defaultWidth += 105;
+        }
+        else
+        {
+            defaultWidth -= 105;
+        }
+        updateWindowSize();
+    }
+
+    void toggleBattles(bool visible)
+    {
+        for (int i = 0; i < this->rows_players.size(); i++)
+        {
+            this->rows_players[i]->battles->setVisible(visible);
+        }
+        this->avg->battles->setVisible(visible);
+        this->battlesIcon->setVisible(visible);
+        if (visible)
+        {
+            defaultWidth += 50;
+        }
+        else
+        {
+            defaultWidth -= 50;
+        }
+        updateWindowSize();
+    }
+
+    void toggleWins(bool visible)
+    {
+        for (int i = 0; i < this->rows_players.size(); i++)
+        {
+            this->rows_players[i]->wins->setVisible(visible);
+        }
+        this->avg->wins->setVisible(visible);
+        this->winsIcon->setVisible(visible);
+        if (visible)
+        {
+            defaultWidth += 50;
+        }
+        else
+        {
+            defaultWidth -= 50;
+        }
+        updateWindowSize();
+    }
+
+    void toggleDamage(bool visible)
+    {
+        for (int i = 0; i < this->rows_players.size(); i++)
+        {
+            this->rows_players[i]->damage->setVisible(visible);
+        }
+        this->avg->damage->setVisible(visible);
+        this->damageIcon->setVisible(visible);
+        if (visible)
+        {
+            defaultWidth += 50;
+        }
+        else
+        {
+            defaultWidth -= 50;
+        }
+        updateWindowSize();
+    }
+
+    void updateWindowSize()
+    {
+        if (defaultWidth < 150)
+        {
+            setFixedWidth(150);
+        }
+        else
+        {
+            setFixedWidth(defaultWidth);
+        }
+    }
+
+    void setOpacity(double opacity)
+    {
+        this->m_backgroundOpacity = opacity;
     }
 };

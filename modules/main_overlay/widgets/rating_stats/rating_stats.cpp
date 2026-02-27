@@ -13,21 +13,28 @@ RatingStats::RatingStats(ApiController *apiController, QWidget *parent)
     // Главный слой для виджета
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(5);
+    mainLayout->setContentsMargins(8, 6, 8, 6);
 
     // Выставление экономики
     addContent(mainLayout, QPixmap(":rating_stats/resources/icons/rating_icon.png"), "Текущий рейтинг", true, false);
     addContent(mainLayout, QPixmap(":rating_stats/resources/icons/progress_icon.png"), "Прогресс рейтинга", false, false);
     addContent(mainLayout, QPixmap(":rating_stats/resources/icons/calib_icon.png"), "Калибровочные бои", false, false);
 
+    QFrame *separator = new QFrame;
+    separator->setFrameShape(QFrame::HLine);
+    separator->setFrameShadow(QFrame::Plain);
+    separator->setStyleSheet("background-color: rgba(226, 222, 211, 0.15);");
+    separator->setFixedHeight(1);
+    mainLayout->addWidget(separator);
+
     // Слой заголовка боевой статистики
     QHBoxLayout *listsStats = new QHBoxLayout();
     listsStats->setSpacing(5);
 
-    QLabel *icon = new QLabel;
-    icon->setPixmap(QPixmap(":main_stats/resources/icons/arrow_icon.png"));
-    icon->setMaximumWidth(30);
-    icon->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    listsStats->addWidget(icon);
+    QFrame *accent = new QFrame;
+    accent->setFixedWidth(3);
+    accent->setStyleSheet("background-color: #c8a84b; border-radius: 1px;");
+    listsStats->addWidget(accent);
 
     QLabel *label = new QLabel;
     label->setText("Боевая эффективность");

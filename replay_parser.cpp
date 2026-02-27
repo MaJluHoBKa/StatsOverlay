@@ -192,7 +192,7 @@ std::vector<Player> parse_entity_method(const std::vector<uint8_t> &payload)
     uint32_t sub_type = *(uint32_t *)&payload[pos];
     pos += 4;
 
-    if (sub_type != 50)
+    if (sub_type != 55)
         return players;
 
     uint32_t inner_length =
@@ -226,7 +226,7 @@ std::vector<Player> parse_entity_method(const std::vector<uint8_t> &payload)
     if (!players.empty())
         std::cout << "[DEBUG] Found " << players.size() << " players in sub_type 50\n";
     else
-        std::cout << "[DEBUG] No players found in sub_type 50\n";
+        std::cout << "[DEBUG] No players found in sub_type 55\n";
 
     return players;
 }

@@ -26,7 +26,7 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     titleLayout->addWidget(icon);
 
     QLabel *title = new QLabel;
-    title->setText("STATS OVERLAY v2.0 TEST");
+    title->setText("STATS OVERLAY v2.3");
     title->setStyleSheet(
         "font-family: Segoe UI;"
         "font-weight: bold;"

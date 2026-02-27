@@ -5,6 +5,31 @@
         <file>../../../../resources/icons/win_icon.png</file>
         <file>../../../../resources/icons/damage_icon.png</file>
         <file>../../../../resources/icons/battles_icon.png</file>
+        <file>../../../../resources/icons/type_icon.png</file>
+        <file>../../../../resources/icons/tt_default.png</file>
+        <file>../../../../resources/icons/tt_premium.png</file>
+        <file>../../../../resources/icons/tt_collect.png</file>
+        <file>../../../../resources/icons/st_default.png</file>
+        <file>../../../../resources/icons/st_premium.png</file>
+        <file>../../../../resources/icons/st_collect.png</file>
+        <file>../../../../resources/icons/lt_default.png</file>
+        <file>../../../../resources/icons/lt_premium.png</file>
+        <file>../../../../resources/icons/lt_collect.png</file>
+        <file>../../../../resources/icons/pt_default.png</file>
+        <file>../../../../resources/icons/pt_premium.png</file>
+        <file>../../../../resources/icons/pt_collect.png</file>
+        <file>../../../../resources/icons/ussr.png</file>
+        <file>../../../../resources/icons/usa.png</file>
+        <file>../../../../resources/icons/germany.png</file>
+        <file>../../../../resources/icons/uk.png</file>
+        <file>../../../../resources/icons/france.png</file>
+        <file>../../../../resources/icons/japan.png</file>
+        <file>../../../../resources/icons/china.png</file>
+        <file>../../../../resources/icons/poland.png</file>
+        <file>../../../../resources/icons/sweden.png</file>
+        <file>../../../../resources/icons/italy.png</file>
+        <file>../../../../resources/icons/czech.png</file>
+        <file>../../../../resources/icons/lesta.png</file>
         <file>../../../../resources/vehicles/tanks.json</file>
         <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
     </qresource>

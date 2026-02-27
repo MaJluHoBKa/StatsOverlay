@@ -18,11 +18,21 @@
 #include <QWidgetAction>
 #include <QContextMenuEvent>
 #include <QPropertyAnimation>
+#include <QCryptographicHash>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QFile>
+#include <QDir>
+#include <QStandardPaths>
+#include <QPainterPath>
+#include <QIntValidator>
+#include <QGraphicsOpacityEffect>
 #include <main_overlay/widgets/main_stats/main_stats.h>
 #include <main_overlay/widgets/rating_stats/rating_stats.h>
 #include <main_overlay/widgets/other_stats/other_stats.h>
 #include <main_overlay/widgets/vehicles_stats/vehicles_stats.h>
 #include <main_overlay/widgets/player_stats/player_stats.h>
+#include <main_overlay/widgets/gun_marks/gun_marks.h>
 #include <main_overlay/widgets/info_page/info_page.h>
 #include <main_overlay/controller/ApiController.h>
 #include <../modules/sub_overlay/sub_overlay.h>
@@ -55,18 +65,22 @@ protected:
 
 private:
     QStackedWidget *stacked_widget = nullptr;
+    GunMarks *gunMark = nullptr;
     PlayerStats *players = nullptr;
     VehicleStats *vehicle = nullptr;
     InfoPage *info = nullptr;
     ApiController *m_apiController = nullptr;
 
     QWidget *configPanel;
-    double m_backgroundOpacity;
+    double m_backgroundOpacity = 1.0;
 
     bool m_dragActive = false;
     QPoint m_dragStartPos;
     int m_currentIndexPage = 5;
     int configPanelNormalWidth = 30;
+
+    std::vector<QPushButton *> m_navButtons;
+    void updateNavButtonStyles(int activePage);
 
     int defaultWidth = 280;
 
@@ -114,10 +128,46 @@ public:
     {
         if (this->m_apiController->is_auth())
         {
-            if (this->m_apiController->logout())
+            QString token = QString::fromStdString(this->m_apiController->getToken());
+            QString nickname = QString::fromStdString(this->m_apiController->getNickname());
+            QString account_id = QString::fromStdString(this->m_apiController->getAccountId());
+
+            QByteArray key = "speaker"; // 🔑 можно вынести в конфиг
+
+            // Шифруем XOR + кодируем в Base64
+            QByteArray tokenEnc = xorEncryptDecrypt(token.toUtf8(), key).toBase64();
+            QByteArray nickEnc = xorEncryptDecrypt(nickname.toUtf8(), key).toBase64();
+            QByteArray accIdEnc = xorEncryptDecrypt(account_id.toUtf8(), key).toBase64();
+
+            // JSON
+            QJsonObject obj;
+            obj["token"] = QString(tokenEnc);
+            obj["nickname"] = QString(nickEnc);
+            obj["account_id"] = QString(accIdEnc);
+
+            QJsonDocument doc(obj);
+
+            // 📂 Путь: %AppData%/StatsOverlay
+            QString appData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            QDir dir(appData);
+            if (!dir.exists())
             {
-                QApplication::quit();
+                if (!dir.mkpath("."))
+                {
+                    qWarning() << "Не удалось создать папку StatsOverlay в AppData!";
+                    return;
+                }
             }
+
+            QFile file(dir.filePath("auth.json"));
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+            {
+                qWarning() << "Не удалось открыть auth.json для записи!";
+                return;
+            }
+
+            file.write(doc.toJson(QJsonDocument::Indented));
+            file.close();
         }
         QApplication::quit();
     }
@@ -147,10 +197,10 @@ public:
 
         if (m_currentIndexPage == 0)
             this->info->setMaximumWidth(280);
-        else if (m_currentIndexPage == 1)
-            this->players->setMaximumWidth(390);
-        else if (m_currentIndexPage == 3)
-            this->vehicle->setMaximumWidth(310);
+        else if (m_currentIndexPage == 2)
+            this->players->setMaximumWidth(280);
+        else if (m_currentIndexPage == 4)
+            this->vehicle->setMaximumWidth(370);
 
         int w = defaultWidth, h = 200;
         switch (m_currentIndexPage)
@@ -160,22 +210,26 @@ public:
             h = 400;
             break; // информационная панель
         case 1:
-            w = defaultWidth + 120;
+            w = defaultWidth;
             h = 200;
-            break; // игроки
+            break; // отметка
         case 2:
             w = defaultWidth;
             h = 200;
-            break; // коэффициенты
+            break; // игроки
         case 3:
-            w = defaultWidth + 50;
+            w = defaultWidth;
+            h = 200;
+            break; // коэффициенты
+        case 4:
+            w = defaultWidth + 110;
             h = 200;
             break; // танки
-        case 4:
+        case 5:
             w = defaultWidth;
             h = 200;
             break; // рейтинговая статистика
-        case 5:
+        case 6:
             w = defaultWidth;
             h = 200;
             break; // основная статистика
@@ -190,6 +244,7 @@ public:
     {
         m_currentIndexPage = index;
         switchHotPage();
+        updateNavButtonStyles(index);
     }
 
     void showConfigPanel(bool show)
@@ -233,4 +288,18 @@ public:
         animPanel->start(QAbstractAnimation::DeleteWhenStopped);
         animWindow->start(QAbstractAnimation::DeleteWhenStopped);
     }
+
+    QByteArray xorEncryptDecrypt(const QByteArray &data, const QByteArray &key)
+    {
+        QByteArray result;
+        result.resize(data.size());
+
+        for (int i = 0; i < data.size(); ++i)
+        {
+            result[i] = data[i] ^ key[i % key.size()];
+        }
+        return result;
+    }
+
+    void drawFrostPatterns(QPainter &p);
 };

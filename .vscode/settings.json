@@ -105,6 +105,10 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "qtimer": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "qvboxlayout": "cpp",
+        "qstackedwidget": "cpp",
+        "qtconcurrent": "cpp",
+        "qcryptographichash": "cpp"
     }
 }

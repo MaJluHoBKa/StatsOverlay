@@ -23,6 +23,11 @@
 #include <main_overlay/controller/data/VehicleStatsData.h>
 #include <main_overlay/controller/ParseReplay.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 using json = nlohmann::json;
 
 struct Player
@@ -77,6 +82,7 @@ public:
     {
         return this->isAuth;
     }
+
     bool login()
     {
         log("Запуск процедуры авторизации", 4, QDateTime::currentDateTime());
@@ -166,11 +172,6 @@ public:
 
         svr.listen("0.0.0.0", 5000);
 
-        if (!get_vehicles_names())
-        {
-            log("Ошибка загрузки списка техники после авторизации", 4, QDateTime::currentDateTime());
-            return false;
-        }
         log("Авторизация завершена успешно", 4, QDateTime::currentDateTime());
         return true;
     }
@@ -851,59 +852,6 @@ public:
         return success;
     }
 
-    bool get_vehicles_names()
-    {
-        CURL *curl;
-        CURLcode res;
-        std::string readBuffer;
-        bool success = false;
-
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl = curl_easy_init();
-
-        if (curl)
-        {
-            std::string base = "https://papi.tanksblitz.ru/wotb/encyclopedia/vehicles/";
-            std::string url = base +
-                              "?application_id=" + this->application_id +
-                              "&fields=name,tank_id,tier";
-            curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-
-            QString exeDir = QCoreApplication::applicationDirPath();
-            QString certPath = exeDir + "/certificate/cacert.pem";
-            std::string certPathUtf8 = certPath.toUtf8().constData();
-
-            if (QFile::exists(certPath))
-            {
-                curl_easy_setopt(curl, CURLOPT_CAINFO, certPathUtf8.c_str());
-            }
-            else
-            {
-                log("Файл сертификата не найден: " + certPath, 0, QDateTime::currentDateTime());
-            }
-
-            res = curl_easy_perform(curl);
-
-            if (res == CURLE_OK)
-            {
-                json j = json::parse(readBuffer, nullptr, false);
-                if (j["status"] == "ok")
-                {
-                    auto &data = j["data"];
-                    vehicleStats.setNames(data);
-                    success = true;
-                }
-            }
-        }
-        if (curl)
-            curl_easy_cleanup(curl);
-        curl_global_cleanup();
-
-        return success;
-    }
-
     const VehicleData *get_updated_vehicles() const
     {
         return vehicleStats.getUpdatedVehicle();
@@ -912,6 +860,26 @@ public:
     std::string getVehicleName(int64_t id)
     {
         return vehicleStats.getName(id);
+    }
+
+    int64_t getVehicleTier(int64_t id)
+    {
+        return vehicleStats.getTier(id);
+    }
+
+    std::string getVehicleType(int64_t id)
+    {
+        return vehicleStats.getType(id);
+    }
+
+    std::string getVehicleNation(int64_t id)
+    {
+        return vehicleStats.getNation(id);
+    }
+
+    std::string getVehicleStatus(int64_t id)
+    {
+        return vehicleStats.getStatus(id);
     }
 
     MainStatsData getMainStats() const
@@ -1051,6 +1019,36 @@ public:
     std::string getNickname() const
     {
         return this->nickname;
+    }
+
+    std::string getToken() const
+    {
+        return this->token;
+    }
+
+    std::string getAccountId() const
+    {
+        return this->account_id;
+    }
+
+    void setNickname(std::string nickname)
+    {
+        this->nickname = nickname;
+    }
+
+    void setToken(std::string token)
+    {
+        this->token = token;
+    }
+
+    void setAccountId(std::string account_id)
+    {
+        this->account_id = account_id;
+    }
+
+    void setAuth(bool auth)
+    {
+        this->isAuth = auth;
     }
 
     void initLog()

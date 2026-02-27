@@ -6,6 +6,9 @@
 #include <../external/json.hpp>
 #include <fstream>
 #include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 using json = nlohmann::json;
 
@@ -26,6 +29,16 @@ struct VehicleData
     }
 };
 
+struct VehicleInfo
+{
+    int64_t tank_id;
+    std::string name;
+    int64_t tier;
+    std::string type;
+    std::string nation;
+    std::string status;
+};
+
 class VehicleStatsData
 {
 private:
@@ -36,40 +49,38 @@ private:
     std::unordered_map<int64_t, VehicleData> vehicles;
     std::unordered_map<int64_t, VehicleData> first_vehicles;
     std::unordered_map<int64_t, VehicleData> prev_vehicles;
-    std::unordered_map<int64_t, std::string> names_vehicles;
-    std::unordered_map<int64_t, int64_t> tier_vehicles;
+    std::unordered_map<int64_t, VehicleInfo> vehicles_info;
 
 public:
     VehicleStatsData()
     {
-        QFile file(":/vehicles_data_stats/resources/vehicles/tanks.json");
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        QByteArray jsonData;
+
+        // 1️⃣ пробуем GitHub
+        jsonData = downloadFromGitHub();
+
+        if (!jsonData.isEmpty() && loadVehiclesFromJson(jsonData))
         {
-            throw std::runtime_error("Can't open file for load vehicle names...");
+            qDebug() << "[VehicleStats] Loaded vehicles from GitHub";
+            return;
         }
 
-        QByteArray data = file.readAll();
-        file.close();
+        // // 2️⃣ fallback — ресурсы
+        // QFile file(":/vehicles_data_stats/resources/vehicles/tanks.json");
+        // if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        // {
+        //     jsonData = file.readAll();
+        //     file.close();
 
-        json j = json::parse(data.toStdString());
+        //     if (loadVehiclesFromJson(jsonData))
+        //     {
+        //         qDebug() << "[VehicleStats] Loaded vehicles from resources";
+        //         return;
+        //     }
+        // }
 
-        if (j.contains("tanks"))
-        {
-            j = j["tanks"];
-        }
-
-        for (auto &i : j)
-        {
-            if (i.contains("id") && i.contains("name") && i.contains("tier"))
-            {
-                int64_t id = i["id"].get<int64_t>();
-                std::string name = i["name"];
-                int64_t tier = i["tier"].get<int64_t>();
-
-                names_vehicles[id] = name;
-                tier_vehicles[id] = tier;
-            }
-        }
+        // 3️⃣ всё плохо
+        throw std::runtime_error("Failed to load vehicle info from GitHub and resources");
     }
 
     void initialStats(const json &stats)
@@ -119,8 +130,8 @@ public:
             auto it = prev_vehicles.find(v.first);
             if (it != prev_vehicles.end() && v.second.battles > it->second.battles)
             {
-                auto nameIt = names_vehicles.find(v.first);
-                std::string tankName = (nameIt != names_vehicles.end()) ? nameIt->second : "Unknown";
+                auto nameIt = vehicles_info.find(v.first);
+                std::string tankName = (nameIt != vehicles_info.end()) ? nameIt->second.name : "Unknown";
                 double winrate = (static_cast<double>(v.second.wins) / v.second.battles) * 100.0;
                 std::cout << "Tank: " << tankName
                           << " Battle: " << v.second.battles
@@ -132,36 +143,95 @@ public:
         return nullptr;
     }
 
+    bool loadVehiclesFromJson(const QByteArray &raw)
+    {
+        json j = json::parse(raw.toStdString(), nullptr, false);
+        if (j.is_discarded())
+            return false;
+
+        if (j.contains("tanks"))
+            j = j["tanks"];
+
+        for (auto &i : j)
+        {
+            if (!i.contains("id") || !i.contains("name") || !i.contains("tier"))
+                continue;
+
+            int64_t id = i["id"].get<int64_t>();
+
+            vehicles_info[id] = {
+                id,
+                i["name"].get<std::string>(),
+                i["tier"].get<int64_t>(),
+                i.value("type", ""),
+                i.value("nation", ""),
+                i.value("status", "default")};
+        }
+
+        return !vehicles_info.empty();
+    }
+
+    QByteArray downloadFromGitHub()
+    {
+        QNetworkAccessManager manager;
+        QNetworkRequest request(QUrl(
+            "https://raw.githubusercontent.com/MaJluHoBKa/vehicles_db_lesta/main/tanks.json"));
+
+        QEventLoop loop;
+        QNetworkReply *reply = manager.get(request);
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        QByteArray data;
+        if (reply->error() == QNetworkReply::NoError)
+            data = reply->readAll();
+
+        reply->deleteLater();
+        return data;
+    }
+
     std::string getName(int64_t id)
     {
-        if (names_vehicles.count(id))
+        if (vehicles_info.count(id))
         {
-            return names_vehicles[id];
+            return vehicles_info[id].name;
         }
         return std::to_string(id);
     }
 
     int64_t getTier(int64_t id)
     {
-        if (tier_vehicles.count(id))
+        if (vehicles_info.count(id))
         {
-            return tier_vehicles[id];
+            return vehicles_info[id].tier;
         }
-        return 0;
+        return 1;
     }
 
-    void setNames(const json &names)
+    std::string getType(int64_t id)
     {
-        for (auto &[key, value] : names.items())
+        if (vehicles_info.count(id))
         {
-            if (value.contains("tank_id") && value.contains("name") && value.contains("tier"))
-            {
-                int64_t id = value["tank_id"].get<int64_t>();
-                std::string name = value["name"];
-                int64_t tier = value["tier"].get<int64_t>();
-                names_vehicles[id] = name;
-                tier_vehicles[id] = tier;
-            }
+            return vehicles_info[id].type;
         }
+        return "";
+    }
+
+    std::string getNation(int64_t id)
+    {
+        if (vehicles_info.count(id))
+        {
+            return vehicles_info[id].nation;
+        }
+        return "";
+    }
+
+    std::string getStatus(int64_t id)
+    {
+        if (vehicles_info.count(id))
+        {
+            return vehicles_info[id].status;
+        }
+        return "default";
     }
 };

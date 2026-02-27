@@ -45,9 +45,10 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
+    gunMark = new GunMarks(m_apiController);
     PlayerStats *playerStats = new PlayerStats(m_apiController);
     OtherStats *otherStats = new OtherStats(m_apiController);
-    VehicleStats *vehicleStats = new VehicleStats(m_apiController);
+    VehicleStats *vehicleStats = new VehicleStats(m_apiController, gunMark);
     RatingStats *ratingStats = new RatingStats(m_apiController);
     MainStats *mainStats = new MainStats(m_apiController);
     InfoPage *infoPage = new InfoPage(m_apiController, mainStats, ratingStats, vehicleStats, otherStats);
@@ -87,7 +88,8 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonMain->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonMain, &QPushButton::clicked, this, [this]()
-            { switchPage(5); });
+            { switchPage(6); });
+    // buttonMain->setToolTip("Основная статистика");
     buttonsLayout->addWidget(buttonMain);
 
     // Кнопка рейтинговой статистики
@@ -109,7 +111,8 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonRating->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonRating, &QPushButton::clicked, this, [this]()
-            { switchPage(4); });
+            { switchPage(5); });
+    // buttonRating->setToolTip("Рейтинг");
     buttonsLayout->addWidget(buttonRating);
 
     // Кнопка танковой статистики
@@ -131,7 +134,8 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonTanks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonTanks, &QPushButton::clicked, this, [this]()
-            { switchPage(3); });
+            { switchPage(4); });
+    // buttonTanks->setToolTip("Техника");
     buttonsLayout->addWidget(buttonTanks);
 
     // Кнопка коэффициентной статистики
@@ -153,48 +157,31 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonOther->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonOther, &QPushButton::clicked, this, [this]()
-            { switchPage(2); });
+            { switchPage(3); });
+    // buttonOther->setToolTip("Медали и Коэффициенты");
     buttonsLayout->addWidget(buttonOther);
 
-    // // Кнопка графиковой статистики
-    // QPushButton *buttonGraphics = new QPushButton;
-    // buttonGraphics->setIcon(QIcon(QPixmap(":main/resources/icons/graphics_icon.png")));
-    // buttonGraphics->setIconSize(QSize(24, 24));
-    // buttonGraphics->setStyleSheet(
-    //     "QPushButton {"
-    //     "    border: none;"
-    //     "    padding: 2px;"
-    //     "    border-top-left-radius: 0px;"
-    //     "    border-bottom-left-radius: 0px;"
-    //     "}"
-    //     "QPushButton:hover {"
-    //     "    background-color: rgb(50, 50, 50);"
-    //     "}"
-    //     "QPushButton:pressed {"
-    //     "    background-color: rgb(70, 70, 70);"
-    //     "}");
-    // buttonGraphics->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    // buttonsLayout->addWidget(buttonGraphics);
-
-    // // Кнопка плиточной статистики
-    // QPushButton *buttonStream = new QPushButton;
-    // buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/stream_icon.png")));
-    // buttonStream->setIconSize(QSize(24, 24));
-    // buttonStream->setStyleSheet(
-    //     "QPushButton {"
-    //     "    border: none;"
-    //     "    padding: 2px;"
-    //     "    border-top-left-radius: 0px;"
-    //     "    border-bottom-left-radius: 0px;"
-    //     "}"
-    //     "QPushButton:hover {"
-    //     "    background-color: rgb(50, 50, 50);"
-    //     "}"
-    //     "QPushButton:pressed {"
-    //     "    background-color: rgb(70, 70, 70);"
-    //     "}");
-    // buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    // buttonsLayout->addWidget(buttonStream);
+    // Кнопка плиточной статистики
+    QPushButton *buttonStream = new QPushButton;
+    buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/widget_icon.png")));
+    buttonStream->setIconSize(QSize(24, 24));
+    buttonStream->setStyleSheet(
+        "QPushButton {"
+        "    border: none;"
+        "    padding: 2px;"
+        "    border-top-left-radius: 0px;"
+        "    border-bottom-left-radius: 0px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: rgb(50, 50, 50);"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: rgb(70, 70, 70);"
+        "}");
+    buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonStream, &QPushButton::clicked, this, [this]()
+            { switchPage(3); });
+    buttonsLayout->addWidget(buttonStream);
 
     // Кнопка оленемера
     QPushButton *buttonPlayers = new QPushButton;
@@ -215,8 +202,32 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonPlayers->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonPlayers, &QPushButton::clicked, this, [this]()
-            { switchPage(1); });
+            { switchPage(2); });
+    // buttonPlayers->setToolTip("Оленемер");
     buttonsLayout->addWidget(buttonPlayers);
+
+    // Кнопка отслеживания отметки
+    QPushButton *buttonGunMark = new QPushButton;
+    buttonGunMark->setText("///");
+    buttonGunMark->setIconSize(QSize(24, 24));
+    buttonGunMark->setStyleSheet(
+        "QPushButton {"
+        "    border: none;"
+        "    padding: 2px;"
+        "    border-top-left-radius: 0px;"
+        "    border-bottom-left-radius: 0px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: rgb(50, 50, 50);"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: rgb(70, 70, 70);"
+        "}");
+    buttonGunMark->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    connect(buttonGunMark, &QPushButton::clicked, this, [this]()
+            { switchPage(1); });
+    // buttonGunMark->setToolTip("Отслеживание отметки");
+    buttonsLayout->addWidget(buttonGunMark);
 
     // Кнопка информационной панели
     QPushButton *buttonInfo = new QPushButton;
@@ -238,7 +249,14 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     buttonInfo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonInfo, &QPushButton::clicked, this, [this]()
             { switchPage(0); });
+    // buttonInfo->setToolTip("Авторизация и доп. информация");
     buttonsLayout->addWidget(buttonInfo);
+
+    QFrame *sep = new QFrame;
+    sep->setFrameShape(QFrame::HLine);
+    sep->setFixedHeight(1);
+    sep->setStyleSheet("background-color: rgba(226,222,211,0.15); margin: 2px 4px;");
+    buttonsLayout->addWidget(sep);
 
     // Кнопка выхода
     QPushButton *buttonExit = new QPushButton;
@@ -252,14 +270,15 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "    border-bottom-left-radius: 10px;"
         "}"
         "QPushButton:hover {"
-        "    background-color: rgb(50, 50, 50);"
+        "    background-color: rgba(180, 40, 40, 0.5);"
         "}"
         "QPushButton:pressed {"
-        "    background-color: rgb(70, 70, 70);"
+        "    background-color: rgba(140, 20, 20, 0.7);"
         "}");
     buttonExit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonExit, &QPushButton::clicked, this, [this]()
             { logout(); });
+    buttonExit->setToolTip("Выход из приложения");
     buttonsLayout->addWidget(buttonExit);
 
     configPanel->setLayout(buttonsLayout);
@@ -275,26 +294,40 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
 
     stacked_widget->addWidget(infoPage);
     stacked_widget->setCurrentIndex(0);
+    m_navButtons.push_back(buttonInfo);
+
+    stacked_widget->addWidget(gunMark);
+    stacked_widget->setCurrentIndex(1);
+    m_navButtons.push_back(buttonGunMark);
 
     stacked_widget->addWidget(playerStats);
-    stacked_widget->setCurrentIndex(1);
+    stacked_widget->setCurrentIndex(2);
+    m_navButtons.push_back(buttonPlayers);
+
+    // m_navButtons.push_back(buttonStream);
 
     stacked_widget->addWidget(otherStats);
-    stacked_widget->setCurrentIndex(2);
+    stacked_widget->setCurrentIndex(3);
+    m_navButtons.push_back(buttonOther);
 
     stacked_widget->addWidget(vehicleStats);
-    stacked_widget->setCurrentIndex(3);
+    stacked_widget->setCurrentIndex(4);
+    m_navButtons.push_back(buttonTanks);
 
     stacked_widget->addWidget(ratingStats);
-    stacked_widget->setCurrentIndex(4);
+    stacked_widget->setCurrentIndex(5);
+    m_navButtons.push_back(buttonRating);
 
     stacked_widget->addWidget(mainStats);
-    stacked_widget->setCurrentIndex(5);
+    stacked_widget->setCurrentIndex(6);
+    m_navButtons.push_back(buttonMain);
 
     setStackedWidget(stacked_widget);
     mainLayout->addWidget(stacked_widget);
 
     setLayout(mainLayout);
+
+    switchPage(6);
 
     QSettings settings("MyCompany", "StatsOverlay");
     m_backgroundOpacity = settings.value("backgroundOpacity", 1.0).toDouble();
@@ -305,6 +338,43 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     RegisterHotKey(NULL, 3, MOD_CONTROL, VK_DOWN);
     auto *hotkeyFilter = new GlobalHotkeyFilter(this);
     qApp->installNativeEventFilter(hotkeyFilter);
+}
+
+void MainOverlay::updateNavButtonStyles(int activePage)
+{
+    // pageOrder такой же как в setActivePage
+    const QList<int> pageOrder = {0, 1, 2, 3, 4, 5, 6};
+
+    for (int i = 0; i < m_navButtons.size(); ++i)
+    {
+        bool active = (pageOrder[i] == activePage);
+        QPushButton *btn = m_navButtons[i];
+
+        // Затемнение неактивных иконок
+        auto *effect = new QGraphicsOpacityEffect(btn);
+        effect->setOpacity(active ? 1.0 : 0.4);
+        btn->setGraphicsEffect(effect);
+
+        btn->setStyleSheet(QString(
+                               "QPushButton {"
+                               "    border: none;"
+                               "    padding: 2px;"
+                               "    border-top-left-radius: %1;"
+                               "    border-bottom-left-radius: %2;"
+                               "    background-color: %3;"
+                               "    border-right: %4;"
+                               "}"
+                               "QPushButton:hover {"
+                               "    background-color: rgb(55, 55, 55);"
+                               "}"
+                               "QPushButton:pressed {"
+                               "    background-color: rgb(70, 70, 70);"
+                               "}")
+                               .arg(i == 6 ? "10px" : "0px")
+                               .arg(i == 0 ? "0px" : "0px")
+                               .arg(active ? "rgba(200,168,75,0.12)" : "transparent")
+                               .arg(active ? "2px solid #c8a84b" : "none"));
+    }
 }
 
 void MainOverlay::paintEvent(QPaintEvent *)
