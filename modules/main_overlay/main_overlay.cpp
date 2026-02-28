@@ -161,27 +161,27 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     // buttonOther->setToolTip("Медали и Коэффициенты");
     buttonsLayout->addWidget(buttonOther);
 
-    // Кнопка плиточной статистики
-    QPushButton *buttonStream = new QPushButton;
-    buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/widget_icon.png")));
-    buttonStream->setIconSize(QSize(24, 24));
-    buttonStream->setStyleSheet(
-        "QPushButton {"
-        "    border: none;"
-        "    padding: 2px;"
-        "    border-top-left-radius: 0px;"
-        "    border-bottom-left-radius: 0px;"
-        "}"
-        "QPushButton:hover {"
-        "    background-color: rgb(50, 50, 50);"
-        "}"
-        "QPushButton:pressed {"
-        "    background-color: rgb(70, 70, 70);"
-        "}");
-    buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    connect(buttonStream, &QPushButton::clicked, this, [this]()
-            { switchPage(3); });
-    buttonsLayout->addWidget(buttonStream);
+    // // Кнопка плиточной статистики
+    // QPushButton *buttonStream = new QPushButton;
+    // buttonStream->setIcon(QIcon(QPixmap(":main/resources/icons/widget_icon.png")));
+    // buttonStream->setIconSize(QSize(24, 24));
+    // buttonStream->setStyleSheet(
+    //     "QPushButton {"
+    //     "    border: none;"
+    //     "    padding: 2px;"
+    //     "    border-top-left-radius: 0px;"
+    //     "    border-bottom-left-radius: 0px;"
+    //     "}"
+    //     "QPushButton:hover {"
+    //     "    background-color: rgb(50, 50, 50);"
+    //     "}"
+    //     "QPushButton:pressed {"
+    //     "    background-color: rgb(70, 70, 70);"
+    //     "}");
+    // buttonStream->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    // connect(buttonStream, &QPushButton::clicked, this, [this]()
+    //         { switchPage(3); });
+    // buttonsLayout->addWidget(buttonStream);
 
     // Кнопка оленемера
     QPushButton *buttonPlayers = new QPushButton;

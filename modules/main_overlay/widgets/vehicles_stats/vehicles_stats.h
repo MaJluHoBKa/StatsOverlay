@@ -102,7 +102,7 @@ private:
     std::vector<int> sizesRow = {30, 30, 105, 60, 60, 60};
 
     QHash<QString, InfoRows *> info_rows;
-    QHash<QString, TankRowWidget *> tankRowWidgets;
+    QHash<QString, QWidget *> tankRowWidgets;
 
     bool isMark = false;
     int64_t tankForMarkID = 0;
@@ -140,12 +140,12 @@ public:
                     int64_t damage = vehicleData->totalDamage / vehicleData->battles;
 
 
-                    if(isMark && this->tankForMarkID == vehicleData->id)
+                    if(m_apiController->isMark() && isMark && this->tankForMarkID == vehicleData->id)
                     {
                         this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
                     }
 
-                    if(!isMark)
+                    if(m_apiController->isMark() && !isMark)
                     {
                         this->tankForMarkID = vehicleData->id;
                         this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
@@ -341,7 +341,7 @@ public:
         addSeparator();
         row->addWidget(tankDamage);
 
-        TankRowWidget *rowWidget = new TankRowWidget(nation);
+        QWidget *rowWidget = new QWidget;
         rowWidget->setFixedHeight(40);
         rowWidget->setLayout(row);
 
@@ -401,10 +401,6 @@ public:
                 color = "#ffffff";
             }
             this->info_rows[name]->wins->setStyleSheet(styled + QString("color: %1;").arg(color));
-
-            QWidget *w = tankRowWidgets[name];
-            data->removeWidget(w);
-            data->insertWidget(0, w);
         }
         else
         {

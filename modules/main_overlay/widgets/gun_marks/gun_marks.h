@@ -141,6 +141,7 @@ public:
                     this->isOn = true;
                     this->isMarks = true;
                     hotVisible = true;
+                    m_apiController->setMark(true);
                 }
             }
         }
@@ -160,6 +161,7 @@ public:
             this->isMarks = false;
             this->isFirst = true;
             hotVisible = false;
+            m_apiController->setMark(false);
         }
     }
 
