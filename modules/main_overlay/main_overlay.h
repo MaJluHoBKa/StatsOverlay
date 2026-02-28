@@ -34,6 +34,7 @@
 #include <main_overlay/widgets/player_stats/player_stats.h>
 #include <main_overlay/widgets/gun_marks/gun_marks.h>
 #include <main_overlay/widgets/info_page/info_page.h>
+#include <main_overlay/widgets/widgets_page/widgets.h>
 #include <main_overlay/controller/ApiController.h>
 #include <../modules/sub_overlay/sub_overlay.h>
 #include <windows.h>
@@ -66,6 +67,7 @@ protected:
 private:
     QStackedWidget *stacked_widget = nullptr;
     GunMarks *gunMark = nullptr;
+    Widgets *widgets = nullptr;
     PlayerStats *players = nullptr;
     VehicleStats *vehicle = nullptr;
     InfoPage *info = nullptr;
@@ -199,7 +201,7 @@ public:
             this->info->setMaximumWidth(280);
         else if (m_currentIndexPage == 2)
             this->players->setMaximumWidth(280);
-        else if (m_currentIndexPage == 4)
+        else if (m_currentIndexPage == 5)
             this->vehicle->setMaximumWidth(370);
 
         int w = defaultWidth, h = 200;
@@ -220,16 +222,20 @@ public:
         case 3:
             w = defaultWidth;
             h = 200;
-            break; // коэффициенты
+            break; // виджеты
         case 4:
+            w = defaultWidth;
+            h = 200;
+            break; // коэффициенты
+        case 5:
             w = defaultWidth + 110;
             h = 200;
             break; // танки
-        case 5:
+        case 6:
             w = defaultWidth;
             h = 200;
             break; // рейтинговая статистика
-        case 6:
+        case 7:
             w = defaultWidth;
             h = 200;
             break; // основная статистика

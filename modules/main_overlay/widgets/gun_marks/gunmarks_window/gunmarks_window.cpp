@@ -40,6 +40,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     percent->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     percent->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    percent->setAttribute(Qt::WA_TransparentForMouseEvents);
     listsStats->addWidget(percent);
 
     QVBoxLayout *inBattleLayout = new QVBoxLayout();
@@ -54,6 +55,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     inBattleText->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     inBattleText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    inBattleText->setAttribute(Qt::WA_TransparentForMouseEvents);
     inBattleLayout->addWidget(inBattleText);
 
     inBattle = new QLabel;
@@ -67,6 +69,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     inBattle->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     inBattle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    inBattle->setAttribute(Qt::WA_TransparentForMouseEvents);
     inBattleLayout->addWidget(inBattle);
 
     listsStats->addLayout(inBattleLayout);
@@ -109,6 +112,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     currentSummaryDamage_text->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     currentSummaryDamage_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    currentSummaryDamage_text->setAttribute(Qt::WA_TransparentForMouseEvents);
     currentSummaryDamage_layout->addWidget(currentSummaryDamage_text);
 
     currentSummaryDamage = new QLabel("0/0");
@@ -121,6 +125,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     currentSummaryDamage->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     currentSummaryDamage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    currentSummaryDamage->setAttribute(Qt::WA_TransparentForMouseEvents);
     currentSummaryDamage_layout->addWidget(currentSummaryDamage);
     mainLayout->addLayout(currentSummaryDamage_layout);
 
@@ -139,6 +144,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     reqAvgDamage_text->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     reqAvgDamage_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    reqAvgDamage_text->setAttribute(Qt::WA_TransparentForMouseEvents);
     reqAvgDamage_layout->addWidget(reqAvgDamage_text);
 
     reqAvgDamage = new QLabel("0");
@@ -151,6 +157,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     reqAvgDamage->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     reqAvgDamage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    reqAvgDamage->setAttribute(Qt::WA_TransparentForMouseEvents);
     reqAvgDamage_layout->addWidget(reqAvgDamage);
     mainLayout->addLayout(reqAvgDamage_layout);
 
@@ -169,6 +176,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next05_text->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     next05_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next05_text->setAttribute(Qt::WA_TransparentForMouseEvents);
     next05_layout->addWidget(next05_text);
 
     next05 = new QLabel("0");
@@ -181,6 +189,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next05->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     next05->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next05->setAttribute(Qt::WA_TransparentForMouseEvents);
     next05_layout->addWidget(next05);
     mainLayout->addLayout(next05_layout);
 
@@ -199,6 +208,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next1_text->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     next1_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next1_text->setAttribute(Qt::WA_TransparentForMouseEvents);
     next1_layout->addWidget(next1_text);
 
     next1 = new QLabel("0");
@@ -211,6 +221,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next1->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     next1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next1->setAttribute(Qt::WA_TransparentForMouseEvents);
     next1_layout->addWidget(next1);
     mainLayout->addLayout(next1_layout);
 
@@ -229,6 +240,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next2_text->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     next2_text->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next2_text->setAttribute(Qt::WA_TransparentForMouseEvents);
     next2_layout->addWidget(next2_text);
 
     next2 = new QLabel("0");
@@ -241,6 +253,7 @@ GunMarksWindow::GunMarksWindow(QWidget *parent)
         "white-space: nowrap;");
     next2->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     next2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    next2->setAttribute(Qt::WA_TransparentForMouseEvents);
     next2_layout->addWidget(next2);
     mainLayout->addLayout(next2_layout);
 

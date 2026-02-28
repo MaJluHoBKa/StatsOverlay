@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/widgets">
+        <file>../../../../resources/icons/arrow_icon.png</file>
+        <file>../../../../resources/icons/tanks_icon.png</file>
+        <file>../../../../resources/icons/win_icon.png</file>
+        <file>../../../../resources/icons/damage_icon.png</file>
+        <file>../../../../resources/icons/battles_icon.png</file>
+        <file>../../../../resources/icons/player_icon.png</file>
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>

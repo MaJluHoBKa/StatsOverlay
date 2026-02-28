@@ -46,6 +46,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     mainLayout->setSpacing(0);
 
     gunMark = new GunMarks(m_apiController);
+    widgets = new Widgets(m_apiController);
     PlayerStats *playerStats = new PlayerStats(m_apiController);
     OtherStats *otherStats = new OtherStats(m_apiController);
     VehicleStats *vehicleStats = new VehicleStats(m_apiController, gunMark);
@@ -88,7 +89,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonMain->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonMain, &QPushButton::clicked, this, [this]()
-            { switchPage(6); });
+            { switchPage(7); });
     // buttonMain->setToolTip("Основная статистика");
     buttonsLayout->addWidget(buttonMain);
 
@@ -111,7 +112,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonRating->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonRating, &QPushButton::clicked, this, [this]()
-            { switchPage(5); });
+            { switchPage(6); });
     // buttonRating->setToolTip("Рейтинг");
     buttonsLayout->addWidget(buttonRating);
 
@@ -134,7 +135,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonTanks->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonTanks, &QPushButton::clicked, this, [this]()
-            { switchPage(4); });
+            { switchPage(5); });
     // buttonTanks->setToolTip("Техника");
     buttonsLayout->addWidget(buttonTanks);
 
@@ -157,7 +158,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
         "}");
     buttonOther->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     connect(buttonOther, &QPushButton::clicked, this, [this]()
-            { switchPage(3); });
+            { switchPage(4); });
     // buttonOther->setToolTip("Медали и Коэффициенты");
     buttonsLayout->addWidget(buttonOther);
 
@@ -304,22 +305,24 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     stacked_widget->setCurrentIndex(2);
     m_navButtons.push_back(buttonPlayers);
 
-    // m_navButtons.push_back(buttonStream);
+    stacked_widget->addWidget(widgets);
+    stacked_widget->setCurrentIndex(3);
+    m_navButtons.push_back(buttonStream);
 
     stacked_widget->addWidget(otherStats);
-    stacked_widget->setCurrentIndex(3);
+    stacked_widget->setCurrentIndex(4);
     m_navButtons.push_back(buttonOther);
 
     stacked_widget->addWidget(vehicleStats);
-    stacked_widget->setCurrentIndex(4);
+    stacked_widget->setCurrentIndex(5);
     m_navButtons.push_back(buttonTanks);
 
     stacked_widget->addWidget(ratingStats);
-    stacked_widget->setCurrentIndex(5);
+    stacked_widget->setCurrentIndex(6);
     m_navButtons.push_back(buttonRating);
 
     stacked_widget->addWidget(mainStats);
-    stacked_widget->setCurrentIndex(6);
+    stacked_widget->setCurrentIndex(7);
     m_navButtons.push_back(buttonMain);
 
     setStackedWidget(stacked_widget);
@@ -327,7 +330,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
 
     setLayout(mainLayout);
 
-    switchPage(6);
+    switchPage(7);
 
     QSettings settings("MyCompany", "StatsOverlay");
     m_backgroundOpacity = settings.value("backgroundOpacity", 1.0).toDouble();
@@ -343,7 +346,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
 void MainOverlay::updateNavButtonStyles(int activePage)
 {
     // pageOrder такой же как в setActivePage
-    const QList<int> pageOrder = {0, 1, 2, 3, 4, 5, 6};
+    const QList<int> pageOrder = {0, 1, 2, 3, 4, 5, 6, 7};
 
     for (int i = 0; i < m_navButtons.size(); ++i)
     {
@@ -370,7 +373,7 @@ void MainOverlay::updateNavButtonStyles(int activePage)
                                "QPushButton:pressed {"
                                "    background-color: rgb(70, 70, 70);"
                                "}")
-                               .arg(i == 6 ? "10px" : "0px")
+                               .arg(i == 7 ? "10px" : "0px")
                                .arg(i == 0 ? "0px" : "0px")
                                .arg(active ? "rgba(200,168,75,0.12)" : "transparent")
                                .arg(active ? "2px solid #c8a84b" : "none"));

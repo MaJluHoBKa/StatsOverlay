@@ -64,11 +64,6 @@ public:
     }
 
 private slots:
-    void onDonateClicked()
-    {
-        QDesktopServices::openUrl(QUrl("https://www.donationalerts.com/r/parrylikeme"));
-    }
-
     void onSupportClicked()
     {
         QDesktopServices::openUrl(QUrl("https://lesta.ru/support/ru/"));

@@ -4,7 +4,7 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     : QWidget(parent), m_apiController(apiController), m_mainStats(mainStats), m_ratingStats(ratingStats), m_vehicleStats(vehicleStats), m_otherStats(otherStats)
 {
     setMaximumWidth(280);
-    setContentsMargins(10, 2, 10, 2);
+    setContentsMargins(0, 2, 0, 2);
     setStyleSheet(
         "border-top-right-radius: 10px;"
         "border-bottom-right-radius: 10px;");
@@ -13,7 +13,7 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     // Основной контейнер
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(5);
-    mainLayout->setContentsMargins(0, 2, 0, 2);
+    mainLayout->setContentsMargins(8, 6, 8, 6);
     mainLayout->setAlignment(Qt::AlignTop);
 
     // Заголовок
@@ -21,9 +21,10 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     titleLayout->setSpacing(10);
     titleLayout->setContentsMargins(0, 2, 0, 2);
 
-    QLabel *icon = new QLabel;
-    icon->setPixmap(QPixmap(":info_page/resources/icons/arrow_icon.png"));
-    titleLayout->addWidget(icon);
+    QFrame *accent = new QFrame;
+    accent->setFixedWidth(3);
+    accent->setStyleSheet("background-color: #c8a84b; border-radius: 1px;");
+    titleLayout->addWidget(accent);
 
     QLabel *title = new QLabel;
     title->setText("STATS OVERLAY v2.3");
@@ -124,7 +125,7 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
 
     QWidget *container = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(container);
-    layout->setContentsMargins(10, 10, 10, 10);
+    layout->setContentsMargins(1, 1, 1, 1);
     layout->addWidget(info);
 
     scroll->setWidget(container);
@@ -133,82 +134,52 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     int id = QFontDatabase::addApplicationFont(":/info_page/resources/fonts/JetBrainsMono-Bold.ttf");
     QString family = QFontDatabase::applicationFontFamilies(id).at(0);
 
-    QPushButton *donate_button = new QPushButton;
-    donate_button->setText("Поддержать автора");
-    donate_button->setStyleSheet(QString(
-                                     "QPushButton {"
-                                     "background-color: rgb(49, 17, 85);"
-                                     "color: #e2ded3;"
-                                     "border: 1px solid #220033;"
-                                     "font-size: 11px;"
-                                     "font-family: \"%1\";"
-                                     "font-weight: bold;"
-                                     "padding: 5px;"
-                                     "border-radius: 5px;"
-                                     "}"
-                                     "QPushButton:hover {"
-                                     "background-color: rgb(90, 90, 90);"
-                                     "color: #ffffff;"
-                                     "}"
-                                     "QPushButton:pressed {"
-                                     "background-color: rgb(50, 50, 50);"
-                                     "color: #cccccc;"
-                                     "}")
-                                     .arg(family));
-    donate_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    connect(donate_button, &QPushButton::clicked, this, &InfoPage::onDonateClicked);
-    mainLayout->addWidget(donate_button);
-
     // Кнопки доната, поддержки, сброса статистики и авторизации
     QPushButton *support_button = new QPushButton;
     support_button->setText("Центр поддержки");
-    support_button->setStyleSheet(QString(
-                                      "QPushButton {"
-                                      "background-color: rgb(70, 70, 70);"
-                                      "color: #e2ded3;"
-                                      "border: 1px solid #333333;"
-                                      "font-size: 11px;"
-                                      "font-family: \"%1\";"
-                                      "font-weight: bold;"
-                                      "padding: 5px;"
-                                      "border-radius: 5px;"
-                                      "}"
-                                      "QPushButton:hover {"
-                                      "background-color: rgb(90, 90, 90);"
-                                      "color: #ffffff;"
-                                      "}"
-                                      "QPushButton:pressed {"
-                                      "background-color: rgb(50, 50, 50);"
-                                      "color: #cccccc;"
-                                      "}")
-                                      .arg(family));
-    support_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    support_button->setStyleSheet(
+        "QPushButton {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #e2ded3;"
+        "font-size: 14px;"
+        "font-family: Segoe UI;"
+        "font-weight: bold;"
+        "padding: 5px;"
+        "border-radius: 5px;"
+        "}"
+        "QPushButton:hover {"
+        "background-color: rgb(90, 90, 90);"
+        "color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #cccccc;"
+        "}");
+    support_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(support_button, &QPushButton::clicked, this, &InfoPage::onSupportClicked);
     mainLayout->addWidget(support_button);
 
     QPushButton *reset_button = new QPushButton;
     reset_button->setText("Сбросить статистику");
-    reset_button->setStyleSheet(QString(
-                                    "QPushButton {"
-                                    "background-color: rgb(70, 70, 70);"
-                                    "color: #e2ded3;"
-                                    "border: 1px solid #333333;"
-                                    "font-size: 11px;"
-                                    "font-family: \"%1\";"
-                                    "font-weight: bold;"
-                                    "padding: 5px;"
-                                    "border-radius: 5px;"
-                                    "}"
-                                    "QPushButton:hover {"
-                                    "background-color: rgb(90, 90, 90);"
-                                    "color: #ffffff;"
-                                    "}"
-                                    "QPushButton:pressed {"
-                                    "background-color: rgb(50, 50, 50);"
-                                    "color: #cccccc;"
-                                    "}")
-                                    .arg(family));
-    reset_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    reset_button->setStyleSheet(
+        "QPushButton {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #e2ded3;"
+        "font-size: 14px;"
+        "font-family: Segoe UI;"
+        "font-weight: bold;"
+        "padding: 5px;"
+        "border-radius: 5px;"
+        "}"
+        "QPushButton:hover {"
+        "background-color: rgb(90, 90, 90);"
+        "color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #cccccc;"
+        "}");
+    reset_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(reset_button, &QPushButton::clicked, this, &InfoPage::onResetClicked);
     mainLayout->addWidget(reset_button);
 
@@ -221,27 +192,25 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
     {
         auth_button->setText("Авторизоваться");
     }
-    auth_button->setStyleSheet(QString(
-                                   "QPushButton {"
-                                   "background-color: rgb(70, 70, 70);"
-                                   "color: #e2ded3;"
-                                   "border: 1px solid #333333;"
-                                   "font-size: 11px;"
-                                   "font-family: \"%1\";"
-                                   "font-weight: bold;"
-                                   "padding: 5px;"
-                                   "border-radius: 5px;"
-                                   "}"
-                                   "QPushButton:hover {"
-                                   "background-color: rgb(90, 90, 90);"
-                                   "color: #ffffff;"
-                                   "}"
-                                   "QPushButton:pressed {"
-                                   "background-color: rgb(50, 50, 50);"
-                                   "color: #cccccc;"
-                                   "}")
-                                   .arg(family));
-    auth_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    auth_button->setStyleSheet(
+        "QPushButton {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #e2ded3;"
+        "font-size: 14px;"
+        "font-family: Segoe UI;"
+        "font-weight: bold;"
+        "padding: 5px;"
+        "border-radius: 5px;"
+        "}"
+        "QPushButton:hover {"
+        "background-color: rgb(90, 90, 90);"
+        "color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgb(50, 50, 50);"
+        "color: #cccccc;"
+        "}");
+    auth_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(auth_button, &QPushButton::clicked, this, &InfoPage::onAuthClicked);
     setAuthButton(auth_button);
     mainLayout->addWidget(auth_button);
@@ -260,6 +229,7 @@ InfoPage::InfoPage(ApiController *apiController, MainStats *mainStats, RatingSta
         "font-family: Segoe UI;"
         "font-weight: bold;"
         "font-size: 14px;"
+        "padding: 10, 0, 0, 0;"
         "color: #99ff99;");
     message->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     message->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

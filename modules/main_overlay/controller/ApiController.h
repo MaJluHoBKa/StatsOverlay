@@ -60,6 +60,7 @@ private:
     bool isFirstOtherStats = true;
     bool isFirstMasteryStats = true;
     bool isFirstVehiclesStats = true;
+    bool isGunMark = false;
 
     MainStatsData mainStats;
     RatingStatsData ratingStats;
@@ -900,6 +901,16 @@ public:
     OtherStatsData getOtherStats() const
     {
         return this->otherStats;
+    }
+
+    bool isMark() const
+    {
+        return this->isGunMark;
+    }
+
+    void setMark(bool mark)
+    {
+        this->isGunMark = mark;
     }
 
     // VehicleStats getVehicleStats() const

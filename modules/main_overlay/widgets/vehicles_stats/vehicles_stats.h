@@ -123,56 +123,85 @@ public:
         if (!isAuth())
             return;
 
-        QtConcurrent::run([this]()
-                          {
-            if (this->m_apiController->update_vehicles_stats())
+        qDebug() << "=== updatingVehicleStats start ===";
+
+        auto future = QtConcurrent::run([this]()
+                                        {
+        qDebug() << "thread: update_vehicles_stats calling...";
+        bool updated = this->m_apiController->update_vehicles_stats();
+        qDebug() << "thread: update_vehicles_stats result:" << updated;
+
+        if (!updated)
+        {
+            qDebug() << "Not updated stats VEH";
+            return;
+        }
+
+        qDebug() << "thread: get_updated_vehicles calling...";
+        const VehicleData *vehicleData = this->m_apiController->get_updated_vehicles();
+        qDebug() << "thread: vehicleData ptr:" << vehicleData;
+
+        if (!vehicleData)
+        {
+            qDebug() << "No updated tanks";
+            return;
+        }
+
+        qDebug() << "thread: reading vehicleData fields...";
+        int64_t tank_id = vehicleData->id;
+        int64_t battles = vehicleData->battles;
+        int64_t totalDamage = vehicleData->totalDamage;
+        int64_t wins = vehicleData->wins;
+        qDebug() << "thread: tank_id:" << tank_id << "battles:" << battles;
+
+        qDebug() << "thread: getVehicleName calling...";
+        std::string name = this->m_apiController->getVehicleName(tank_id);
+        qDebug() << "thread: name:" << QString::fromStdString(name);
+
+        qDebug() << "thread: getVehicleTier calling...";
+        int64_t tier = this->m_apiController->getVehicleTier(tank_id);
+
+        qDebug() << "thread: getVehicleType calling...";
+        std::string type = this->m_apiController->getVehicleType(tank_id);
+
+        qDebug() << "thread: getVehicleNation calling...";
+        std::string nation = this->m_apiController->getVehicleNation(tank_id);
+
+        qDebug() << "thread: getVehicleStatus calling...";
+        std::string status = this->m_apiController->getVehicleStatus(tank_id);
+
+        qDebug() << "thread: calculating stats...";
+        double winRate = (static_cast<double>(wins) / battles) * 100.0;
+        int64_t damage = totalDamage / battles;
+
+        qDebug() << "thread: invokeMethod calling...";
+        QMetaObject::invokeMethod(this, [this, tank_id, name, tier, type, nation, status, battles, winRate, damage, totalDamage]()
+        {
+            qDebug() << "main thread: updateTankRow calling...";
+
+            if (m_apiController->isMark() && isMark && tankForMarkID == tank_id)
+                m_gunMark->updateInfo(name, totalDamage);
+
+            if (m_apiController->isMark() && !isMark)
             {
-                const VehicleData *vehicleData = this->m_apiController->get_updated_vehicles();
-                if (vehicleData != nullptr)
-                {
-                    int64_t tank_id = vehicleData->id;
-                    std::string name = this->m_apiController->getVehicleName(vehicleData->id);
-                    int64_t tier = this->m_apiController->getVehicleTier(vehicleData->id);
-                    std::string type = this->m_apiController->getVehicleType(vehicleData->id);
-                    std::string nation = this->m_apiController->getVehicleNation(vehicleData->id);
-                    std::string status = this->m_apiController->getVehicleStatus(vehicleData->id);
-                    double winRate = (static_cast<double>(vehicleData->wins) / vehicleData->battles) * 100.0;
-                    int64_t damage = vehicleData->totalDamage / vehicleData->battles;
-
-
-                    if(isMark && this->tankForMarkID == vehicleData->id)
-                    {
-                        this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
-                    }
-
-                    if(!isMark)
-                    {
-                        this->tankForMarkID = vehicleData->id;
-                        this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
-                        isMark = !isMark;
-                    }
-
-                    QMetaObject::invokeMethod(this, [this, tank_id, name, tier, type, nation, status, vehicleData, winRate, damage]() {
-                        updateTankRow(vehicleData->id,
-                                      QString::fromStdString(name),
-                                      tier,
-                                      QString::fromStdString(type),
-                                      QString::fromStdString(nation),
-                                      QString::fromStdString(status),
-                                      vehicleData->battles,
-                                      std::round(winRate * 100.0) / 100.0,
-                                      damage);
-                    }, Qt::QueuedConnection);
-                }
-                else
-                {
-                    qDebug() << "No updated tanks";
-                }
+                tankForMarkID = tank_id;
+                m_gunMark->updateInfo(name, totalDamage);
+                isMark = true;
             }
-            else
-            {
-                qDebug() << "Not updated stats VEH";
-            } });
+
+            qDebug() << "main thread: calling updateTankRow...";
+            updateTankRow(tank_id,
+                          QString::fromStdString(name),
+                          tier,
+                          QString::fromStdString(type),
+                          QString::fromStdString(nation),
+                          QString::fromStdString(status),
+                          battles,
+                          std::round(winRate * 100.0) / 100.0,
+                          damage);
+            qDebug() << "main thread: updateTankRow done";
+        }, Qt::QueuedConnection); });
+        Q_UNUSED(future);
     }
 
     void addTankRow(int64_t tank_id, QString name, int64_t tier, QString type, QString nation, QString status, int64_t battles, float wins, int64_t damage)

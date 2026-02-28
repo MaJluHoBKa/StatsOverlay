@@ -26,6 +26,7 @@ qt_add_resources(RESOURCES
     modules/main_overlay/widgets/player_stats/player_stats.qrc
     modules/main_overlay/widgets/player_stats/split_players/players_window.qrc
     modules/main_overlay/controller/data/vehicles_data_resources.qrc
+    modules/main_overlay/widgets/widgets_page/widgets.qrc
     modules/main_overlay/widgets/gun_marks/gun_marks.qrc
     modules/main_overlay/widgets/info_page/info_resources.qrc
     modules/main_overlay/controller/cacert_resources.qrc
@@ -40,6 +41,9 @@ qt_add_executable(StatsOverlay
     modules/main_overlay/widgets/vehicles_stats/vehicles_stats.cpp
     modules/main_overlay/widgets/player_stats/player_stats.cpp
     modules/main_overlay/widgets/player_stats/split_players/players_window.cpp
+    modules/main_overlay/widgets/widgets_page/widgets.cpp
+    modules/main_overlay/widgets/widgets_page/widgets_window/widgets_window.cpp
+    modules/main_overlay/widgets/widgets_page/widgets_window/FlowLayout.cpp
     modules/main_overlay/widgets/gun_marks/gun_marks.cpp
     modules/main_overlay/widgets/gun_marks/gunmarks_window/gunmarks_window.cpp
     modules/main_overlay/widgets/info_page/info_page.cpp

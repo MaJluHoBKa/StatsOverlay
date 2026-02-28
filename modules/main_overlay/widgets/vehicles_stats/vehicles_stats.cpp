@@ -138,11 +138,11 @@ VehicleStats::VehicleStats(ApiController *apiController, GunMarks *gunMark, QWid
         "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
         "    height: 0;"
         "}");
-    scroll->setMaximumHeight(220);
+    scroll->setMaximumHeight(200);
 
     // Обёртка
     QWidget *scrollContainer = new QWidget;
-    scrollContainer->setFixedHeight(220);
+    scrollContainer->setFixedHeight(200);
     scrollContainer->setStyleSheet("background: transparent;");
 
     QVBoxLayout *scrollContainerLayout = new QVBoxLayout(scrollContainer);
@@ -152,7 +152,7 @@ VehicleStats::VehicleStats(ApiController *apiController, GunMarks *gunMark, QWid
     // Оверлей с fade снизу
     QWidget *fadeOverlay = new QWidget(scrollContainer);
     fadeOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
-    fadeOverlay->setGeometry(0, 0, scrollContainer->width(), 220);
+    fadeOverlay->setGeometry(0, 0, scrollContainer->width(), 200);
     fadeOverlay->setStyleSheet(
         "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
         "stop:0.0 rgba(0,0,0,0),"
@@ -163,13 +163,6 @@ VehicleStats::VehicleStats(ApiController *apiController, GunMarks *gunMark, QWid
     mainLayout->addWidget(scrollContainer);
 
     setLayout(mainLayout);
-
-    addTankRow(23232, "ЛВ-5000", 10, "lt", "japan", "default", 9, 45.52, 150);
-    addTankRow(23232, "Chieftain MK. 6", 10, "tt", "uk", "premium", 10, 68.52, 3420);
-    addTankRow(23232, "Project Murat", 10, "st", "france", "collect", 9, 72.52, 3420);
-    addTankRow(23232, "ИС-7", 10, "tt", "ussr", "default", 21, 59.52, 2220);
-    addTankRow(23232, "Grille 15", 10, "pt", "germany", "default", 9, 72.52, 3420);
-    addTankRow(23232, "ЛВ-1300 Уран", 10, "tt", "lesta", "default", 9, 45.52, 150);
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &VehicleStats::updatingVehicleStats);
