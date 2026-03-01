@@ -31,7 +31,7 @@ qt_add_resources(RESOURCES
     modules/main_overlay/controller/cacert_resources.qrc
 )
 # Создаём исполняемый файл (только cpp)
-qt_add_executable(StatsOverlay
+qt_add_executable(StatsOverlay WIN32
     main.cpp
     modules/main_overlay/main_overlay.cpp
     modules/main_overlay/widgets/main_stats/main_stats.cpp

@@ -237,6 +237,7 @@ public:
 
         // сначала выставляем текущую страницу, потом resize
         stacked_widget->setCurrentIndex(m_currentIndexPage);
+        updateNavButtonStyles(m_currentIndexPage);
         this->resize(w, h);
     }
 

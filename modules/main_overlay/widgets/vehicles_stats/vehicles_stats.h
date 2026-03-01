@@ -370,7 +370,7 @@ public:
                     font-size: 11px;
                     font-weight: bold;
                     color: #e2ded3;
-                    background-color: #383838;
+                    background-color: transparent;
                     padding: 5px 0px;
                     margin: 0px;
                     border-radius: 3px;
