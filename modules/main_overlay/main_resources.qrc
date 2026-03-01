@@ -10,6 +10,7 @@
         <file>../../resources/icons/player_icon.png</file>
         <file>../../resources/icons/info_icon.png</file>
         <file>../../resources/icons/exit_icon.png</file>
+        <file>../../resources/icons/mark.png</file>
         <file>../../resources/icons/background.png</file>
     </qresource>
 </RCC>

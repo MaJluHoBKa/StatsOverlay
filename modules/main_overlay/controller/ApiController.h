@@ -60,6 +60,7 @@ private:
     bool isFirstOtherStats = true;
     bool isFirstMasteryStats = true;
     bool isFirstVehiclesStats = true;
+    bool isTankLock = false;
     bool isGunMark = false;
 
     MainStatsData mainStats;
@@ -911,6 +912,16 @@ public:
     void setMark(bool mark)
     {
         this->isGunMark = mark;
+    }
+
+    bool isLock() const
+    {
+        return this->isTankLock;
+    }
+
+    void setTankLock(bool mark)
+    {
+        this->isTankLock = mark;
     }
     // VehicleStats getVehicleStats() const
     // {

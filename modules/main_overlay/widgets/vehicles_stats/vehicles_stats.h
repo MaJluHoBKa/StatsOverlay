@@ -140,16 +140,16 @@ public:
                     int64_t damage = vehicleData->totalDamage / vehicleData->battles;
 
 
-                    if(m_apiController->isMark() && isMark && this->tankForMarkID == vehicleData->id)
+                    if(m_apiController->isMark() && m_apiController->isLock() && this->tankForMarkID == vehicleData->id)
                     {
                         this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
                     }
 
-                    if(m_apiController->isMark() && !isMark)
+                    if(m_apiController->isMark() && !m_apiController->isLock())
                     {
                         this->tankForMarkID = vehicleData->id;
                         this->m_gunMark->updateInfo(name, vehicleData->totalDamage);
-                        isMark = !isMark;
+                        m_apiController->setTankLock(true);
                     }
 
                     QMetaObject::invokeMethod(this, [this, tank_id, name, tier, type, nation, status, vehicleData, winRate, damage]() {
