@@ -162,6 +162,7 @@ public:
             this->isFirst = true;
             hotVisible = false;
             m_apiController->setMark(false);
+            m_apiController->setTankLock(false);
         }
     }
 

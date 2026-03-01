@@ -209,7 +209,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
 
     // Кнопка отслеживания отметки
     QPushButton *buttonGunMark = new QPushButton;
-    buttonGunMark->setText("///");
+    buttonGunMark->setIcon(QIcon(QPixmap(":main/resources/icons/mark.png")));
     buttonGunMark->setIconSize(QSize(24, 24));
     buttonGunMark->setStyleSheet(
         "QPushButton {"

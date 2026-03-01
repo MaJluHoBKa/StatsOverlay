@@ -179,14 +179,15 @@ public:
         {
             qDebug() << "main thread: updateTankRow calling...";
 
-            if (m_apiController->isMark() && isMark && tankForMarkID == tank_id)
+            if (m_apiController->isMark() && m_apiController->isLock() && tankForMarkID == tank_id)
                 m_gunMark->updateInfo(name, totalDamage);
 
-            if (m_apiController->isMark() && !isMark)
+            if (m_apiController->isMark() && !m_apiController->isLock())
             {
                 tankForMarkID = tank_id;
                 m_gunMark->updateInfo(name, totalDamage);
                 isMark = true;
+                m_apiController->setTankLock(true);
             }
 
             qDebug() << "main thread: calling updateTankRow...";
