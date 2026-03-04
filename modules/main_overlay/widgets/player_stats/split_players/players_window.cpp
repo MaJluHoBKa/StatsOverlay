@@ -4,7 +4,7 @@ PlayerStatsWindow::PlayerStatsWindow(const QString &title, QWidget *parent)
     : QWidget(parent)
 {
     setContentsMargins(0, 2, 0, 2);
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet(
         "border-top-right-radius: 10px;"

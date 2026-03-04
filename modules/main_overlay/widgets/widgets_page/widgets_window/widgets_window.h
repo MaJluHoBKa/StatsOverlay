@@ -89,6 +89,7 @@ public:
         if (tiles.contains(label))
         {
             tiles[label]->setVisible(visible);
+            flowLayout->invalidate();
             adjustSize();
         }
     }

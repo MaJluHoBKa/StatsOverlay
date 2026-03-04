@@ -35,7 +35,7 @@ MainOverlay::MainOverlay(ApiController *apiController, QWidget *parent)
     // Настройка основного окна
     QApplication::setStyle("Fusion");
     QApplication::setWindowIcon(QPixmap(":main/resources/icons/icon.ico"));
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     resize(280, 200);
     setAttribute(Qt::WA_TranslucentBackground);
     move(100, (QApplication::primaryScreen()->availableGeometry().height() - height()) / 2);

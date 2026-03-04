@@ -51,7 +51,11 @@ QSize FlowLayout::minimumSize() const
 {
     QSize size;
     for (const QLayoutItem *item : itemList)
+    {
+        if (item->widget() && !item->widget()->isVisible())
+            continue;
         size = size.expandedTo(item->minimumSize());
+    }
     const QMargins margins = contentsMargins();
     size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
     return size;
@@ -68,6 +72,9 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
 
     for (QLayoutItem *item : itemList)
     {
+        if (item->widget() && !item->widget()->isVisible())
+            continue;
+
         int spaceX = horizontalSpacing();
         int spaceY = verticalSpacing();
         int nextX = x + item->sizeHint().width() + spaceX;
