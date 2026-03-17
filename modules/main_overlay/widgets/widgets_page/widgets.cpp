@@ -13,6 +13,12 @@ Widgets::Widgets(ApiController *apiController, QWidget *parent)
     widgetsWindow = new WidgetsWindow();
     widgetsWindow->hide();
 
+    dmgWidget = new DamageWidget();
+    dmgWidget->hide();
+
+    hWidget = new HistoryWidget(m_apiController);
+    hWidget->hide();
+
     // Главный слой для виджета
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(5);
@@ -162,6 +168,35 @@ Widgets::Widgets(ApiController *apiController, QWidget *parent)
     setButtonActive(switchWidgets);
     mainLayout->addWidget(switchWidgets);
 
+    QFrame *separator2 = new QFrame;
+    separator2->setFrameShape(QFrame::HLine);
+    separator2->setFrameShadow(QFrame::Plain);
+    separator2->setStyleSheet("background-color: rgba(226, 222, 211, 0.15);");
+    separator2->setFixedHeight(1);
+    mainLayout->addWidget(separator2);
+
+    QHBoxLayout *events_layout = new QHBoxLayout();
+    events_layout->setSpacing(2);
+    events_layout->setContentsMargins(0, 0, 0, 0);
+
+    dmgInBattleBox = createButtonCheckbox("Эффек-ть", dmgCheck);
+    historyInBattleBox = createButtonCheckbox("Cобытия", historyCheck);
+
+    connect(dmgInBattleBox, &QPushButton::clicked, this, &Widgets::toggleBattleStats);
+    connect(historyInBattleBox, &QPushButton::clicked, this, &Widgets::toggleHistory);
+
+    events_layout->addWidget(dmgInBattleBox);
+    events_layout->addWidget(historyInBattleBox);
+
+    mainLayout->addLayout(events_layout);
+
+    QFrame *separator3 = new QFrame;
+    separator3->setFrameShape(QFrame::HLine);
+    separator3->setFrameShadow(QFrame::Plain);
+    separator3->setStyleSheet("background-color: rgba(226, 222, 211, 0.15);");
+    separator3->setFixedHeight(1);
+    mainLayout->addWidget(separator3);
+
     auto createOpacitySlider = [this]() -> QWidget *
     {
         QWidget *container = new QWidget;
@@ -215,9 +250,134 @@ Widgets::Widgets(ApiController *apiController, QWidget *parent)
 
     setLayout(mainLayout);
 
+    m_replayTracker = new ReplayTracker(this);
+
+    QTimer *replayTimer = new QTimer(this);
+    connect(replayTimer, &QTimer::timeout, this, &Widgets::updateBattleDamage);
+    replayTimer->start(5000);
+
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &Widgets::updatingWidgets);
     timer->start(30000);
+}
+
+void Widgets::updateBattleDamage()
+{
+    QMetaObject::invokeMethod(
+        this,
+        [this]()
+        {
+            if (!this->is_dmg_widget && !this->is_history_widget)
+                return;
+
+            if (m_replayBusy)
+                return;
+
+            m_replayBusy = true;
+
+            QtConcurrent::run([this]()
+                              {
+                // Ищем реплей — папка recording* в Documents/TanksBlitz/replays/
+                QString documents = QStandardPaths::writableLocation(
+                    QStandardPaths::DocumentsLocation);
+                QDir replaysDir(documents + "/TanksBlitz/replays/");
+
+                QString replayPath;
+
+                if (replaysDir.exists()) {
+                    QStringList recordings = replaysDir.entryList(
+                        QStringList() << "recording*",
+                        QDir::Dirs | QDir::NoDotAndDotDot);
+
+                    if (!recordings.isEmpty()) {
+                        QString candidate = replaysDir.absoluteFilePath(recordings.first())
+                                            + "/data.replay";
+                        if (QFile::exists(candidate))
+                            replayPath = candidate;
+                    }
+                }
+
+                if (replayPath.isEmpty()) {
+                    // Нет активного боя — сбрасываем
+                    QMetaObject::invokeMethod(this, [this]()
+                    {
+                        m_replayTracker->reset();
+                        m_replayBusy = false;
+                        
+                        if(dmgWidget->isVisible())
+                        {
+                            dmgWidget->hide();
+                        }
+                        dmgWidget->clearData();
+
+                        if(hWidget->isVisible())
+                        {
+                            hWidget->hide();
+                        }
+                        hWidget->clearData();
+
+                    }, Qt::QueuedConnection);
+                    return;
+                }
+
+                QString selfNick = QString::fromStdString(m_apiController->getNickname()); // ← адаптировать
+
+                bool updated = m_replayTracker->update(replayPath, selfNick);
+
+                if (updated) {
+                    QVector<DamageEvent> events      = m_replayTracker->events();
+                    QVector<BattleEvent> history     = m_replayTracker->battleHistory();
+                    int totalDamage                  = m_replayTracker->totalDamage();
+                    int totalBlocked                 = m_replayTracker->totalBlocked();
+                    int totalAssist                  = m_replayTracker->totalAssist();
+
+                    QMetaObject::invokeMethod(this, [this, events, history, totalDamage, totalBlocked, totalAssist]()
+                    {
+                        qDebug() << "════════════════════════════════════════";
+                        qDebug() << "[BattleDmg] Игрок:" << m_apiController->getNickname()
+                                 << " Урон:" << totalDamage
+                                 << " Блок:" << totalBlocked
+                                 << " Ассист:" << totalAssist
+                                 << " Событий:" << events.size();
+                        qDebug() << "────────────────────────────────────────";
+                        for (const DamageEvent &ev : events) {
+                            qDebug().noquote()
+                                << QString("t=%1s  →%2  dmg=%3  hp=%4  [%5]  total=%6")
+                                   .arg(ev.time_s,       6, 'f', 2)
+                                   .arg(ev.target,      -22)
+                                   .arg(ev.damage,        5)
+                                   .arg(ev.hp_after,      5)
+                                   .arg(ev.hit_result,  -10)
+                                   .arg(ev.total_damage,  6);
+                        }
+                        qDebug() << "════════════════════════════════════════";
+
+                        if (!dmgWidget->isVisible() && is_dmg_widget)
+                            dmgWidget->show();
+
+                        if (!hWidget->isVisible() && is_history_widget)
+                            hWidget->show();
+
+                        if (!events.isEmpty()) {
+                            BattleData data;
+                            data.damage = totalDamage;
+                            data.block  = totalBlocked;
+                            data.assist = totalAssist;
+                            dmgWidget->setData(data);
+                        }
+
+                        hWidget->setHistory(history);
+
+                        m_replayBusy = false;
+                    }, Qt::QueuedConnection);
+                } else {
+                    QMetaObject::invokeMethod(this, [this]()
+                    {
+                        m_replayBusy = false;
+                    }, Qt::QueuedConnection);
+                } });
+        },
+        Qt::QueuedConnection);
 }
 
 void Widgets::toggleRating()
@@ -376,6 +536,44 @@ void Widgets::toggleShots()
             }
             widgetsWindow->toggleShots(!is_shots);
             is_shots = !is_shots;
+        },
+        Qt::QueuedConnection);
+}
+
+void Widgets::toggleBattleStats()
+{
+    QMetaObject::invokeMethod(
+        this,
+        [this]()
+        {
+            if (is_dmg_widget)
+            {
+                dmgCheck->setText("");
+            }
+            else
+            {
+                dmgCheck->setText("✔");
+            }
+            is_dmg_widget = !is_dmg_widget;
+        },
+        Qt::QueuedConnection);
+}
+
+void Widgets::toggleHistory()
+{
+    QMetaObject::invokeMethod(
+        this,
+        [this]()
+        {
+            if (is_history_widget)
+            {
+                historyCheck->setText("");
+            }
+            else
+            {
+                historyCheck->setText("✔");
+            }
+            is_history_widget = !is_history_widget;
         },
         Qt::QueuedConnection);
 }

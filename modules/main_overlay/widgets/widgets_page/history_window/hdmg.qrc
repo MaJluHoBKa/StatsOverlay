@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/hdmg">
+        <file>../../../../../resources/icons/damage_green.png</file>
+        <file>../../../../../resources/icons/damage_red.png</file>
+        <file>../../../../../resources/icons/damage_block.png</file>
+    </qresource>
+</RCC>

@@ -117,7 +117,7 @@ public:
 
         QLabel *label = valueLabels["Победы"];
         label->setText(QString::fromStdString(formatFloat(value)) + "%");
-        label->setStyleSheet(QString("color: %1; font-family: Segoe UI; font-size: 16px; font-weight: bold;").arg(color));
+        label->setStyleSheet(QString("color: %1; font-family: Segoe UI; font-size: 16px; font-weight: bold; background-color: transparent;").arg(color));
     }
 
     void toggleBattles(bool visible) { setTileVisible("Бои", visible); }

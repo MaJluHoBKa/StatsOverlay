@@ -6,7 +6,7 @@ WidgetsWindow::WidgetsWindow(QWidget *parent)
 {
     setFixedWidth(185);
     setContentsMargins(0, 0, 0, 0);
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet(
         "border-top-right-radius: 5px;"

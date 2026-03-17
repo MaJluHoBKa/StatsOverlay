@@ -27,6 +27,8 @@ qt_add_resources(RESOURCES
     modules/main_overlay/widgets/player_stats/split_players/players_window.qrc
     modules/main_overlay/controller/data/vehicles_data_resources.qrc
     modules/main_overlay/widgets/widgets_page/widgets.qrc
+    modules/main_overlay/widgets/widgets_page/dmg_window/dmg.qrc
+    modules/main_overlay/widgets/widgets_page/history_window/hdmg.qrc
     modules/main_overlay/widgets/gun_marks/gun_marks.qrc
     modules/main_overlay/widgets/info_page/info_resources.qrc
     modules/main_overlay/controller/cacert_resources.qrc
@@ -44,9 +46,12 @@ qt_add_executable(StatsOverlay WIN32
     modules/main_overlay/widgets/widgets_page/widgets.cpp
     modules/main_overlay/widgets/widgets_page/widgets_window/widgets_window.cpp
     modules/main_overlay/widgets/widgets_page/widgets_window/FlowLayout.cpp
+    modules/main_overlay/widgets/widgets_page/dmg_window/dmg.cpp
+    modules/main_overlay/widgets/widgets_page/history_window/hdmg.cpp
     modules/main_overlay/widgets/gun_marks/gun_marks.cpp
     modules/main_overlay/widgets/gun_marks/gunmarks_window/gunmarks_window.cpp
     modules/main_overlay/widgets/info_page/info_page.cpp
+    modules/main_overlay/controller/ReplayTracker.cpp
     modules/sub_overlay/sub_overlay.cpp
     modules/main_overlay/activate/activation_window.cpp
     ${RESOURCES}
@@ -57,6 +62,10 @@ target_include_directories(StatsOverlay PRIVATE ${CMAKE_SOURCE_DIR}/modules)
 
 # Линкуем Qt
 target_link_libraries(StatsOverlay PRIVATE Qt6::Widgets Qt6::Network curl ws2_32 bcrypt)
+
+target_link_libraries(StatsOverlay PRIVATE
+    "C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/lib/libz.a"
+)
 
 add_custom_command(TARGET StatsOverlay POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

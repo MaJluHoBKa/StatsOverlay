@@ -16,6 +16,9 @@
 #include <QSlider>
 #include <QtConcurrent/QtConcurrent>
 #include <main_overlay/controller/ApiController.h>
+#include <main_overlay/controller/ReplayTracker.h>
+#include <main_overlay/widgets/widgets_page/dmg_window/dmg.h>
+#include <main_overlay/widgets/widgets_page/history_window/hdmg.h>
 #include <main_overlay/widgets/widgets_page/widgets_window/widgets_window.h>
 
 #include <unordered_map>
@@ -32,6 +35,8 @@ class Widgets : public QWidget
 
 private slots:
     void updatingWidgets();
+    void updateBattleDamage();
+
     void toggleRating();
     void toggleMaster();
     void toggleBattles();
@@ -40,11 +45,18 @@ private slots:
     void toggleShots();
     void toggleWins();
     void toggleDamage();
+    void toggleBattleStats();
+    void toggleHistory();
 
 private:
     ApiController *m_apiController = nullptr;
 
-    WidgetsWindow *widgetsWindow;
+    WidgetsWindow *widgetsWindow = nullptr;
+    DamageWidget *dmgWidget = nullptr;
+    HistoryWidget *hWidget = nullptr;
+
+    ReplayTracker *m_replayTracker = nullptr;
+    bool m_replayBusy = false;
 
     QPushButton *active = nullptr;
     bool isOn = false;
@@ -58,6 +70,9 @@ private:
     QPushButton *ratingBox = nullptr;
     QPushButton *masterBox = nullptr;
 
+    QPushButton *dmgInBattleBox = nullptr;
+    QPushButton *historyInBattleBox = nullptr;
+
     QLabel *battlesCheck = nullptr;
     QLabel *winsCheck = nullptr;
     QLabel *damageCheck = nullptr;
@@ -66,6 +81,8 @@ private:
     QLabel *shotsCheck = nullptr;
     QLabel *ratingCheck = nullptr;
     QLabel *masterCheck = nullptr;
+    QLabel *dmgCheck = nullptr;
+    QLabel *historyCheck = nullptr;
 
     bool is_rating = true;
     bool is_master = true;
@@ -75,6 +92,8 @@ private:
     bool is_shots = true;
     bool is_wins = true;
     bool is_damage = true;
+    bool is_dmg_widget = true;
+    bool is_history_widget = true;
 
     double m_backgroundOpacity = 1.0;
 

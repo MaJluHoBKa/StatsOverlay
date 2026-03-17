@@ -4,7 +4,7 @@ PlayerStatsWindow::PlayerStatsWindow(const QString &title, QWidget *parent)
     : QWidget(parent)
 {
     setContentsMargins(0, 2, 0, 2);
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet(
         "border-top-right-radius: 10px;"
@@ -19,7 +19,6 @@ PlayerStatsWindow::PlayerStatsWindow(const QString &title, QWidget *parent)
     int x = (title == "Союзники")
                 ? 30
                 : screenWidth - 400;
-
     move(x, y);
 
     // Главный слой для виджета
