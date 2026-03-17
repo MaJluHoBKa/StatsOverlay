@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/main">
+        <file>../../resources/icons/icon.ico</file>
+        <file>../../resources/icons/stats_icon.png</file>
+        <file>../../resources/icons/rating_icon.png</file>
+        <file>../../resources/icons/tanks_icon.png</file>
+        <file>../../resources/icons/other_icon.png</file>
+        <file>../../resources/icons/graphics_icon.png</file>
+        <file>../../resources/icons/widget_icon.png</file>
+        <file>../../resources/icons/player_icon.png</file>
+        <file>../../resources/icons/info_icon.png</file>
+        <file>../../resources/icons/exit_icon.png</file>
+        <file>../../resources/icons/mark.png</file>
+        <file>../../resources/icons/background.png</file>
+    </qresource>
+</RCC>

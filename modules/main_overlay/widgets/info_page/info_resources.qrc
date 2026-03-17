@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/info_page">
+        <file>../../../../resources/icons/arrow_icon.png</file>
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>

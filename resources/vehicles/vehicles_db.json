@@ -1,0 +1,571 @@
+{
+    "tanks": [
+        {
+            "name": "Т-100 ЛТ",
+            "id": 24321,
+            "tier": 10,
+            "type": "lt",
+            "prem": "default"
+        },
+        {
+            "name": "Т-62А",
+            "id": 16897,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Объект 907",
+            "id": 15617,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "Объект 140",
+            "id": 16897,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Т-22 ср.",
+            "id": 19969,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "Объект 430Б",
+            "id": 29441,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "ИС-4",
+            "id": 6145,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "ИС-7",
+            "id": 7169,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Объект 260",
+            "id": 22273,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "ИС-7 Стриж",
+            "id": 24833,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "Объект 777 Вариант II",
+            "id": 25857,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "Объект 780",
+            "id": 28417,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "Объект 268",
+            "id": 13569,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Объект 263",
+            "id": 14337,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Объект 268 Вариант 4",
+            "id": 24577,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "E 50 Ausf. M",
+            "id": 12305,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Leopard 1",
+            "id": 14609,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Kampfpanzer 50 t",
+            "id": 23313,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "Erich Konzept I",
+            "id": 27665,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "Maus",
+            "id": 6929,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "E 100",
+            "id": 9489,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "VK 90.01 (P)",
+            "id": 21777,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "Kampfpanzer 07 P(E)",
+            "id": 28177,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "VK 72.01 (K)",
+            "id": 58641,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Jagdpanzer E 100",
+            "id": 12049,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Grille 15",
+            "id": 19217,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Jagdpanzer E 100 Gold",
+            "id": 28689,
+            "tier": 10,
+            "type": "pt",
+            "prem": "prem"
+        },
+        {
+            "name": "XM551 Sheridan",
+            "id": 20257,
+            "tier": 10,
+            "type": "lt",
+            "prem": "default"
+        },
+        {
+            "name": "XM551 Sheridan Ракетный",
+            "id": 21793,
+            "tier": 10,
+            "type": "lt",
+            "prem": "collect"
+        },
+        {
+            "name": "M48 Patton",
+            "id": 14113,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "M60",
+            "id": 15905,
+            "tier": 10,
+            "type": "st",
+            "prem": "prem"
+        },
+        {
+            "name": "T110E5",
+            "id": 10785,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "T57 Heavy Tank",
+            "id": 14881,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "T95E6",
+            "id": 18977,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "M-VI-Yoh",
+            "id": 22817,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Concept 1B",
+            "id": 24609,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "MBT-B",
+            "id": 30241,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "T110E4",
+            "id": 13089,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "T110E3",
+            "id": 13857,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "XM66F",
+            "id": 28705,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "AAT60",
+            "id": 29729,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "XM57",
+            "id": 30753,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "WZ-132-1",
+            "id": 10289,
+            "tier": 10,
+            "type": "lt",
+            "prem": "default"
+        },
+        {
+            "name": "WZ-121",
+            "id": 4145,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "121B",
+            "id": 5681,
+            "tier": 10,
+            "type": "st",
+            "prem": "prem"
+        },
+        {
+            "name": "WZ-113",
+            "id": 5425,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "WZ-111 model 5A",
+            "id": 8497,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "114 SP2",
+            "id": 11057,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "BZ-75",
+            "id": 11825,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "116-F3",
+            "id": 13361,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "WZ-113G FT",
+            "id": 8241,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Bat.-Châtillon 25 t",
+            "id": 3649,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "AMX 30 B",
+            "id": 8513,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "AMX M4 mle. 54",
+            "id": 4417,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "AMX 50 B",
+            "id": 6209,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "AMX 50 Foch (155)",
+            "id": 11073,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Vickers Light 105",
+            "id": 19537,
+            "tier": 10,
+            "type": "lt",
+            "prem": "default"
+        },
+        {
+            "name": "FV4202",
+            "id": 7249,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "FV215b",
+            "id": 6225,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Chieftain Mk. 6",
+            "id": 15697,
+            "tier": 10,
+            "type": "tt",
+            "prem": "prem"
+        },
+        {
+            "name": "Super Conqueror",
+            "id": 19281,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "FV215b (183)",
+            "id": 9297,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "FV217 Badger",
+            "id": 17745,
+            "tier": 10,
+            "type": "pt",
+            "prem": "collect"
+        },
+        {
+            "name": "FV4005",
+            "id": 18001,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "FV205b Alligator",
+            "id": 23633,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "STB-1",
+            "id": 3681,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Type 71",
+            "id": 6753,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Type 63",
+            "id": 7777,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Ho-Ri Type III",
+            "id": 3937,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "МБ-64 Галилей",
+            "id": 15473,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "ЛВ-1300 Уран",
+            "id": 13169,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Progetto M40 mod. 65",
+            "id": 385,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "TVP T 50/51",
+            "id": 5505,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Carro da Combattimento 45t",
+            "id": 10113,
+            "tier": 10,
+            "type": "st",
+            "prem": "collect"
+        },
+        {
+            "name": "CS-63",
+            "id": 14977,
+            "tier": 10,
+            "type": "st",
+            "prem": "default"
+        },
+        {
+            "name": "Kranvagn",
+            "id": 4481,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "60TP Lewandowskiego",
+            "id": 7297,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Strv K",
+            "id": 12161,
+            "tier": 10,
+            "type": "tt",
+            "prem": "collect"
+        },
+        {
+            "name": "Vz. 55",
+            "id": 13185,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        },
+        {
+            "name": "Minotauro",
+            "id": 10369,
+            "tier": 10,
+            "type": "pt",
+            "prem": "default"
+        },
+        {
+            "name": "Wz.70",
+            "id": 18305,
+            "tier": 10,
+            "type": "tt",
+            "prem": "default"
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/gunmarks_window">
+        <file>../../../../resources/fonts/JetBrainsMono-Bold.ttf</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,1 @@
+#include <main_overlay/widgets/widgets_page/history_window/hdmg.h>

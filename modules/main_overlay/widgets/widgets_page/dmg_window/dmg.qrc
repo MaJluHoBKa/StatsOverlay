@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/dmg">
+        <file>../../../../../resources/icons/total_damage_icon.png</file>
+        <file>../../../../../resources/icons/block_icon.png</file>
+        <file>../../../../../resources/icons/assist_icon.png</file>
+    </qresource>
+</RCC>
